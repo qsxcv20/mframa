@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Mframa" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/mframa_primary</item>
+        <item name="colorPrimaryVariant">@color/mframa_primary_dark</item>
+        <item name="colorSecondary">@color/mframa_accent</item>
+    </style>
+</resources>

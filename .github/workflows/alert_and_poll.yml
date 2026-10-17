@@ -1,0 +1,55 @@
+name: Alerts and Bot Poll
+
+on:
+  schedule:
+    # every 15 minutes, offset from the top of the hour
+    - cron: "7-57/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  poll-and-alert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests numpy
+
+      - name: Process bot commands (getUpdates)
+        env:
+          OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: python push_engine.py poll
+
+      - name: Check alert thresholds
+        env:
+          OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: python push_engine.py alerts
+
+      - name: Commit state changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add subscribers.json bot_state.json
+          git diff --cached --quiet || git commit -m "chore: update push state after alert/poll cycle [skip ci]"
+          git push
+
+      - name: Publish PM2.5 field JSON
+        env:
+          OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
+        run: python publish_field.py
+
+      - name: Commit field.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/field.json
+          git diff --cached --quiet || (git commit -m "field.json [skip ci]" && git push)

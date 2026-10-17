@@ -1,0 +1,36 @@
+Accra Hospitals/Clinics Offline Database - Build Summary
+========================================================
+Build date:            2026-10-18
+Source:                OpenStreetMap via Overpass API
+Endpoint:              https://overpass-api.de/api/interpreter
+OSM data timestamp:    2026-10-17T22:41:51Z
+Bbox:                  5.45,-0.40,5.75,0.10 (S,W,N,E)
+Query filter:          amenity ~ hospital|clinic|doctors (nodes+ways)
+
+Raw elements fetched:  298
+Dropped (no name):     14
+After dedupe:          280
+  - type=hospital:     123
+  - type=clinic:       157
+  - with phone:        51
+  - open 24/7:         25
+
+Major hospital verification (fuzzy name match):
+  [OK]   Korle Bu Teaching Hospital  -> matched: Korle Bu Policlinic; Korle Bu Teaching Hospital
+  [OK]   Greater Accra Regional Hospital (Ridge)  -> matched: Ridge Hospital
+  [OK]   37 Military Hospital  -> matched: 37 Military Hospital
+  [OK]   LEKMA Hospital  -> matched: Lekma Hospital
+  [OK]   La General Hospital  -> matched: La General Hospital
+  [OK]   Nyaho Medical Centre  -> matched: Nyaho Clinic; Nyaho Medical Centre
+  [MISS] Trust Hospital  -> NOT found in OSM data (not fabricated)
+
+Trust Hospital note: exact 'Trust Hospital' is absent from OSM in this
+bbox; related facilities DO exist in data: 'Trust Specialist Hospital'
+(amenity=doctors) and 'Trust Clinic Dome' (amenity=clinic). The main
+hospital entry was NOT fabricated.
+
+Notes:
+- type: amenity=hospital -> 'hospital'; clinic/doctors -> 'clinic'.
+- open24=true iff opening_hours contains '24/7'.
+- Dedupe: same normalized name within 500 m merged.
+- Coordinates: node lat/lon; way -> center.

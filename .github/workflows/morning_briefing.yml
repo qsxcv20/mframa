@@ -1,0 +1,37 @@
+name: Morning Briefing
+
+on:
+  schedule:
+    # 05:45 UTC = 05:45 Ghana local time (UTC+0), before the morning rush
+    - cron: "45 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests numpy
+
+      - name: Send morning briefings
+        env:
+          OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: python push_engine.py briefing
+
+      - name: Commit subscriber state changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add subscribers.json bot_state.json
+          git diff --cached --quiet || git commit -m "chore: update push state after morning briefing [skip ci]"
+          git push

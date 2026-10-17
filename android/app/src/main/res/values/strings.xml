@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mframa</string>
+    <string name="nav_air">Air Quality</string>
+    <string name="nav_exposure">My Exposure</string>
+    <string name="channel_advisory">Exposure advisory</string>
+    <string name="channel_advisory_desc">Air quality and dose advisories</string>
+    <string name="channel_health">Health alert</string>
+    <string name="channel_health_desc">Urgent exposure alerts with hospital info</string>
+    <string name="notif_service_title">Mframa exposure tracking</string>
+    <string name="notif_service_text">Monitoring your air exposure in the background</string>
+    <string name="notif_advisory_title">Air quality advisory</string>
+    <string name="notif_strong_title">High dose today</string>
+    <string name="notif_health_title">Seek medical advice</string>
+    <string name="notif_health_suffix">Tap to see the nearest hospitals.</string>
+    <string name="notif_retry_title">Field data unavailable</string>
+    <string name="notif_retry_text">Could not fetch air quality field. Will retry at the next location update.</string>
+    <string name="exposure_toggle">Track my exposure (background GPS)</string>
+    <string name="exposure_pm25">Current PM2.5: %.0f µg/m³</string>
+    <string name="exposure_no_data">No samples yet — enable tracking</string>
+    <string name="exposure_dose">Today\'s dose: %.0f µg·h/m³</string>
+    <string name="exposure_cigs">≈ %.2f cigarettes</string>
+    <string name="exposure_hourly">Hourly average PM2.5 (today)</string>
+    <string name="exposure_recent">Recent samples (24h)</string>
+    <string name="hospitals_title">Nearby hospitals</string>
+    <string name="hospitals_empty">Hospital data unavailable</string>
+    <string name="no_maps_app">No maps app installed</string>
+</resources>

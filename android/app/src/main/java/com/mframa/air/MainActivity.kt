@@ -1,0 +1,37 @@
+package com.mframa.air
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
+class MainActivity : AppCompatActivity() {
+
+    private val airFragment: Fragment by lazy { AirQualityFragment() }
+    private val exposureFragment: Fragment by lazy { ExposureFragment() }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        NotificationHelper.ensureChannels(this)
+
+        val nav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .add(R.id.fragment_container, exposureFragment, "exposure")
+                .hide(exposureFragment)
+                .add(R.id.fragment_container, airFragment, "air")
+                .commit()
+        }
+        nav.setOnItemSelectedListener { item ->
+            val tx = supportFragmentManager.beginTransaction()
+            when (item.itemId) {
+                R.id.nav_air -> tx.hide(exposureFragment).show(airFragment)
+                R.id.nav_exposure -> tx.hide(airFragment).show(exposureFragment)
+                else -> return@setOnItemSelectedListener false
+            }
+            tx.commit()
+            true
+        }
+    }
+}

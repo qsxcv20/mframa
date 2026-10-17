@@ -1,0 +1,24 @@
+# Secrets & machine-local
+.env
+local.properties
+subscribers.json
+bot_state.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Caches (regenerable)
+data/openmeteo_cache.json
+data/weather_cache.json
+candidates/_e2_cache.pkl
+
+# Android build
+.gradle/
+**/build/
+android/local.properties
+
+# OS
+Thumbs.db
+.DS_Store

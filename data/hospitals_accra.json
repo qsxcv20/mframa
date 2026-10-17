@@ -1,0 +1,2242 @@
+[
+ {
+  "name": "37 Military Hospital",
+  "lat": 5.586912,
+  "lon": -0.184713,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Accra Medical Centre",
+  "lat": 5.568718,
+  "lon": -0.186039,
+  "type": "hospital",
+  "phone": "+233 20 4096 099",
+  "open24": true
+ },
+ {
+  "name": "Accra Psychiatric Hospital",
+  "lat": 5.563335,
+  "lon": -0.204589,
+  "type": "hospital",
+  "phone": "0302 228 688",
+  "open24": true
+ },
+ {
+  "name": "Accra West Medical Centre",
+  "lat": 5.546389,
+  "lon": -0.326209,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Achimota Hospital",
+  "lat": 5.629735,
+  "lon": -0.217263,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Adabraka Polyclinic",
+  "lat": 5.561821,
+  "lon": -0.204431,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Advance Body Sculpture",
+  "lat": 5.5562,
+  "lon": -0.304198,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "AIMS Hospital",
+  "lat": 5.60608,
+  "lon": -0.225404,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Al-Ayar Hospital",
+  "lat": 5.613837,
+  "lon": -0.240367,
+  "type": "hospital",
+  "phone": "0544193852",
+  "open24": true
+ },
+ {
+  "name": "Alpha and Omega Chiropractic Health Care",
+  "lat": 5.6478,
+  "lon": -0.07331,
+  "type": "hospital",
+  "phone": "+233 55 918 2810; +233 27 263 1964",
+  "open24": true
+ },
+ {
+  "name": "Amasaman Hospital",
+  "lat": 5.70192,
+  "lon": -0.299348,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Amoah Memorial Hospital",
+  "lat": 5.590794,
+  "lon": -0.287288,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Anthon Memorial Hospital",
+  "lat": 5.593701,
+  "lon": -0.211451,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Armah Memorial",
+  "lat": 5.558404,
+  "lon": -0.243367,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Ashaiman Community Hospital",
+  "lat": 5.710865,
+  "lon": -0.037084,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Ashongman Community Hospital",
+  "lat": 5.685357,
+  "lon": -0.231811,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Atlantis Hospital",
+  "lat": 5.7186,
+  "lon": 0.008722,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Atta Quarshie Merton Memorial Hospital",
+  "lat": 5.561949,
+  "lon": -0.213777,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Barnor Hospital",
+  "lat": 5.549264,
+  "lon": -0.241119,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Bemuah Royal Hospital",
+  "lat": 5.645973,
+  "lon": -0.156896,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Bengali Hospital",
+  "lat": 5.667841,
+  "lon": -0.02029,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Bethel Hospital",
+  "lat": 5.67204,
+  "lon": -0.019317,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Breasted One Foundation",
+  "lat": 5.63192,
+  "lon": -0.014665,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "C&J Medicare Hospital",
+  "lat": 5.553525,
+  "lon": -0.210097,
+  "type": "hospital",
+  "phone": "0302 683 388",
+  "open24": true
+ },
+ {
+  "name": "C&J Medicare Hospital and Diagnostic Center",
+  "lat": 5.624365,
+  "lon": -0.06956,
+  "type": "hospital",
+  "phone": "+233 244 586769",
+  "open24": true
+ },
+ {
+  "name": "Cedars Medical Center",
+  "lat": 5.681436,
+  "lon": -0.198466,
+  "type": "hospital",
+  "phone": "+233303932684",
+  "open24": true
+ },
+ {
+  "name": "Cedars Medical Center",
+  "lat": 5.679387,
+  "lon": -0.192696,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Chrispod Hospital",
+  "lat": 5.643609,
+  "lon": -0.231986,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Citadel Hospital",
+  "lat": 5.596484,
+  "lon": -0.21683,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "City of Hope Hospital",
+  "lat": 5.639462,
+  "lon": -0.056646,
+  "type": "hospital",
+  "phone": "0543495200",
+  "open24": true
+ },
+ {
+  "name": "Civil Service Polyclinic",
+  "lat": 5.55104,
+  "lon": -0.19601,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Cocoa Clinic",
+  "lat": 5.571797,
+  "lon": -0.236333,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Dr. Beecham's Central Dansoman Clinic",
+  "lat": 5.552274,
+  "lon": -0.262226,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Emmanuel Community Hospital",
+  "lat": 5.606533,
+  "lon": -0.237588,
+  "type": "hospital",
+  "phone": null,
+  "open24": true
+ },
+ {
+  "name": "Esidem Hospital",
+  "lat": 5.660176,
+  "lon": -0.154979,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Euracare",
+  "lat": 5.570436,
+  "lon": -0.176664,
+  "type": "hospital",
+  "phone": "0500809024",
+  "open24": false
+ },
+ {
+  "name": "Faith Evangelical Mission Hospital",
+  "lat": 5.579282,
+  "lon": -0.245048,
+  "type": "hospital",
+  "phone": null,
+  "open24": true
+ },
+ {
+  "name": "Family Health Hospital",
+  "lat": 5.572863,
+  "lon": -0.112204,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Focos Orthopedic hospital",
+  "lat": 5.727474,
+  "lon": -0.185106,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Focus Orthopedic",
+  "lat": 5.736226,
+  "lon": -0.176166,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Ga East Municipal Hospital",
+  "lat": 5.673371,
+  "lon": -0.22933,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Ga North Municipal Hospital",
+  "lat": 5.655317,
+  "lon": -0.277801,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "General Family Hospital",
+  "lat": 5.724347,
+  "lon": -0.057918,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "German Egon Clinic",
+  "lat": 5.612363,
+  "lon": -0.214348,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Gewah Hospital",
+  "lat": 5.56165,
+  "lon": -0.310078,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Ghana Atomic Energy Commission Hospital",
+  "lat": 5.668583,
+  "lon": -0.231571,
+  "type": "hospital",
+  "phone": "+233 0576096697",
+  "open24": false
+ },
+ {
+  "name": "Ghana Police Hospital",
+  "lat": 5.568439,
+  "lon": -0.181711,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Grace Memorial Hospital",
+  "lat": 5.597029,
+  "lon": -0.112341,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Greater Grace Hospital",
+  "lat": 5.718486,
+  "lon": -0.174098,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Greenville Hospital",
+  "lat": 5.728819,
+  "lon": 0.034835,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Hajj Abdulai Yaro Memorial and Maternity Clinic",
+  "lat": 5.585305,
+  "lon": -0.199481,
+  "type": "hospital",
+  "phone": "+233208183572",
+  "open24": true
+ },
+ {
+  "name": "Inkoom Hospital",
+  "lat": 5.633705,
+  "lon": -0.098333,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "International Homeopatic Clinic",
+  "lat": 5.635602,
+  "lon": -0.16104,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "International Maritime Hospital Ghana Limited",
+  "lat": 5.626487,
+  "lon": -0.026784,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "International Medical & Dental Clinic",
+  "lat": 5.637182,
+  "lon": -0.164652,
+  "type": "hospital",
+  "phone": "0303970212",
+  "open24": false
+ },
+ {
+  "name": "Jubail Specialist Hospital",
+  "lat": 5.625637,
+  "lon": -0.052081,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Kaneshie Polyclinic",
+  "lat": 5.574578,
+  "lon": -0.230925,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Karikari Brobbey Hospital",
+  "lat": 5.531098,
+  "lon": -0.261595,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Klagon Maternity Home and Clinic",
+  "lat": 5.664674,
+  "lon": -0.049919,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Korle Bu Policlinic",
+  "lat": 5.537867,
+  "lon": -0.223472,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Korle Bu Teaching Hospital",
+  "lat": 5.538081,
+  "lon": -0.227202,
+  "type": "hospital",
+  "phone": "+233 30 273 9510",
+  "open24": false
+ },
+ {
+  "name": "La General Hospital",
+  "lat": 5.555398,
+  "lon": -0.166495,
+  "type": "hospital",
+  "phone": null,
+  "open24": true
+ },
+ {
+  "name": "Landmark Medical Center",
+  "lat": 5.653532,
+  "lon": -0.075951,
+  "type": "hospital",
+  "phone": "+233 30 340 8195; +233 30 340 8196",
+  "open24": false
+ },
+ {
+  "name": "Lapaz Community Hospital",
+  "lat": 5.63542,
+  "lon": -0.21536,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Lapaz Community Hospital",
+  "lat": 5.608767,
+  "lon": -0.253733,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Lebanon Community Hospital",
+  "lat": 5.720567,
+  "lon": -0.057847,
+  "type": "hospital",
+  "phone": "+233244592623",
+  "open24": true
+ },
+ {
+  "name": "Lekma Hospital",
+  "lat": 5.603121,
+  "lon": -0.120013,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Lighthouse Hospital",
+  "lat": 5.648028,
+  "lon": 0.024328,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Lister Hospital",
+  "lat": 5.619309,
+  "lon": -0.14647,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Malikem Hospital",
+  "lat": 5.667398,
+  "lon": -0.116638,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Mamobi General Hospital",
+  "lat": 5.591364,
+  "lon": -0.199086,
+  "type": "hospital",
+  "phone": "024 089 8458",
+  "open24": true
+ },
+ {
+  "name": "Mamprobi Hospital",
+  "lat": 5.53818,
+  "lon": -0.245264,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Manna Mission",
+  "lat": 5.607096,
+  "lon": -0.107374,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "MBA Hospital",
+  "lat": 5.601309,
+  "lon": -0.256814,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "McHenly's Medical Centre",
+  "lat": 5.632815,
+  "lon": -0.16692,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Medifem Multi-Specialist Hospital & Fertility Centre",
+  "lat": 5.658528,
+  "lon": -0.20607,
+  "type": "hospital",
+  "phone": "+233 302 433963",
+  "open24": false
+ },
+ {
+  "name": "Medimoses Clinic and Prostate Center",
+  "lat": 5.710442,
+  "lon": -0.173092,
+  "type": "hospital",
+  "phone": "0244068447",
+  "open24": false
+ },
+ {
+  "name": "Meridian Clinic",
+  "lat": 5.645627,
+  "lon": -0.007262,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Mother of God Hospital",
+  "lat": 5.710956,
+  "lon": -0.050174,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Mother-Love Hospital",
+  "lat": 5.716545,
+  "lon": -0.166359,
+  "type": "hospital",
+  "phone": "+233 302552153",
+  "open24": false
+ },
+ {
+  "name": "Narh-Bita Hospital",
+  "lat": 5.658011,
+  "lon": -0.010804,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Neptune Medical Centre",
+  "lat": 5.64948,
+  "lon": -0.074886,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "New Crystal Hospital",
+  "lat": 5.736734,
+  "lon": -0.014381,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "North Deseret Hospital",
+  "lat": 5.608031,
+  "lon": -0.278783,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "North Legon Hospital",
+  "lat": 5.66942,
+  "lon": -0.182454,
+  "type": "hospital",
+  "phone": "0302 250 6666",
+  "open24": true
+ },
+ {
+  "name": "Nova Surgery Center",
+  "lat": 5.653095,
+  "lon": -0.134379,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Nyaho Clinic",
+  "lat": 5.614556,
+  "lon": -0.184994,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Nyaho Medical Centre",
+  "lat": 5.55149,
+  "lon": -0.203939,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Nyameadom Maternity Home",
+  "lat": 5.551863,
+  "lon": -0.26434,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Obaatan Pa Womens Hospital",
+  "lat": 5.631025,
+  "lon": -0.168702,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Oduman Polyclinic",
+  "lat": 5.642259,
+  "lon": -0.330747,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Osu Maternity Home Hospital",
+  "lat": 5.553747,
+  "lon": -0.185228,
+  "type": "hospital",
+  "phone": "0302775259",
+  "open24": false
+ },
+ {
+  "name": "Pantang Hospital",
+  "lat": 5.717441,
+  "lon": -0.190787,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Princess Marie Louie Children's Hospital",
+  "lat": 5.544645,
+  "lon": -0.213242,
+  "type": "hospital",
+  "phone": "+233 302 664137",
+  "open24": false
+ },
+ {
+  "name": "Pro Vita Specialist Hospital",
+  "lat": 5.652354,
+  "lon": -0.019805,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Provident Specialist Hospital",
+  "lat": 5.626274,
+  "lon": -0.236429,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Resolve Medical Hospital",
+  "lat": 5.63552,
+  "lon": -0.078442,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Rhema Rapha Medical Center",
+  "lat": 5.57659,
+  "lon": -0.139469,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Ridge Hospital",
+  "lat": 5.562299,
+  "lon": -0.19939,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Sakumono Community Hospital",
+  "lat": 5.622496,
+  "lon": -0.062749,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Sam J Hospital",
+  "lat": 5.677399,
+  "lon": -0.203028,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Scanport Healthcare and Medical Imaging",
+  "lat": 5.532882,
+  "lon": -0.237223,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Speed Hospital",
+  "lat": 5.747865,
+  "lon": -0.029493,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "SSNIT Hospital",
+  "lat": 5.562561,
+  "lon": -0.182113,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "SSNIT Mother and Child",
+  "lat": 5.555147,
+  "lon": -0.179296,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "St. Kathryn's Hospital",
+  "lat": 5.58764,
+  "lon": -0.231468,
+  "type": "hospital",
+  "phone": null,
+  "open24": true
+ },
+ {
+  "name": "St. Martin's Memorial Hospital",
+  "lat": 5.579362,
+  "lon": -0.273374,
+  "type": "hospital",
+  "phone": "+233 30 232 7038",
+  "open24": false
+ },
+ {
+  "name": "Sweden Ghana Medical Centre",
+  "lat": 5.725038,
+  "lon": -0.114898,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Tema General Hospital",
+  "lat": 5.674217,
+  "lon": -0.025155,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Tema Polyclinic",
+  "lat": 5.635652,
+  "lon": -0.006799,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Tema Women's Hospital",
+  "lat": 5.665711,
+  "lon": -0.018876,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "The Bank Hospital",
+  "lat": 5.585129,
+  "lon": -0.162,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "The Bank Hospital Anex",
+  "lat": 5.583319,
+  "lon": -0.160833,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Twumasiwaa Hospital",
+  "lat": 5.659538,
+  "lon": -0.148089,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "University of Ghana Hospital",
+  "lat": 5.651852,
+  "lon": -0.178107,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "University of Ghana Medical Center Limited",
+  "lat": 5.631864,
+  "lon": -0.185925,
+  "type": "hospital",
+  "phone": "+233 302 550843",
+  "open24": false
+ },
+ {
+  "name": "Valco Clinic",
+  "lat": 5.652432,
+  "lon": -0.010233,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Valco Hospital",
+  "lat": 5.668976,
+  "lon": 0.034477,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Valley View Clinic",
+  "lat": 5.615156,
+  "lon": -0.198284,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "VRA Hospital & Pharmacy",
+  "lat": 5.553983,
+  "lon": -0.180748,
+  "type": "hospital",
+  "phone": "0302776427",
+  "open24": false
+ },
+ {
+  "name": "Weija-Gbawe Municipal Hospital",
+  "lat": 5.565149,
+  "lon": -0.290353,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Wellmark Specialist Hospital",
+  "lat": 5.681192,
+  "lon": -0.193366,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Yeboah Hospital",
+  "lat": 5.632289,
+  "lon": -0.152257,
+  "type": "hospital",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Acacia Medical Centre",
+  "lat": 5.633614,
+  "lon": -0.157585,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Accra New Town CHPS Compound",
+  "lat": 5.583051,
+  "lon": -0.205962,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Accra Physiotherapy & Sports Injury Clinic",
+  "lat": 5.613363,
+  "lon": -0.215333,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Acheampong Specialist Clinic",
+  "lat": 5.561695,
+  "lon": -0.172576,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Adabraka clinic",
+  "lat": 5.566273,
+  "lon": -0.209599,
+  "type": "clinic",
+  "phone": "0302 222 6430",
+  "open24": true
+ },
+ {
+  "name": "Adenta Clinic",
+  "lat": 5.706065,
+  "lon": -0.168109,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Adowa Boatemaa Memorial Clinic",
+  "lat": 5.533058,
+  "lon": -0.237364,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Afenyo Memorial Hospital",
+  "lat": 5.692106,
+  "lon": -0.034241,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Agbogba Community Clinic",
+  "lat": 5.694953,
+  "lon": -0.201244,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Airport Clinic Limited",
+  "lat": 5.608267,
+  "lon": -0.170918,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Airport Womens Hospital",
+  "lat": 5.617659,
+  "lon": -0.178877,
+  "type": "clinic",
+  "phone": null,
+  "open24": true
+ },
+ {
+  "name": "Akai House Clinic",
+  "lat": 5.577234,
+  "lon": -0.171563,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Albany Specialist Clinic",
+  "lat": 5.670142,
+  "lon": -0.183843,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "All Care Medical Center",
+  "lat": 5.708026,
+  "lon": -0.014919,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "All Faith Clinic",
+  "lat": 5.542951,
+  "lon": -0.335006,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Amamorley Health Centre",
+  "lat": 5.663478,
+  "lon": -0.296872,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Anglican Medical Center",
+  "lat": 5.69726,
+  "lon": -0.281136,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Ashaiman Poly Clinic",
+  "lat": 5.686505,
+  "lon": -0.039718,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Beijing Clinic",
+  "lat": 5.558373,
+  "lon": -0.180122,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Better Hearing Clinic Ltd.",
+  "lat": 5.594042,
+  "lon": -0.242664,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "BJ Medical Centre",
+  "lat": 5.630628,
+  "lon": -0.260931,
+  "type": "clinic",
+  "phone": "0303965751",
+  "open24": false
+ },
+ {
+  "name": "Bloom physiotherapy clinic",
+  "lat": 5.5713,
+  "lon": -0.236544,
+  "type": "clinic",
+  "phone": "0203652128 0272339229",
+  "open24": false
+ },
+ {
+  "name": "Bright ALK Herbal Clinic",
+  "lat": 5.579325,
+  "lon": -0.144482,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Caiquo Hospital",
+  "lat": 5.652901,
+  "lon": -0.022466,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Cathedral Clinic and Lab Limited",
+  "lat": 5.539521,
+  "lon": -0.207766,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Celestial Medicare Clinic",
+  "lat": 5.601111,
+  "lon": -0.120511,
+  "type": "clinic",
+  "phone": "+233 24 143 1093",
+  "open24": false
+ },
+ {
+  "name": "Champion Divine",
+  "lat": 5.642745,
+  "lon": -0.249499,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Chiropractic & Wellness Centres",
+  "lat": 5.613932,
+  "lon": -0.209838,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Christian Medical Centre & Laboratory",
+  "lat": 5.606484,
+  "lon": -0.077807,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Christian Medical Service Clinic",
+  "lat": 5.583215,
+  "lon": -0.105013,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Christleads Medical Center",
+  "lat": 5.680383,
+  "lon": -0.176218,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "CITA Geakrh",
+  "lat": 5.666411,
+  "lon": -0.196221,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Citadel Clinic",
+  "lat": 5.60416,
+  "lon": -0.218911,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Claron Health International",
+  "lat": 5.612246,
+  "lon": -0.182298,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Classic Diagnostic & Medical Clinic",
+  "lat": 5.704553,
+  "lon": -0.201748,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Club Road Clinic",
+  "lat": 5.544478,
+  "lon": -0.206385,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Cosmopolitan Health",
+  "lat": 5.644574,
+  "lon": -0.155456,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "COY Paediatric",
+  "lat": 5.648374,
+  "lon": -0.028215,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Crystal Eye Clinic",
+  "lat": 5.706148,
+  "lon": -0.146809,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Dansoman polyclinic",
+  "lat": 5.56108,
+  "lon": -0.260079,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Daprof Clinic",
+  "lat": 5.579679,
+  "lon": -0.196933,
+  "type": "clinic",
+  "phone": "+233243375577",
+  "open24": true
+ },
+ {
+  "name": "Dar-bem Clinic",
+  "lat": 5.683381,
+  "lon": -0.036258,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Darpong Clinic",
+  "lat": 5.628104,
+  "lon": -0.088759,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Del International hospital & fertility centre",
+  "lat": 5.652465,
+  "lon": -0.153639,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Diagnostic Centre",
+  "lat": 5.63171,
+  "lon": -0.174259,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Dialysis Center",
+  "lat": 5.542271,
+  "lon": -0.229193,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Diamed Diagnostical and Treatment Center",
+  "lat": 5.639097,
+  "lon": -0.177408,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Doctors on Duty Clinic",
+  "lat": 5.559874,
+  "lon": -0.158612,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Dons Medical Services",
+  "lat": 5.582419,
+  "lon": -0.198336,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Dr. K.K. Duncan",
+  "lat": 5.594118,
+  "lon": -0.232053,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Dr. Mensah Herbal Clinic & Shop",
+  "lat": 5.680587,
+  "lon": -0.173133,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Dua Clinic",
+  "lat": 5.572076,
+  "lon": -0.202551,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Edward Attah Asare",
+  "lat": 5.61361,
+  "lon": -0.240192,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Efan Victory Clinic",
+  "lat": 5.624386,
+  "lon": -0.090954,
+  "type": "clinic",
+  "phone": "0208412921",
+  "open24": false
+ },
+ {
+  "name": "Efan Victory Clinic",
+  "lat": 5.598531,
+  "lon": -0.198806,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Emmanuel Eye Clinic",
+  "lat": 5.630441,
+  "lon": -0.174433,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Expert's Hand Clinic",
+  "lat": 5.677701,
+  "lon": -0.17958,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Eye Link Clinic",
+  "lat": 5.61241,
+  "lon": -0.222045,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Faith Medical Services",
+  "lat": 5.599969,
+  "lon": -0.217619,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "G.P.H.A Clinic Tema",
+  "lat": 5.632682,
+  "lon": -0.006523,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "G2 Medical Laboratory Services",
+  "lat": 5.590249,
+  "lon": -0.181608,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "GBC Clinic",
+  "lat": 5.575589,
+  "lon": -0.194122,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Geomond Eye Centre",
+  "lat": 5.617501,
+  "lon": -0.078728,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Ghanuba Specialist Clinic",
+  "lat": 5.582793,
+  "lon": -0.20682,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Givers Scientic Herbal Clinic",
+  "lat": 5.60787,
+  "lon": -0.127572,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Global Star HealthCenter",
+  "lat": 5.675363,
+  "lon": -0.181885,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Golden Jubilee Clinic",
+  "lat": 5.662173,
+  "lon": -0.172816,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Greenfield",
+  "lat": 5.618811,
+  "lon": -0.090966,
+  "type": "clinic",
+  "phone": "0243983906",
+  "open24": false
+ },
+ {
+  "name": "Hass West Africa Hearing Clinic",
+  "lat": 5.571442,
+  "lon": -0.236058,
+  "type": "clinic",
+  "phone": "0244165807 0576076229",
+  "open24": false
+ },
+ {
+  "name": "Healthnet Airpoort Mediacl Centre",
+  "lat": 5.60895,
+  "lon": -0.186801,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Healthnet Clinic",
+  "lat": 5.554257,
+  "lon": -0.171835,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Healthy Soul Natural Health Clinic",
+  "lat": 5.580617,
+  "lon": -0.220226,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Hobats Clinic",
+  "lat": 5.606822,
+  "lon": -0.231701,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Inter-Star Eye Clinic",
+  "lat": 5.646459,
+  "lon": -0.155002,
+  "type": "clinic",
+  "phone": "0244850200",
+  "open24": false
+ },
+ {
+  "name": "Iran Clinic",
+  "lat": 5.568037,
+  "lon": -0.212442,
+  "type": "clinic",
+  "phone": "+233 30 222 2402;+233 30 224 3342",
+  "open24": true
+ },
+ {
+  "name": "James Town Usher Clinic",
+  "lat": 5.540333,
+  "lon": -0.21299,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "King David Hospital",
+  "lat": 5.592747,
+  "lon": -0.206034,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Kotoku Clinic",
+  "lat": 5.73637,
+  "lon": -0.359485,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Kumcji Hospital",
+  "lat": 5.573934,
+  "lon": -0.18236,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "La Medicare Ltd",
+  "lat": 5.55777,
+  "lon": -0.15553,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Labone Clinic",
+  "lat": 5.568812,
+  "lon": -0.170222,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Layfa Clinic",
+  "lat": 5.581569,
+  "lon": -0.197307,
+  "type": "clinic",
+  "phone": null,
+  "open24": true
+ },
+ {
+  "name": "Life Health Care",
+  "lat": 5.638541,
+  "lon": -0.241597,
+  "type": "clinic",
+  "phone": "+233 20 2336065",
+  "open24": false
+ },
+ {
+  "name": "Lifebridge Physio Clinic",
+  "lat": 5.556899,
+  "lon": -0.178406,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Lifeview Medical Laboratory",
+  "lat": 5.611663,
+  "lon": -0.233511,
+  "type": "clinic",
+  "phone": "0302238777",
+  "open24": false
+ },
+ {
+  "name": "Lifeview Medical Laboratory and Ultra Scan centre",
+  "lat": 5.591619,
+  "lon": -0.204551,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "M Pact Clinic",
+  "lat": 5.57049,
+  "lon": -0.201592,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Madina Polyclinic",
+  "lat": 5.66758,
+  "lon": -0.165229,
+  "type": "clinic",
+  "phone": "0312291865",
+  "open24": false
+ },
+ {
+  "name": "Maldey Medical Centre",
+  "lat": 5.626927,
+  "lon": -0.01836,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Marie Stopes",
+  "lat": 5.57718,
+  "lon": -0.213748,
+  "type": "clinic",
+  "phone": "+233 80 020 8585",
+  "open24": false
+ },
+ {
+  "name": "Medcare Plus Clinic",
+  "lat": 5.713011,
+  "lon": -0.205791,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Medical & Dental Clini6",
+  "lat": 5.626419,
+  "lon": -0.15378,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Medical & Dental Council Ghana",
+  "lat": 5.552352,
+  "lon": -0.211204,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Medimafo Herbal Hope",
+  "lat": 5.71805,
+  "lon": -0.282496,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Medlab",
+  "lat": 5.601588,
+  "lon": -0.192894,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Medline",
+  "lat": 5.645313,
+  "lon": -0.247554,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Midway Clinic Ltd.",
+  "lat": 5.617476,
+  "lon": -0.226261,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Mini Clinic",
+  "lat": 5.667475,
+  "lon": -0.185664,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Mission Children Clinic",
+  "lat": 5.582638,
+  "lon": -0.215776,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Mk Eye Center",
+  "lat": 5.636693,
+  "lon": -0.237919,
+  "type": "clinic",
+  "phone": "+233558156929",
+  "open24": false
+ },
+ {
+  "name": "MMC Polyclinic",
+  "lat": 5.612022,
+  "lon": -0.193867,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "New Cross Clinic",
+  "lat": 5.582432,
+  "lon": -0.199324,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "New Cross Clinic and Medical",
+  "lat": 5.582382,
+  "lon": -0.19929,
+  "type": "clinic",
+  "phone": "0302235249",
+  "open24": true
+ },
+ {
+  "name": "New Crystal Hospital",
+  "lat": 5.690273,
+  "lon": -0.03433,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "New Life Homeopathic Clinic",
+  "lat": 5.555227,
+  "lon": -0.267043,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Nima Goverment Clinic",
+  "lat": 5.57757,
+  "lon": -0.200014,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Nuffield Clinic Orthopaedic",
+  "lat": 5.565778,
+  "lon": -0.184822,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Oblogo Health Centre",
+  "lat": 5.558173,
+  "lon": -0.306453,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Odorna Medical Center",
+  "lat": 5.559084,
+  "lon": -0.215609,
+  "type": "clinic",
+  "phone": null,
+  "open24": true
+ },
+ {
+  "name": "Okanta Clinic",
+  "lat": 5.686876,
+  "lon": -0.039983,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "OMNI Healthcare",
+  "lat": 5.616734,
+  "lon": -0.192383,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Opmann Clinic",
+  "lat": 5.6081,
+  "lon": -0.242019,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Peace Be Clinic",
+  "lat": 5.684647,
+  "lon": -0.145175,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Peace Clinic",
+  "lat": 5.670066,
+  "lon": -0.160085,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Penbrose Clinic",
+  "lat": 5.648278,
+  "lon": -0.228348,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Polyclinic",
+  "lat": 5.612886,
+  "lon": -0.088966,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Port Medical Centre",
+  "lat": 5.642639,
+  "lon": 0.001417,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Pro-Life Medical Center",
+  "lat": 5.585147,
+  "lon": -0.131264,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Prolife Chinese Acupuncture Clinic",
+  "lat": 5.660166,
+  "lon": -0.151744,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Quality Care",
+  "lat": 5.637709,
+  "lon": -0.161913,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Quantum Medical Centre and Eye Clinic",
+  "lat": 5.567474,
+  "lon": -0.257386,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Rabito Clinic",
+  "lat": 5.565651,
+  "lon": -0.180066,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Ramona Clinic",
+  "lat": 5.560996,
+  "lon": -0.182449,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Raphal Medical Center",
+  "lat": 5.660147,
+  "lon": -0.020707,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Regional Medical Office of the Embassy of the Federal Republic of Germany",
+  "lat": 5.563669,
+  "lon": -0.198411,
+  "type": "clinic",
+  "phone": "+233 302 21 10 00;+233 302 22 13 11",
+  "open24": false
+ },
+ {
+  "name": "Rehabilitation Center",
+  "lat": 5.719538,
+  "lon": -0.187167,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Rinat Clinic",
+  "lat": 5.651874,
+  "lon": -0.131227,
+  "type": "clinic",
+  "phone": "+233 30 251 5901",
+  "open24": true
+ },
+ {
+  "name": "Royal Star Clinic and Diagnostic Center",
+  "lat": 5.590431,
+  "lon": -0.203873,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Sape Agbo Memorial Hospital",
+  "lat": 5.592265,
+  "lon": -0.208231,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Save the Nation's Sight Clinic",
+  "lat": 5.658422,
+  "lon": -0.155802,
+  "type": "clinic",
+  "phone": "+233244014656",
+  "open24": false
+ },
+ {
+  "name": "Shalina",
+  "lat": 5.566,
+  "lon": -0.210348,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "SIC Bob Freeman Clinic",
+  "lat": 5.554324,
+  "lon": -0.208527,
+  "type": "clinic",
+  "phone": "030268283233",
+  "open24": false
+ },
+ {
+  "name": "Sina Zuwina Herbal Center",
+  "lat": 5.581497,
+  "lon": -0.201922,
+  "type": "clinic",
+  "phone": "+233208948821",
+  "open24": false
+ },
+ {
+  "name": "Solace Hospital",
+  "lat": 5.678482,
+  "lon": -0.028132,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Sonotech Medical Center",
+  "lat": 5.545287,
+  "lon": -0.34479,
+  "type": "clinic",
+  "phone": "+233 55 151 3331; +233 24 243 9467",
+  "open24": false
+ },
+ {
+  "name": "St Florence Clinic",
+  "lat": 5.688226,
+  "lon": -0.032744,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "St Moses Clinic",
+  "lat": 5.688652,
+  "lon": -0.28589,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "St. Andrews Clinic",
+  "lat": 5.608001,
+  "lon": -0.188023,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "St. Bernhard Eye Clinic",
+  "lat": 5.574363,
+  "lon": -0.207488,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "St. Lucy Eye Clinic",
+  "lat": 5.634594,
+  "lon": -0.063783,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "St. Lukes Clinic",
+  "lat": 5.614031,
+  "lon": -0.177654,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "The Oak Street Clinic",
+  "lat": 5.590699,
+  "lon": -0.099257,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "The Oak Street Clinic & Laboratory",
+  "lat": 5.590863,
+  "lon": -0.099231,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "TMA Maternity and Children's Clinic",
+  "lat": 5.647716,
+  "lon": -0.002661,
+  "type": "clinic",
+  "phone": null,
+  "open24": true
+ },
+ {
+  "name": "Top Herbal Clinic",
+  "lat": 5.682835,
+  "lon": -0.193503,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Trust Clinic Dome",
+  "lat": 5.646857,
+  "lon": -0.244899,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Trust Specialist Hospital",
+  "lat": 5.56075,
+  "lon": -0.187079,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Tuba Community Maternity & Clinic",
+  "lat": 5.512,
+  "lon": -0.393109,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Unity Medical Center",
+  "lat": 5.677748,
+  "lon": -0.175557,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Urban Medical Research Center",
+  "lat": 5.681254,
+  "lon": -0.195842,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Urology and Nephrology Centre of Excellence",
+  "lat": 5.541763,
+  "lon": -0.228482,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Van J Eye Care",
+  "lat": 5.612639,
+  "lon": -0.198234,
+  "type": "clinic",
+  "phone": "+233 208130301",
+  "open24": false
+ },
+ {
+  "name": "Vic Dank Health Centre",
+  "lat": 5.640468,
+  "lon": -0.103907,
+  "type": "clinic",
+  "phone": "+233549951211",
+  "open24": false
+ },
+ {
+  "name": "Vision Clinic",
+  "lat": 5.582084,
+  "lon": -0.201294,
+  "type": "clinic",
+  "phone": "+233243365994",
+  "open24": false
+ },
+ {
+  "name": "WARA / International SOS",
+  "lat": 5.570308,
+  "lon": -0.166837,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Zaclex Maternity Home",
+  "lat": 5.528576,
+  "lon": -0.263876,
+  "type": "clinic",
+  "phone": null,
+  "open24": false
+ },
+ {
+  "name": "Zak-med Clinic",
+  "lat": 5.583225,
+  "lon": -0.207755,
+  "type": "clinic",
+  "phone": "+233244179253;+233504179253",
+  "open24": false
+ }
+]
