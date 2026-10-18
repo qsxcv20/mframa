@@ -25,4 +25,8 @@
     <string name="hospitals_title">Nearby hospitals</string>
     <string name="hospitals_empty">Hospital data unavailable</string>
     <string name="no_maps_app">No maps app installed</string>
+    <string name="alerts_toggle">City air alerts (no account needed)</string>
+    <string name="alerts_threshold_fmt">Alert me when city PM2.5 ≥ %1$d µg/m³</string>
+    <string name="notif_city_title">Accra air alert</string>
+    <string name="notif_city_text">City PM2.5 is now %1$d µg/m³ — above your %2$d limit. Sensitive groups should stay indoors; consider a mask outside.</string>
 </resources>

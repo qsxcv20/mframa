@@ -484,10 +484,9 @@ def render_dust_forecast_chart(hours=48):
                           annotation_position="top left")
         fig.update_layout(
             height=320, margin=dict(l=10, r=10, t=44, b=10),
-            yaxis_title="µg/m³",
             legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0, xanchor="left"),
         )
-        st.markdown(f"**{t('dust_chart_title', hours=hours)}**")
+        st.markdown(f"**{t('dust_chart_title', hours=hours)} (µg/m³)**")
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
         st.caption(t("forecast_src")
                    + (t("showing_cached") if aq.get("stale") else ""))
@@ -663,10 +662,16 @@ def render_best_hours(station):
     for s, e in red:
         fig.add_vrect(x0=s - 0.5, x1=e - 0.5, fillcolor="#d64545", opacity=0.10, line_width=0)
     fig.update_layout(
-        height=380, margin=dict(l=10, r=10, t=30, b=10),
+        height=380, margin=dict(l=10, r=10, t=56, b=10),
         xaxis=dict(title=t("xaxis_hour"), dtick=2, range=[-0.5, 23.5]),
-        yaxis_title="PM2.5 µg/m³",
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
+    )
+    # Plotly always renders y-axis titles vertically, which turns Chinese
+    # labels into an unreadable rotated stack — use a horizontal annotation
+    # above the axis instead.
+    fig.add_annotation(
+        text="PM2.5 µg/m³", xref="paper", yref="paper",
+        x=0, y=1.14, showarrow=False, xanchor="left", font=dict(size=13),
     )
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 

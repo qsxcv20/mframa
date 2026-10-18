@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -27,6 +28,9 @@ class ExposureFragment : Fragment() {
 
     private lateinit var store: DoseStore
     private lateinit var toggle: MaterialSwitch
+    private lateinit var toggleAlerts: MaterialSwitch
+    private lateinit var seekThreshold: SeekBar
+    private lateinit var txtThreshold: TextView
     private lateinit var txtPm25: TextView
     private lateinit var txtDose: TextView
     private lateinit var txtCigs: TextView
@@ -71,6 +75,26 @@ class ExposureFragment : Fragment() {
         toggle.setOnCheckedChangeListener { _, checked ->
             if (checked) ensurePermissionsThenStart() else stopService()
         }
+
+        toggleAlerts = root.findViewById(R.id.toggle_alerts)
+        seekThreshold = root.findViewById(R.id.seek_threshold)
+        txtThreshold = root.findViewById(R.id.txt_threshold)
+        toggleAlerts.isChecked = AlertPrefs.enabled(requireContext())
+        toggleAlerts.setOnCheckedChangeListener { _, checked ->
+            AlertPrefs.setEnabled(requireContext(), checked)
+        }
+        seekThreshold.progress = AlertPrefs.thresholdIndex(requireContext())
+        updateThresholdLabel()
+        seekThreshold.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                AlertPrefs.setThreshold(requireContext(), AlertPrefs.THRESHOLD_STEPS[progress])
+                updateThresholdLabel()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+        })
+
         root.findViewById<Button>(R.id.btn_hospitals).setOnClickListener {
             startActivity(Intent(requireContext(), HospitalsActivity::class.java))
         }
@@ -117,6 +141,13 @@ class ExposureFragment : Fragment() {
     private fun stopService() {
         store.serviceEnabled = false
         requireContext().stopService(Intent(requireContext(), ExposureService::class.java))
+    }
+
+    private fun updateThresholdLabel() {
+        txtThreshold.text = getString(
+            R.string.alerts_threshold_fmt,
+            AlertPrefs.threshold(requireContext()).toInt()
+        )
     }
 
     private fun refresh() {

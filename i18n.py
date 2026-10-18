@@ -224,12 +224,20 @@ S = {
               "你会立即收到带有具体防护措施的警告。12 小时内不会重复推送。",
     },
     "subscribe_line": {
-        "en": "👉 **Subscribe free in 10 seconds — no account, no phone number:** open "
+        "en": "📱 **Android app users: nothing to install — alerts are built in.** "
+              "Open *My Exposure* in the Mframa app, flip on **City air alerts** "
+              "and pick your own PM2.5 threshold; the app checks the air itself "
+              "every 15 minutes and notifies you. No account, no phone number.\n\n"
+              "👉 **On any other device, subscribe free in 10 seconds:** open "
               "**[ntfy.sh/{topic}](https://ntfy.sh/{topic})** in any browser and tap "
               "*Subscribe to topic*, or install the **ntfy** app (Android / iOS) and "
               "add the topic `{topic}`. You will get the daily morning briefing and "
               "every city-wide burst alert as a phone notification.",
-        "zh": "👉 **10 秒免费订阅——无需账号、无需手机号：** 在任意浏览器打开 "
+        "zh": "📱 **安卓 App 用户：无需安装任何其他软件——预警功能已内置。** "
+              "打开 Mframa 应用的「My Exposure」页，开启 **City air alerts** 并选择"
+              "你自己的 PM2.5 阈值；App 会每 15 分钟自行检查空气并推送通知。"
+              "无需账号、无需手机号。\n\n"
+              "👉 **其他设备可 10 秒免费订阅：** 在任意浏览器打开 "
               "**[ntfy.sh/{topic}](https://ntfy.sh/{topic})**，点击 *Subscribe to topic*；"
               "或安装 **ntfy** 应用（Android / iOS）并添加主题 `{topic}`。"
               "每日晨间简报和每次全市突发警报都会以手机通知送达。",

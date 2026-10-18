@@ -1,9 +1,13 @@
 package com.mframa.air
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,6 +18,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         NotificationHelper.ensureChannels(this)
+
+        AlertWorker.schedule(this)
+        lifecycleScope.launch { AlertWorker.checkNow(this@MainActivity) }
+        if (Build.VERSION.SDK_INT >= 33) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        }
 
         val nav = findViewById<BottomNavigationView>(R.id.bottom_nav)
         if (savedInstanceState == null) {
