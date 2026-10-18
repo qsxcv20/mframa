@@ -34,7 +34,7 @@ The cruel part: the pollution is invisible, hyper-local, and time-varying. Offic
 
 ## The Solution — five pages, five concrete answers
 
-**My Air** — You pick a health profile (child, pregnant, asthma/respiratory condition, elderly, outdoor worker, healthy adult). Mframa reads the nearest live stations and gives plain-language action guidance tuned to that profile: whether to go out now, whether to keep windows open, whether today is a mask day. Advice is based on WHO-aligned PM2.5 breakpoints, not generic "moderate air" labels. A **"Dust or Smoke?"** card on the same page attributes the pollution source — Saharan dust vs. combustion smoke — by combining live PM2.5 with the CAMS dust forecast (see Open-Meteo below).
+**My Air** — You pick a health profile (child, pregnant, asthma/respiratory condition, elderly, outdoor worker, healthy adult). Mframa reads the nearest live stations and gives plain-language action guidance tuned to that profile: whether to go out now, whether to keep windows open, whether today is a mask day. Advice is based on WHO-aligned PM2.5 breakpoints, not generic "moderate air" labels. The big AQI card wears a **cute kaomoji face for each pollution level** — ＼(＾▽＾)／ on a good day, a masked (＞_＜)😷 when the air turns unhealthy — so even a child can read the air at a glance; the same faces ride along in the alert messages. A **"Dust or Smoke?"** card on the same page attributes the pollution source — Saharan dust vs. combustion smoke — by combining live PM2.5 with the CAMS dust forecast (see Open-Meteo below).
 
 **Best Hours Today** — A direct answer to the question everyone actually asks: *when should I go out?* A diurnal curve built from the last 7 days of hourly readings finds the historically cleanest hours, overlays today's live trend, and marks **green outdoor windows** for exercise, commuting with children, or drying laundry — plus a **48-hour dust & PM2.5 forecast**.
 
@@ -73,7 +73,7 @@ A native Kotlin app under `android/` for the way Ghanaians actually live with ai
 - **Dose accumulation** in `DoseLogic` — pure Kotlin, unit-tested — turning time-at-location into a daily PM2.5 dose
 - **3-tier notifications** as your accumulated dose crosses thresholds
 - **280 real hospitals** around Accra ([`data/hospitals_accra.json`](data/hospitals_accra.json), sourced from OpenStreetMap and bundled in app assets) so a bad-air alert can point to actual care
-- **24 unit tests pass**; prebuilt APK: [`dist/Mframa-v0.2-debug.apk`](dist/Mframa-v0.2-debug.apk)
+- **24 unit tests pass**; prebuilt APK: [`dist/Mframa-v0.3-debug.apk`](dist/Mframa-v0.3-debug.apk)
 
 ## field.json pipeline — offline air for the app
 
