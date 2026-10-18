@@ -23,7 +23,7 @@ Built for the **TechHub Africa Hackathon 2026**, track *Reducing Public Pollutio
 
 ## 30-second demo
 
-![Mframa demo: live map with NASA FIRMS fire detections, Harmattan-day replay (red AQI card, cigarette equivalent, seek-care red flags), and the best-hours planner](docs/demo.gif)
+![Mframa demo: live map with NASA FIRMS fire detections, Harmattan-day replay (red AQI card, cigarette equivalent, seek-care red flags), the best-hours planner, and the bilingual Chinese UI](docs/demo.gif)
 
 **Historical-peak replay:** [mframa.streamlit.app/?demo=harmattan](https://mframa.streamlit.app/?demo=harmattan). Why a replay: October is Accra's cleanest month of the year — [IQAir puts October at 16.9 µg/m³ vs 59.8 in January](https://www.iqair.com/ghana/greater-accra/accra) — so the demo replays a Harmattan-season pollution peak rather than today's unusually clean air.
 
