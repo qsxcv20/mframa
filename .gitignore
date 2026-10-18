@@ -1,8 +1,6 @@
 # Secrets & machine-local
 .env
 local.properties
-subscribers.json
-bot_state.json
 
 # Python
 __pycache__/
