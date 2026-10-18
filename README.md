@@ -23,9 +23,9 @@ Built for the **TechHub Africa Hackathon 2026**, track *Reducing Public Pollutio
 
 ## 30-second demo
 
-[demo GIF — recorded before submission]
+![Mframa demo: live map with NASA FIRMS fire detections, Harmattan-day replay (red AQI card, cigarette equivalent, seek-care red flags), and the best-hours planner](docs/demo.gif)
 
-**Historical-peak replay:** [mframa.streamlit.app/?demo=harmattan](https://mframa.streamlit.app/?demo=harmattan) (web replay in parallel development). Why a replay: October is Accra's cleanest month of the year — [IQAir puts October at 16.9 µg/m³ vs 59.8 in January](https://www.iqair.com/ghana/greater-accra/accra) — so the demo replays a Harmattan-season pollution peak rather than today's unusually clean air.
+**Historical-peak replay:** [mframa.streamlit.app/?demo=harmattan](https://mframa.streamlit.app/?demo=harmattan). Why a replay: October is Accra's cleanest month of the year — [IQAir puts October at 16.9 µg/m³ vs 59.8 in January](https://www.iqair.com/ghana/greater-accra/accra) — so the demo replays a Harmattan-season pollution peak rather than today's unusually clean air.
 
 ## Judging criteria → evidence map
 
@@ -57,7 +57,7 @@ Top navigation, four destinations, tuned for one-thumb phone use:
 - **Live Map** — all 85 monitoring stations across Accra with an IDW interpolation heatmap: the pollution *field*, not just dots — plus a **NASA FIRMS VIIRS fire layer** ([`fetch_fires.py`](fetch_fires.py), refreshed every 6 h by [`.github/workflows/fires.yml`](.github/workflows/fires.yml)) sizing each active fire by radiative power, so you can *see* the smoke sources around the city.
 - **More → What Did I Breathe? / Get Air Alerts** — a **cigarette-equivalent exposure calculator** ([Berkeley Earth conversion](http://berkeleyearth.org/air-pollution-and-cigarette-equivalence/): 22 µg/m³ over a day ≈ one cigarette), weighted by breathing rate and your actual commute/outdoor time; and 10-second subscription to a **daily morning briefing** plus **burst alerts** when the city crosses AQI 151 — no account, no phone number.
 - **In the Android app:** threshold alerts fire inside the app itself as your accumulated dose crosses levels.
-- **In parallel development (web):** one-tap **WhatsApp share** of your air report — the channel where Ghanaians actually forward information.
+- **One-tap WhatsApp share** of your air report — a prefilled message with the current level, cigarette equivalent, best outdoor window and a deep link back, built for the channel where Ghanaians actually forward information.
 
 ## Why this nowcast — the technical core
 
