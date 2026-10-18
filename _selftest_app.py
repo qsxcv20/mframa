@@ -8,6 +8,8 @@ the framework (KeyError on stale widget ids) — not an app bug.
 
 import sys
 
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 from streamlit.testing.v1 import AppTest
 
 # Top-level pills navigation; "More" expands into its two sub-pages.
@@ -133,6 +135,105 @@ def main():
             print("    failed: qp page=map (got %r)" % at.query_params.get("page"))
         if not lang_ok:
             print("    failed: qp lang=zh (got %r)" % at.query_params.get("lang"))
+
+    # Batch-1 features on My Air: EPA 35 µg/m³ benchmark line, red-flag card
+    # (with GINA line for asthma), and the WhatsApp share button.
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.run()
+    body = "\n".join(str(m.value) for m in at.markdown)
+    epa_ok = "35 µg/m³" in body
+    wa = [b for b in at.link_button if "wa.me" in str(b.url)]
+    errors = [str(e.value) for e in at.exception]
+    if not errors and epa_ok and wa:
+        print("[OK] My Air: EPA 35 line + WhatsApp share button")
+    else:
+        ok = False
+        print("[FAIL] My Air: EPA 35 line + WhatsApp share button")
+        for e in errors:
+            print("   ", e[:500])
+        if not epa_ok:
+            print("    EPA line (35 µg/m³) missing")
+        if not wa:
+            print("    wa.me link_button missing")
+
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.run()
+    prof = next(s for s in at.selectbox if s.key == "health_profile")
+    prof.set_value("asthma").run()
+    err_body = "\n".join(str(e.value) for e in at.error)
+    errors = [str(e.value) for e in at.exception]
+    if not errors and "GINA" in err_body and "CHPS" in err_body:
+        print("[OK] My Air (asthma): red-flag card with GINA line")
+    else:
+        ok = False
+        print("[FAIL] My Air (asthma): red-flag card with GINA line")
+        for e in errors:
+            print("   ", e[:500])
+        if "CHPS" not in err_body:
+            print("    red-flag card missing")
+        if "GINA" not in err_body:
+            print("    GINA line missing")
+
+    # Batch-2: Harmattan demo replay (?demo=harmattan) — banner shows, AQI
+    # card renders the replay value for the default (nearest-center) station.
+    import json as _json
+    demo_data = _json.load(open("data/demo_harmattan.json", encoding="utf-8"))
+    center = (5.6037, -0.1870)
+    default_station = min(
+        demo_data["stations"],
+        key=lambda s: (s["lat"] - center[0]) ** 2 + (s["lon"] - center[1]) ** 2)
+    expected_pm25 = default_station["latest_pm25"]["value"]
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.query_params["demo"] = "harmattan"
+    at.run()
+    body = "\n".join(str(m.value) for m in at.markdown)
+    warn_body = "\n".join(str(w.value) for w in at.warning)
+    errors = [str(e.value) for e in at.exception]
+    checks = [
+        ("banner", "Demo replay" in warn_body and demo_data["date"] in warn_body),
+        ("replay value", f"{expected_pm25:.1f}" in body),
+    ]
+    if not errors and all(c for _, c in checks):
+        print(f"[OK] demo=harmattan replay ({demo_data['date']}, "
+              f"default station {expected_pm25:.1f} µg/m³)")
+    else:
+        ok = False
+        print("[FAIL] demo=harmattan replay")
+        for e in errors:
+            print("   ", e[:500])
+        for name, c in checks:
+            if not c:
+                print("    failed:", name)
+
+    # Batch-2: Agbogbloshie cleanup card on Live Map; loaders go silent on
+    # missing files (tested directly, app.py only runs main() under __main__).
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.run()
+    nav = next(p for p in at.pills if "My Air" in list(p.options))
+    nav.set_value("Live Map").run()
+    body = "\n".join(str(m.value) for m in at.markdown)
+    errors = [str(e.value) for e in at.exception]
+    card_ok = "Agbogbloshie" in body and "90-day cleanup" in body
+    if not errors and card_ok:
+        print("[OK] Live Map: Agbogbloshie cleanup card")
+    else:
+        ok = False
+        print("[FAIL] Live Map: Agbogbloshie cleanup card")
+        for e in errors:
+            print("   ", e[:500])
+        if not card_ok:
+            print("    cleanup card missing")
+
+    import app as app_mod
+    silent = (app_mod.load_cleanup_status("data/_missing_.json") is None
+              and app_mod.load_demo_harmattan("data/_missing_.json") is None
+              and app_mod.load_cleanup_status() is not None
+              and app_mod.load_demo_harmattan() is not None)
+    if silent:
+        print("[OK] static-data loaders silent on missing files")
+    else:
+        ok = False
+        print("[FAIL] static-data loaders silent on missing files")
 
     print("ALL PAGES OK" if ok else "SOME PAGES FAILED")
     sys.exit(0 if ok else 1)

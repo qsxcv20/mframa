@@ -6,6 +6,7 @@ Data: OpenAQ v3 (live API with snapshot fallback via openaq_client).
 
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import quote
 import json
 
 import numpy as np
@@ -156,6 +157,32 @@ GRID_LON = (-0.40, 0.10)
 PROFILES = ["general", "child", "asthma", "pregnant", "senior", "athlete"]
 ACTIVITIES = ["rest", "light", "moderate", "heavy"]
 FALLBACK_COLOR = "#8a94a6"
+# Ghana EPA national 24-hour PM2.5 standard (µg/m³), per 3News reporting.
+EPA_PM25_24H = 35.0
+DEMO_PATH = Path(__file__).parent / "data" / "demo_harmattan.json"
+CLEANUP_PATH = Path(__file__).parent / "data" / "agbogbloshie_cleanup.json"
+
+
+def load_demo_harmattan(path=None):
+    """Static Harmattan replay dataset (?demo=harmattan); None if unavailable."""
+    try:
+        d = json.loads(Path(path or DEMO_PATH).read_text(encoding="utf-8"))
+        if d.get("stations"):
+            return d
+    except (OSError, json.JSONDecodeError, TypeError):
+        pass
+    return None
+
+
+def load_cleanup_status(path=None):
+    """Static Agbogbloshie cleanup tracker; None if the JSON is missing/broken."""
+    try:
+        d = json.loads(Path(path or CLEANUP_PATH).read_text(encoding="utf-8"))
+        if d.get("baseline_mean") is not None and d.get("current_mean") is not None:
+            return d
+    except (OSError, json.JSONDecodeError, TypeError):
+        pass
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -576,7 +603,7 @@ def footer():
 # Pages
 # ---------------------------------------------------------------------------
 
-def render_my_air(stations):
+def render_my_air(stations, replay=False):
     profile_labels = [t(f"profile_{p}") for p in PROFILES]
     prev = st.session_state.get("health_profile_value", "general")
     c_prof, c_stat = st.columns(2)
@@ -591,7 +618,8 @@ def render_my_air(stations):
     pm25 = pm25_of(station)
     stale_h = stale_hours_of(station)
     estimate = None
-    if pm25 is None or (stale_h is not None and stale_h > 3.0):
+    # Replay mode shows the historical day as-is: no nowcast estimation.
+    if not replay and (pm25 is None or (stale_h is not None and stale_h > 3.0)):
         try:
             estimate = nowcast.predict_station(
                 station, [s for s in stations if s is not station])
@@ -632,6 +660,15 @@ def render_my_air(stations):
         unsafe_allow_html=True,
     )
 
+    # Ghana EPA 24h national-standard benchmark, right under the AQI card.
+    epa_color = "#d64545" if pm25 > EPA_PM25_24H else "#2E9E5B"
+    st.markdown(
+        f'<div style="text-align:center;font-size:.85rem;font-weight:600;'
+        f'color:{epa_color};margin:-2px 0 8px;">'
+        f'{t("epa_line", mult=f"{pm25 / EPA_PM25_24H:.1f}")}</div>',
+        unsafe_allow_html=True,
+    )
+
     if estimate and estimate.get("value") is not None:
         m = nowcast_metrics(load_locations()[0]) or {}
         mae_txt = t("est_mae", mae=m["mae"]) if m.get("mae") is not None else ""
@@ -649,6 +686,8 @@ def render_my_air(stations):
 
     # Wow lines: cigarette equivalent + today's first clean window, right
     # under the AQI card so they are visible without scrolling on a phone.
+    # cigs_txt / best_slot are reused by the WhatsApp share text below.
+    cigs_txt = None
     try:
         pm_vals = [v for v in (pm25_of(s) for s in stations) if v is not None]
         if pm_vals:
@@ -662,12 +701,14 @@ def render_my_air(stations):
     except Exception:
         pass
 
+    best_slot = None
     try:
         plan = hourly_plan(get_hourly(station))
         green = (plan or {}).get("green_windows") or []
         if green:
             s, e = green[0]  # windows are half-open (start, end_exclusive)
-            st.success(t("home_best_window", slot=f"{s:02d}:00–{e:02d}:00"))
+            best_slot = f"{s:02d}:00–{e:02d}:00"
+            st.success(t("home_best_window", slot=best_slot))
         else:
             st.info(t("home_no_window"))
     except Exception:
@@ -693,13 +734,37 @@ def render_my_air(stations):
               args=(t("nav_more"), t("nav_alerts")), key="qj_alerts",
               use_container_width=True)
 
+    # WhatsApp is Ghana's main sharing channel: one tap forwards today's air.
+    share_url = ("https://mframa.streamlit.app/?lang="
+                 f"{st.session_state.get('lang', 'en')}&page=my_air")
+    share_text = t(
+        "share_text",
+        emoji=face, aqi=aqi if aqi is not None else "?", label=tt(label),
+        cigs=cigs_txt or "?",
+        slot=best_slot or t("share_no_slot"),
+        url=share_url,
+    )
+    st.link_button(f"📲 {t('share_whatsapp')}",
+                   "https://wa.me/?text=" + quote(share_text),
+                   use_container_width=True)
+
     tips = advice_for(profile, aqi)
     if tips:
         st.markdown(f"#### {t('advice_header', profile=t(f'profile_{profile}'))}")
         for tip in tips:
             st.markdown(f"- {tt(tip)}")
 
-    render_dust_smoke_card()
+    # Red-flag symptoms card: shown when the air is Unhealthy+, or always for
+    # asthma/child profiles (Ghana Thoracic Society guidance + GINA control line).
+    if (aqi is not None and aqi >= 151) or profile in ("asthma", "child"):
+        redflag = t("redflag_card")
+        if profile == "asthma":
+            redflag += "\n\n" + t("redflag_gina")
+        st.error(redflag)
+
+    # The dust/smoke card is a live CAMS forecast — wrong era for a replay.
+    if not replay:
+        render_dust_smoke_card()
 
 
 def render_best_hours(station):
@@ -732,6 +797,9 @@ def render_best_hours(station):
         fig.add_vrect(x0=s - 0.5, x1=e - 0.5, fillcolor="#2E9E5B", opacity=0.14, line_width=0)
     for s, e in red:
         fig.add_vrect(x0=s - 0.5, x1=e - 0.5, fillcolor="#d64545", opacity=0.10, line_width=0)
+    fig.add_hline(y=EPA_PM25_24H, line_dash="dash", line_color="#C98A2D",
+                  annotation_text="Ghana EPA 24h std", annotation_position="top left",
+                  annotation_font_size=11)
     fig.update_layout(
         height=380, margin=dict(l=10, r=10, t=56, b=10),
         xaxis=dict(title=t("xaxis_hour"), dtick=2, range=[-0.5, 23.5]),
@@ -904,6 +972,39 @@ def render_map(stations):
     )
     st.pydeck_chart(deck, width="stretch", height=520)
     st.caption(t("map_caption"))
+    render_cleanup_card()
+
+
+def render_cleanup_card():
+    """Agbogbloshie 90-day e-waste cleanup tracker; silent if the JSON is missing."""
+    d = load_cleanup_status()
+    if not d:
+        return
+    pct = d["change_pct"]
+    arrow = "▼" if pct < 0 else "▲"
+    color = "#2E9E5B" if pct < 0 else "#d64545"
+    st.markdown(
+        f"""
+        <div style="background:#F2F7F4;border:1px solid #CBE0D4;border-radius:16px;
+                    padding:20px 22px;margin-top:12px;color:#1E3B2C;">
+          <div style="font-size:1.1rem;font-weight:700;">{t('cleanup_title')}</div>
+          <div style="font-size:.95rem;margin-top:8px;">
+            {t('cleanup_body', station=d['station_name'], dist=d['distance_km'],
+               launch=d['launch_date'],
+               base=d['baseline_mean'], bdays=d['baseline_days'],
+               cur=d['current_mean'], cdays=d['current_days'])}
+            <span style="font-weight:800;color:{color};">{arrow} {abs(pct)}%</span>
+          </div>
+          <div style="font-size:.9rem;margin-top:8px;font-style:italic;">
+            {t('cleanup_point')}
+          </div>
+          <div style="font-size:.75rem;opacity:.7;margin-top:8px;">
+            {t('cleanup_meta', ts=d.get('computed_at_utc', '?'))}
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -1002,13 +1103,24 @@ def main():
 
     data_banner(source)
 
+    # Harmattan demo replay (?demo=harmattan): swap live stations for one real
+    # historical peak day from OpenAQ. No demo param → completely unaffected.
+    demo = load_demo_harmattan() if qp.get("demo") == "harmattan" else None
+    if demo:
+        live_link = f"?lang={st.session_state.get('lang', 'en')}&page=my_air"
+        st.warning(t("demo_banner", date=demo.get("date", "?"),
+                     mean=demo.get("city_mean_pm25", "?"), link=live_link))
+
     if more_sub == t("nav_alerts"):
         render_get_alerts()
         footer()
         return
 
     try:
-        stations = stations_with_readings(locations or [])
+        if demo:
+            stations = demo["stations"]
+        else:
+            stations = stations_with_readings(locations or [])
     except Exception:
         stations = []
     if not stations:
@@ -1019,11 +1131,12 @@ def main():
     try:
         if page == t("nav_my_air"):
             pool = list(stations)
-            online_ids = {s.get("id") for s in pool}
-            for loc in locations or []:
-                if loc.get("id") not in online_ids and (loc.get("hourly_pm25") or []):
-                    pool.append(loc)  # offline but estimable via nowcast
-            render_my_air(pool)
+            if not demo:
+                online_ids = {s.get("id") for s in pool}
+                for loc in locations or []:
+                    if loc.get("id") not in online_ids and (loc.get("hourly_pm25") or []):
+                        pool.append(loc)  # offline but estimable via nowcast
+            render_my_air(pool, replay=demo is not None)
         elif page == t("nav_best_hours"):
             render_best_hours(pick_station(stations, key="station_hours"))
         elif page == t("nav_more"):
@@ -1036,4 +1149,5 @@ def main():
     footer()
 
 
-main()
+if __name__ == "__main__":
+    main()

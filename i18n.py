@@ -61,6 +61,10 @@ S = {
         "zh": "该站点暂无近期读数，也没有足够数据进行估算——请换个站点试试。",
     },
     "estimated_suffix": {"en": " (estimated)", "zh": "（估算）"},
+    "epa_line": {
+        "en": "Current PM2.5 is {mult}× Ghana's EPA 24-hour standard (35 µg/m³)",
+        "zh": "当前 PM2.5 是加纳 EPA 24 小时国标（35 µg/m³）的 {mult} 倍",
+    },
     "updated_source": {
         "en": "Updated {ts} · Source: {provider}",
         "zh": "更新于 {ts} · 来源：{provider}",
@@ -104,6 +108,38 @@ S = {
     "home_no_window": {
         "en": "🕐 No clear low-pollution window today — consider indoor exercise.",
         "zh": "🕐 今天没有明显的低污染时段——建议改为室内锻炼。",
+    },
+    "redflag_card": {
+        "en": "**🚩 Seek care today** if you notice any of these: a child "
+              "breathing fast or with the chest pulling in between the ribs, "
+              "wheezing that does not settle, or needing the reliever inhaler "
+              "again within 4 hours → go to your nearest health centre / CHPS "
+              "the same day. Severe symptoms → a teaching hospital "
+              "(Korle Bu / Ridge).",
+        "zh": "**🚩 出现以下情况请当天就医**：儿童呼吸急促或肋间胸廓凹陷、"
+              "喘鸣持续不缓解、缓解吸入剂 4 小时内需要重复使用 → "
+              "当天前往就近的 health centre / CHPS；症状严重 → "
+              "教学医院（Korle Bu / Ridge）。",
+    },
+    "redflag_gina": {
+        "en": "📋 Asthma control check (GINA): using your blue reliever inhaler "
+              "more than 2 times a week means your asthma is poorly controlled "
+              "— see a doctor to adjust your medication.",
+        "zh": "📋 哮喘控制自查（GINA）：蓝色缓解吸入剂每周使用超过 2 次 = "
+              "哮喘控制不佳，请就诊调整用药。",
+    },
+    "share_whatsapp": {"en": "Share to WhatsApp", "zh": "分享到 WhatsApp"},
+    "share_text": {
+        "en": "Accra air now: {emoji} AQI {aqi} ({label}) — a day here ≈ "
+              "{cigs} cigarettes. Best time outside today: {slot}. "
+              "Check yours: {url}",
+        "zh": "阿克拉空气实况：{emoji} AQI {aqi}（{label}）——在这里待一天 ≈ "
+              "吸 {cigs} 支香烟。今天最佳户外时间：{slot}。"
+              "查查你那里的空气：{url}",
+    },
+    "share_no_slot": {
+        "en": "no clear clean window",
+        "zh": "无明显低污染时段",
     },
 
     # --- Dust or Smoke? card / forecast chart -------------------------------
@@ -318,6 +354,39 @@ S = {
         "en": "Heatmap interpolated from station readings (IDW); dots are monitoring "
               "stations colored by AQI category.",
         "zh": "热力图由站点读数插值（IDW）生成；圆点为监测站，按 AQI 等级着色。",
+    },
+
+    # --- Demo replay / Agbogbloshie cleanup tracker ---------------------------
+    "demo_banner": {
+        "en": "🎬 **Demo replay: a real Harmattan day ({date})** — city-average "
+              "PM2.5 was {mean} µg/m³. Historical OpenAQ data, not current "
+              "conditions. [Back to live air]({link})",
+        "zh": "🎬 **回放模式：真实的哈马丹沙尘日（{date}）**——当天全市平均 "
+              "PM2.5 为 {mean} µg/m³。OpenAQ 历史数据，非当前实况。"
+              "[返回实时空气]({link})",
+    },
+    "cleanup_title": {
+        "en": "🗑️ Agbogbloshie 90-day cleanup: is the air improving?",
+        "zh": "🗑️ Agbogbloshie 90 天清运：空气在变好吗？",
+    },
+    "cleanup_body": {
+        "en": "Cleanup launched {launch} · tracking station **{station}** "
+              "({dist} km from the site). Baseline (30 days before, {bdays} "
+              "days with data): **{base} µg/m³** → since launch ({cdays} days "
+              "with data): **{cur} µg/m³**",
+        "zh": "清运于 {launch} 启动 · 追踪站点 **{station}**（距垃圾场 "
+              "{dist} 公里）。启动前 30 天基线（{bdays} 天有数据）："
+              "**{base} µg/m³** → 启动至今（{cdays} 天有数据）："
+              "**{cur} µg/m³**",
+    },
+    "cleanup_point": {
+        "en": "Will 90 days of cleanup clear the air? Watch this card — the data "
+              "will tell.",
+        "zh": "90 天清运会不会让空气变好？持续关注这张卡——数据会说话。",
+    },
+    "cleanup_meta": {
+        "en": "Source: OpenAQ hourly means · computed {ts}",
+        "zh": "来源：OpenAQ 逐小时均值 · 计算于 {ts}",
     },
 }
 

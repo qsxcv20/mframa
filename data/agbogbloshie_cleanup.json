@@ -1,0 +1,17 @@
+{
+ "station_name": "Agbogbloshie",
+ "station_id": 3025588,
+ "distance_km": 1.16,
+ "launch_date": "2026-09-18",
+ "baseline_from": "2026-08-19",
+ "baseline_to": "2026-09-17",
+ "baseline_days": 30,
+ "baseline_mean": 35.8,
+ "current_from": "2026-09-18",
+ "current_to": "2026-10-18",
+ "current_days": 31,
+ "current_mean": 32.9,
+ "change_pct": -7.9,
+ "source": "OpenAQ v3 historical hourly data (api.openaq.org)",
+ "computed_at_utc": "2026-10-18T16:50:33Z"
+}
