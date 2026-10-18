@@ -630,6 +630,20 @@ def render_my_air(stations):
 
     render_dust_smoke_card()
 
+    # Quick jumps so mobile users (sidebar collapsed behind ">>") can still
+    # reach the other pages in one tap.
+    def _goto(page_label):
+        st.session_state["nav_page"] = page_label
+
+    st.caption(t("quick_jump"))
+    q1, q2, q3 = st.columns(3)
+    q1.button(f"🕐 {t('nav_best_hours')}", on_click=_goto,
+              args=(t("nav_best_hours"),), key="qj_best", use_container_width=True)
+    q2.button(f"🗺️ {t('nav_map')}", on_click=_goto,
+              args=(t("nav_map"),), key="qj_map", use_container_width=True)
+    q3.button(f"🔔 {t('nav_alerts')}", on_click=_goto,
+              args=(t("nav_alerts"),), key="qj_alerts", use_container_width=True)
+
 
 def render_best_hours(station):
     st.subheader(t("nav_best_hours"))

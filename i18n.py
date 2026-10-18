@@ -64,6 +64,7 @@ S = {
         "en": "Updated {ts} · Source: {provider}",
         "zh": "更新于 {ts} · 来源：{provider}",
     },
+    "quick_jump": {"en": "Jump to:", "zh": "快速前往："},
     "est_warn": {
         "en": "Estimated (station offline) — based on diurnal pattern + "
               "{n} nearby stations{stats}. Last reading {stale} h ago · "
