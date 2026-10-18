@@ -18,6 +18,7 @@ import analytics
 import nowcast
 import openaq_client
 import openmeteo_client
+from i18n import t, tt
 
 st.set_page_config(
     page_title="Mframa — Know your air, Accra",
@@ -107,10 +108,19 @@ MOBILE_CSS = """
 </style>
 """
 
+# Hide Streamlit Cloud free-tier chrome (the red "Hosted with Streamlit" badge
+# and the Fork/deploy button) so demos and the Android WebView stay clean.
+CHROME_CSS = """
+<style>
+div[class*="viewerBadge"], [class*="viewerBadge_container"] { display: none !important; }
+.stAppDeployButton, [data-testid="stAppDeployButton"] { display: none !important; }
+</style>
+"""
+
 
 def inject_responsive_css():
     try:
-        st.markdown(MOBILE_CSS, unsafe_allow_html=True)
+        st.markdown(MOBILE_CSS + CHROME_CSS, unsafe_allow_html=True)
     except Exception:
         pass
 
@@ -284,6 +294,7 @@ def exposure(pm_commute, commute_h, pm_outdoor, outdoor_h, activity):
         breakdown = [{"label": k, "ug": v} for k, v in breakdown.items()]
     return {
         "cigarettes": rep.get("cigarettes"),
+        "inhaled_ug": rep.get("inhaled_ug"),
         "headline": str(rep.get("headline", "")),
         "breakdown": breakdown,
     }
@@ -373,7 +384,7 @@ def render_dust_smoke_card():
     """'Dust or Smoke?' card for the My Air page; degrades silently to a caption."""
     aq = load_air_quality()
     if not aq:
-        st.caption("Dust/smoke forecast temporarily unavailable.")
+        st.caption(t("dust_unavailable"))
         return
     try:
         current = cams_current(aq) or {}
@@ -383,33 +394,37 @@ def render_dust_smoke_card():
         split = dust_smoke_split(dust, pm25)
         harmattan = is_harmattan(aq)
         if split is None and not harmattan:
-            st.caption("Dust/smoke forecast temporarily unavailable.")
+            st.caption(t("dust_unavailable"))
             return
 
         badge = (
             '<span style="display:inline-block;background:#8A5A00;color:#fff;'
             'border-radius:999px;padding:2px 10px;font-size:.75rem;font-weight:700;'
-            'margin-left:8px;vertical-align:middle;">🏜️ Harmattan conditions</span>'
+            f'margin-left:8px;vertical-align:middle;">{t("harmattan_badge")}</span>'
             if harmattan else ""
         )
         risk = openmeteo_client.dust_risk_level(dust)
-        stale_txt = " (cached)" if aq.get("stale") else ""
+        stale_txt = t("cached_suffix") if aq.get("stale") else ""
         if split is not None:
+            dust_line = t(
+                "dust_line",
+                dust=f"{dust:.0f}", pm25=f"{pm25:.0f}",
+                pct=f"{split['ratio'] * 100:.0f}", risk=tt(risk["label"]),
+                aod=f" · AOD {aod:.2f}" if aod is not None else "",
+            )
             st.markdown(
                 f"""
                 <div style="background:#FBF7F0;border:1px solid #E5D9C3;border-radius:18px;
                             padding:20px 22px;color:#4A3A22;margin-bottom:8px;">
                   <div style="font-size:1.05rem;font-weight:800;margin-bottom:6px;">
-                    Dust or Smoke? — {split['title']}{badge}
+                    {t("dust_or_smoke")} — {tt(split['title'])}{badge}
                   </div>
                   <div style="font-size:.95rem;line-height:1.5;">
-                    Dust ≈ <b>{dust:.0f}</b> of <b>{pm25:.0f}</b> µg/m³ PM2.5
-                    ({split['ratio'] * 100:.0f}% dust share · dust risk: {risk['label']}
-                    {f" · AOD {aod:.2f}" if aod is not None else ""}).
+                    {dust_line}
                   </div>
-                  <div style="font-size:.95rem;margin-top:6px;">{split['advice']}</div>
+                  <div style="font-size:.95rem;margin-top:6px;">{tt(split['advice'])}</div>
                   <div style="font-size:.75rem;opacity:.75;margin-top:8px;">
-                    Forecast: CAMS/ECMWF via Open-Meteo (free){stale_txt}
+                    {t("forecast_src")}{stale_txt}
                   </div>
                 </div>
                 """,
@@ -421,20 +436,20 @@ def render_dust_smoke_card():
                 <div style="background:#FBF7F0;border:1px solid #E5D9C3;border-radius:18px;
                             padding:20px 22px;color:#4A3A22;margin-bottom:8px;">
                   <div style="font-size:1.05rem;font-weight:800;">
-                    Dust or Smoke?{badge}
+                    {t("dust_or_smoke")}{badge}
                   </div>
                   <div style="font-size:.95rem;margin-top:6px;">
-                    Saharan dust is elevated. Keep windows closed and wear a mask outdoors.
+                    {t("harmattan_body")}
                   </div>
                   <div style="font-size:.75rem;opacity:.75;margin-top:8px;">
-                    Forecast: CAMS/ECMWF via Open-Meteo (free){stale_txt}
+                    {t("forecast_src")}{stale_txt}
                   </div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
     except Exception:
-        st.caption("Dust/smoke forecast temporarily unavailable.")
+        st.caption(t("dust_unavailable"))
 
 
 def render_dust_forecast_chart(hours=48):
@@ -460,22 +475,22 @@ def render_dust_forecast_chart(hours=48):
             line=dict(color="#B3402A", width=3), connectgaps=False,
         ))
         fig.add_trace(go.Scatter(
-            x=xs, y=dust, mode="lines", name="Dust (Saharan)",
+            x=xs, y=dust, mode="lines", name=t("trace_dust"),
             line=dict(color="#C98A2D", width=2, dash="dash"), connectgaps=False,
         ))
         if is_harmattan(aq):
             fig.add_hline(y=50, line=dict(color="#C98A2D", width=1, dash="dot"),
-                          annotation_text="Harmattan dust threshold (50)",
+                          annotation_text=t("harmattan_threshold"),
                           annotation_position="top left")
         fig.update_layout(
             height=320, margin=dict(l=10, r=10, t=30, b=10),
-            title=f"Next {hours} h: dust & PM2.5 forecast",
+            title=t("dust_chart_title", hours=hours),
             yaxis_title="µg/m³",
             legend=dict(orientation="h", yanchor="bottom", y=1.02),
         )
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
-        st.caption("Forecast: CAMS/ECMWF via Open-Meteo (free)"
-                   + (" — showing cached forecast" if aq.get("stale") else ""))
+        st.caption(t("forecast_src")
+                   + (t("showing_cached") if aq.get("stale") else ""))
         return True
     except Exception:
         return False
@@ -509,10 +524,10 @@ def nearest_index(stations):
     return best_i
 
 
-def pick_station(stations, key, label="Monitoring station"):
+def pick_station(stations, key, label=None):
     names = [s.get("name") or f"Station {s.get('id')}" for s in stations]
     idx = st.sidebar.selectbox(
-        label, range(len(stations)),
+        label or t("monitoring_station"), range(len(stations)),
         format_func=lambda i: names[i], index=nearest_index(stations), key=key,
     )
     return stations[idx]
@@ -525,12 +540,12 @@ def data_banner(source):
     except Exception:
         pass
     if source == "snapshot" or mode == "snapshot":
-        st.warning("Showing recently cached OpenAQ data (live API unavailable)")
+        st.warning(t("data_cached"))
 
 
 def footer():
     st.divider()
-    st.caption("Data: OpenAQ (api.openaq.org) · AfriqAir & community sensors · Not medical advice")
+    st.caption(t("footer"))
 
 
 # ---------------------------------------------------------------------------
@@ -538,8 +553,15 @@ def footer():
 # ---------------------------------------------------------------------------
 
 def render_my_air(stations):
-    st.sidebar.markdown("### My Air")
-    profile = st.sidebar.selectbox("Health profile", PROFILES)
+    st.sidebar.markdown(f"### {t('nav_my_air')}")
+    profile_labels = [t(f"profile_{p}") for p in PROFILES]
+    prev = st.session_state.get("health_profile_value", "general")
+    choice = st.sidebar.selectbox(
+        t("health_profile"), profile_labels,
+        index=PROFILES.index(prev) if prev in PROFILES else 0,
+        key="health_profile")
+    profile = PROFILES[profile_labels.index(choice)]
+    st.session_state["health_profile_value"] = profile
     station = pick_station(stations, key="station_myair")
 
     pm25 = pm25_of(station)
@@ -555,8 +577,7 @@ def render_my_air(stations):
             pm25 = estimate["value"]
 
     if pm25 is None:
-        st.info("No recent readings for this station and not enough data to estimate — "
-                "try another station in the sidebar.")
+        st.info(t("no_readings"))
         return
 
     aqi = aqi_of(pm25)
@@ -566,6 +587,7 @@ def render_my_air(stations):
     latest = station.get("latest_pm25") or {}
     ts = latest.get("datetime_utc") or station.get("last_updated_utc") or "unknown time"
     provider = station.get("provider") or "OpenAQ"
+    est_suffix = t("estimated_suffix") if estimate and estimate.get("value") is not None else ""
 
     st.markdown(
         f"""
@@ -577,9 +599,9 @@ def render_my_air(stations):
           <div class="aqi-value" style="font-size:3.6rem;font-weight:800;line-height:1.1;">
             {pm25:.1f}<span style="font-size:1.1rem;font-weight:500;"> µg/m³ PM2.5</span>
           </div>
-          <div class="aqi-line" style="font-size:1.5rem;font-weight:700;">AQI {aqi} · {label}{" (estimated)" if estimate and estimate.get("value") is not None else ""}</div>
+          <div class="aqi-line" style="font-size:1.5rem;font-weight:700;">AQI {aqi} · {tt(label)}{est_suffix}</div>
           <div class="aqi-meta" style="font-size:.8rem;opacity:.8;margin-top:6px;">
-            Updated {ts} · Source: {provider}
+            {t("updated_source", ts=ts, provider=provider)}
           </div>
         </div>
         """,
@@ -588,39 +610,38 @@ def render_my_air(stations):
 
     if estimate and estimate.get("value") is not None:
         m = nowcast_metrics(load_locations()[0]) or {}
-        mae_txt = f"backtest MAE ≈ {m['mae']} µg/m³" if m.get("mae") is not None else ""
+        mae_txt = t("est_mae", mae=m["mae"]) if m.get("mae") is not None else ""
         acc_txt = (
-            f", typical relative error ≈ {round((1 - m['acc']) * 100)}% "
-            f"(n={m['n']}, vs {round((1 - m['baseline_persistence_acc']) * 100)}% naive baseline)"
+            t("est_acc", rel=round((1 - m["acc"]) * 100), n=m["n"],
+              base=round((1 - m["baseline_persistence_acc"]) * 100))
             if m.get("acc") is not None and m.get("n") else ""
         )
         stats_txt = f" — {mae_txt}{acc_txt}" if mae_txt else ""
-        st.warning(
-            f"Estimated (station offline) — based on diurnal pattern + "
-            f"{estimate.get('sources_used', 0)} nearby stations{stats_txt}. "
-            f"Last reading {estimate.get('stale_hours')} h ago · confidence: "
-            f"{estimate.get('confidence')}."
-        )
+        st.warning(t(
+            "est_warn",
+            n=estimate.get("sources_used", 0), stats=stats_txt,
+            stale=estimate.get("stale_hours"), conf=estimate.get("confidence"),
+        ))
 
     tips = advice_for(profile, aqi)
     if tips:
-        st.markdown(f"#### What this means for you ({profile})")
+        st.markdown(f"#### {t('advice_header', profile=t(f'profile_{profile}'))}")
         for tip in tips:
-            st.markdown(f"- {tip}")
+            st.markdown(f"- {tt(tip)}")
 
     render_dust_smoke_card()
 
 
 def render_best_hours(station):
-    st.subheader("Best Hours Today")
+    st.subheader(t("nav_best_hours"))
     hourly = get_hourly(station)
     if not hourly:
-        st.info("No recent hourly measurements for this station yet — try another station in the sidebar.")
+        st.info(t("no_hourly"))
         return
 
     plan = hourly_plan(hourly)
     if not plan:
-        st.info("Today's pattern could not be computed for this station.")
+        st.info(t("no_pattern"))
         return
     hours = plan["hours"]
     green = plan.get("green_windows") or []
@@ -630,12 +651,12 @@ def render_best_hours(station):
     xs = [h["hour"] for h in hours]
     fig.add_trace(go.Scatter(
         x=xs, y=[h["expected"] for h in hours], mode="lines",
-        name="Typical (7-day)", line=dict(dash="dash", color="#9aa5b1"),
+        name=t("trace_typical"), line=dict(dash="dash", color="#9aa5b1"),
     ))
     today_x = [h["hour"] for h in hours if h.get("today") is not None]
     fig.add_trace(go.Scatter(
         x=today_x, y=[hours[h]["today"] for h in today_x], mode="lines+markers",
-        name="Today", line=dict(color="#2E9E5B", width=3),
+        name=t("trace_today"), line=dict(color="#2E9E5B", width=3),
     ))
     for s, e in green:  # windows are half-open (start, end_exclusive)
         fig.add_vrect(x0=s - 0.5, x1=e - 0.5, fillcolor="#2E9E5B", opacity=0.14, line_width=0)
@@ -643,7 +664,7 @@ def render_best_hours(station):
         fig.add_vrect(x0=s - 0.5, x1=e - 0.5, fillcolor="#d64545", opacity=0.10, line_width=0)
     fig.update_layout(
         height=380, margin=dict(l=10, r=10, t=30, b=10),
-        xaxis=dict(title="Hour of day (local)", dtick=2, range=[-0.5, 23.5]),
+        xaxis=dict(title=t("xaxis_hour"), dtick=2, range=[-0.5, 23.5]),
         yaxis_title="PM2.5 µg/m³",
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
@@ -651,48 +672,52 @@ def render_best_hours(station):
 
     if green:
         slots = " · ".join(f"**{s:02d}:00–{e:02d}:00**" for s, e in green)
-        st.success(f"Good for jogging / outdoor time: {slots}")
+        st.success(t("good_windows", slots=slots))
     else:
-        st.info("No clear low-pollution window today — consider indoor exercise.")
+        st.info(t("no_green"))
     if red:
         slots = " · ".join(f"**{s:02d}:00–{e:02d}:00**" for s, e in red)
-        st.error(f"Avoid prolonged outdoor exertion: {slots}")
-    st.caption(
-        "Windows are runs of 2+ hours in the Good (green) or Unhealthy (red) PM2.5 range, "
-        "judged on today's readings where available, otherwise the station's 7-day average."
-    )
+        st.error(t("bad_windows", slots=slots))
+    st.caption(t("windows_caption"))
 
     render_dust_forecast_chart(hours=48)
 
 
 def render_breathe(stations):
-    st.subheader("What Did I Breathe?")
-    station = pick_station(stations, key="station_breathe", label="Reference station")
+    st.subheader(t("nav_breathe"))
+    station = pick_station(stations, key="station_breathe", label=t("reference_station"))
     pm_site = pm25_of(station)
     pm_city = float(np.mean([pm25_of(s) for s in stations]))
 
-    with st.expander("Pollution levels used (µg/m³)"):
+    with st.expander(t("pollution_levels")):
         pm_outdoor = st.number_input(
-            "Outdoor level (default: selected station)", 0.0, 500.0, float(pm_site), 1.0)
+            t("outdoor_level"), 0.0, 500.0, float(pm_site), 1.0, key="breathe_pm_outdoor")
         pm_commute = st.number_input(
-            "Commute level (default: city average)", 0.0, 500.0, float(pm_city), 1.0)
+            t("commute_level"), 0.0, 500.0, float(pm_city), 1.0, key="breathe_pm_commute")
 
     c1, c2, c3 = st.columns(3)
-    commute_h = c1.slider("Commute time (h/day)", 0.0, 4.0, 1.0, 0.25)
-    outdoor_h = c2.slider("Outdoor time (h/day)", 0.0, 12.0, 2.0, 0.5)
-    activity = c3.selectbox("Activity intensity", ACTIVITIES, index=1)
+    commute_h = c1.slider(t("commute_time"), 0.0, 4.0, 1.0, 0.25, key="breathe_commute_h")
+    outdoor_h = c2.slider(t("outdoor_time"), 0.0, 12.0, 2.0, 0.5, key="breathe_outdoor_h")
+    activity = c3.selectbox(
+        t("activity_intensity"), ACTIVITIES, index=1,
+        format_func=lambda a: t(f"activity_{a}"), key="breathe_activity")
 
     rep = exposure(pm_commute, commute_h, pm_outdoor, outdoor_h, activity)
 
     if rep["cigarettes"] is not None:
+        headline = rep["headline"]
+        if rep.get("inhaled_ug") is not None:
+            cigs = rep["cigarettes"]
+            cigs_txt = f"{cigs:.1f}" if cigs >= 0.05 else t("cigs_lt")
+            headline = t("cig_headline", cigs=cigs_txt, ug=f"{rep['inhaled_ug']:.0f}")
         st.markdown(
             f"""
             <div class="cig-card"
                  style="background:#FFF6EC;border:1px solid #F0D9B8;border-radius:18px;
                         padding:26px;text-align:center;color:#5A3B12;">
               <div class="cig-value" style="font-size:3.8rem;font-weight:800;">🚬 {rep['cigarettes']:.1f}</div>
-              <div style="font-size:1.15rem;font-weight:600;">cigarette-equivalent per day</div>
-              <div style="font-size:.95rem;margin-top:6px;">{rep['headline']}</div>
+              <div style="font-size:1.15rem;font-weight:600;">{t("cig_equiv")}</div>
+              <div style="font-size:.95rem;margin-top:6px;">{headline}</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -701,50 +726,27 @@ def render_breathe(stations):
     if rep["breakdown"]:
         bdf = pd.DataFrame(rep["breakdown"])
         fig = go.Figure(go.Bar(
-            x=bdf["label"], y=bdf["ug"],
+            x=[tt(str(l)) for l in bdf["label"]], y=bdf["ug"],
             marker_color=["#F4A259", "#2E9E5B"][: len(bdf)],
             text=bdf["ug"], textposition="auto",
         ))
         fig.update_layout(
             height=320, margin=dict(l=10, r=10, t=30, b=10),
-            yaxis_title="PM2.5 inhaled (µg)", title="Exposure breakdown",
+            yaxis_title=t("yaxis_inhaled"), title=t("exposure_breakdown"),
         )
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
-    st.caption(
-        "Methodology: cigarette equivalence follows the Berkeley Earth rule of thumb — "
-        "inhaling ≈253 µg PM2.5 (22 µg/m³ over a day's breathing) ≈ 1 cigarette; "
-        "commute and outdoor doses are weighted by breathing rate for the chosen activity."
-    )
+    st.caption(t("cig_method"))
 
 
 def render_get_alerts():
-    st.subheader("Get Air Alerts")
-    st.markdown(
-        "Mframa can **push the air to you** instead of you checking the app. "
-        "Two free channels, powered by scheduled checks of the same OpenAQ data you see here:"
-    )
+    st.subheader(t("nav_alerts"))
+    st.markdown(t("alerts_intro"))
     c1, c2 = st.columns(2)
     with c1:
-        st.markdown(
-            """
-            **🌅 Morning briefing (daily, ~05:45)**
-
-            Your station's current PM2.5 and AQI, today's cleanest hours,
-            commute guidance for the 06:00–09:00 / 17:00–20:00 rush peaks,
-            and a laundry & windows tip — before you leave home.
-            """
-        )
+        st.markdown(t("alerts_morning"))
     with c2:
-        st.markdown(
-            """
-            **🚨 Burst alerts (checked every 15 min)**
-
-            When your station — or the whole city — crosses AQI 151
-            (*Unhealthy*), you get an immediate warning with concrete
-            protective steps. No repeats within 12 hours.
-            """
-        )
+        st.markdown(t("alerts_burst"))
 
     bot_username = None
     try:
@@ -757,37 +759,21 @@ def render_get_alerts():
     bot_username = (bot_username or "").strip().lstrip("@")
 
     ntfy_topic = "mframa-accra-air"
-    st.markdown(
-        f"👉 **Subscribe free in 10 seconds — no account, no phone number:** open "
-        f"**[ntfy.sh/{ntfy_topic}](https://ntfy.sh/{ntfy_topic})** in any browser and tap "
-        f"*Subscribe to topic*, or install the **ntfy** app (Android / iOS) and add the topic "
-        f"`{ntfy_topic}`. You will get the daily morning briefing and every city-wide burst alert "
-        "as a phone notification."
-    )
+    st.markdown(t("subscribe_line", topic=ntfy_topic))
 
     if bot_username:
-        st.markdown(
-            f"📮 **Station-level personal alerts on Telegram: [@{bot_username}](https://t.me/{bot_username})** — "
-            "send `/subscribe nearest` and share your location, or `/subscribe <station name>`."
-        )
+        st.markdown(t("telegram_line", bot=bot_username))
     else:
-        st.caption("A Telegram bot with station-level personal alerts (/subscribe your street's "
-                   "sensor) is launching soon — the ntfy channel above already works today.")
+        st.caption(t("telegram_soon"))
 
-    with st.expander("No smartphone? SMS / USSD is the scale path"):
-        st.markdown(
-            "ntfy covers smartphone users first. To reach feature-phone users — "
-            "often the people most exposed — the same engine plugs into "
-            "**[Africa's Talking](https://africastalking.com/)** for SMS and USSD delivery "
-            "across MTN, Vodafone and AirtelTigo. The alert logic, thresholds and "
-            "de-duplication stay identical; only the transport changes."
-        )
+    with st.expander(t("sms_expander")):
+        st.markdown(t("sms_body"))
 
-    st.caption("Free to use, always. Data: OpenAQ · mute the ntfy topic any time to unsubscribe.")
+    st.caption(t("alerts_footer"))
 
 
 def render_map(stations):
-    st.subheader("Live Map — PM2.5 across Accra")
+    st.subheader(t("map_header"))
     grid = idw_points(stations)
 
     sdf = pd.DataFrame([
@@ -795,7 +781,7 @@ def render_map(stations):
             "name": s.get("name") or f"Station {s.get('id')}",
             "lat": s.get("lat"), "lon": s.get("lon"),
             "pm25": round(pm25_of(s), 1),
-            "label": aqi_info(aqi_of(pm25_of(s)))[0],
+            "label": tt(aqi_info(aqi_of(pm25_of(s)))[0]),
             "color": hex_to_rgb(aqi_info(aqi_of(pm25_of(s)))[1]),
         }
         for s in stations
@@ -823,7 +809,7 @@ def render_map(stations):
         tooltip={"html": "<b>{name}</b><br/>PM2.5: {pm25} µg/m³<br/>{label}"},
     )
     st.pydeck_chart(deck, width="stretch", height=520)
-    st.caption("Heatmap interpolated from station readings (IDW); dots are monitoring stations colored by AQI category.")
+    st.caption(t("map_caption"))
 
 
 # ---------------------------------------------------------------------------
@@ -833,26 +819,36 @@ def render_map(stations):
 def main():
     inject_responsive_css()
     st.title("Mframa")
-    st.caption("Know your air, Accra — TechHub Africa Hackathon 2026")
+    st.caption(t("tagline"))
+
+    lang_options = ["English", "中文"]
+    lang_choice = st.sidebar.radio(
+        t("language_label"), lang_options,
+        index=0 if st.session_state.get("lang", "en") == "en" else 1,
+        horizontal=True,
+        key="lang_switch",
+    )
+    st.session_state["lang"] = "en" if lang_choice == "English" else "zh"
 
     try:
         locations, source = load_locations()
     except Exception:
-        st.error("Air quality data could not be loaded. Please refresh in a moment.")
+        st.error(t("load_error"))
         footer()
         return
 
     data_banner(source)
 
-    st.sidebar.title("Navigate")
+    st.sidebar.title(t("navigate"))
     page = st.sidebar.radio(
-        "Page",
-        ["My Air", "Best Hours Today", "What Did I Breathe?", "Live Map", "Get Air Alerts"],
+        t("nav_page"),
+        [t("nav_my_air"), t("nav_best_hours"), t("nav_breathe"), t("nav_map"), t("nav_alerts")],
         label_visibility="collapsed",
+        key="nav_page",
     )
 
     try:
-        if page == "Get Air Alerts":
+        if page == t("nav_alerts"):
             render_get_alerts()
             footer()
             return
@@ -861,27 +857,27 @@ def main():
     except Exception:
         stations = []
     if not stations:
-        st.info("No stations with current PM2.5 readings are available right now. Please check back shortly.")
+        st.info(t("no_stations"))
         footer()
         return
 
     try:
-        if page == "My Air":
+        if page == t("nav_my_air"):
             pool = list(stations)
             online_ids = {s.get("id") for s in pool}
             for loc in locations or []:
                 if loc.get("id") not in online_ids and (loc.get("hourly_pm25") or []):
                     pool.append(loc)  # offline but estimable via nowcast
             render_my_air(pool)
-        elif page == "Best Hours Today":
-            st.sidebar.markdown("### Station")
+        elif page == t("nav_best_hours"):
+            st.sidebar.markdown(f"### {t('station_header')}")
             render_best_hours(pick_station(stations, key="station_hours"))
-        elif page == "What Did I Breathe?":
+        elif page == t("nav_breathe"):
             render_breathe(stations)
         else:
             render_map(stations)
     except Exception:
-        st.error("This view hit a snag while processing the data. Try another page or refresh the app.")
+        st.error(t("snag_error"))
 
     footer()
 

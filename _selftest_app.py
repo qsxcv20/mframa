@@ -1,4 +1,10 @@
-"""Smoke test for app.py: render every page via Streamlit AppTest and fail on exceptions."""
+"""Smoke test for app.py: render every page via Streamlit AppTest and fail on exceptions.
+
+A fresh AppTest instance is used per page: this AppTest version keeps stale
+widget nodes from previous pages in its element tree while dropping their
+session state, so reusing one instance across page switches crashes inside
+the framework (KeyError on stale widget ids) — not an app bug.
+"""
 
 import sys
 
@@ -8,12 +14,12 @@ PAGES = ["My Air", "Best Hours Today", "What Did I Breathe?", "Live Map", "Get A
 
 
 def main():
-    at = AppTest.from_file("app.py", default_timeout=180)
-    at.run()
-    assert not at.exception, [str(e.value) for e in at.exception]
     ok = True
     for page in PAGES:
-        at.radio[0].set_value(page).run()
+        at = AppTest.from_file("app.py", default_timeout=180)
+        at.run()
+        nav = next(r for r in at.radio if "My Air" in list(r.options))
+        nav.set_value(page).run()
         errors = [str(e.value) for e in at.exception]
         status = "OK" if not errors else "FAIL"
         print(f"[{status}] {page} (errors shown: {len(at.error)}, warnings: {len(at.warning)})")
