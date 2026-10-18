@@ -320,13 +320,18 @@ def _fmt_window(w: tuple[int, int]) -> str:
     return f"{w[0]:02d}:00–{w[1]:02d}:00"
 
 
+def _daypart() -> str:
+    """Accra is UTC+0 — pick a greeting matching the local time of day."""
+    return "morning" if datetime.now(timezone.utc).hour < 12 else "evening"
+
+
 def build_morning_message(sub: dict, locations: list[dict]) -> str:
-    """Morning briefing for one subscriber (plain text, Telegram-safe)."""
+    """Briefing for one subscriber (plain text, Telegram-safe)."""
     station = find_station(sub, locations)
     ctx = city_context(locations)
     name = sub.get("station_name") or (station or {}).get("name") or "your area"
 
-    lines = [f"Good morning, Accra! Here is your Mframa air briefing for *{name}*.", ""]
+    lines = [f"Good {_daypart()}, Accra! Here is your Mframa air briefing for *{name}*.", ""]
 
     pm25 = pm25_of(station) if station else None
     aqi = analytics.pm25_to_aqi(pm25) if pm25 is not None else None
@@ -334,7 +339,7 @@ def build_morning_message(sub: dict, locations: list[dict]) -> str:
         cat = analytics.aqi_category(aqi)
         lines.append(f"Now: PM2.5 {pm25:.1f} µg/m³ — AQI {aqi} ({cat['label']}) {cat['kaomoji']}")
     else:
-        lines.append("Your station has no fresh reading this morning; guidance below uses the 7-day pattern.")
+        lines.append("Your station has no fresh reading right now; guidance below uses the 7-day pattern.")
 
     green, red = [], []
     hourly = (station or {}).get("hourly_pm25") or []
@@ -408,12 +413,12 @@ def build_city_briefing(stations: list[dict]) -> str:
     city_median = ctx.get("city_median")
     aqi = analytics.pm25_to_aqi(city_median) if city_median is not None else None
 
-    lines = ["Good morning, Accra! Your Mframa city air briefing:", ""]
+    lines = [f"Good {_daypart()}, Accra! Your Mframa city air briefing:", ""]
     if aqi is not None:
         cat = analytics.aqi_category(aqi)
         lines.append(f"City now: PM2.5 {city_median:.1f} µg/m³ — AQI {aqi} ({cat['label']}) {cat['kaomoji']}")
     else:
-        lines.append("No fresh city reading this morning; guidance below uses the 7-day pattern.")
+        lines.append("No fresh city reading right now; guidance below uses the 7-day pattern.")
 
     series = city_hourly_series(stations)
     if series:
@@ -545,7 +550,7 @@ def cmd_broadcast(dry_run: bool) -> int:
         print("No station readings available — broadcast skipped.", file=sys.stderr)
         return 1
     msg = build_city_briefing(stations)
-    ok = send_ntfy("Mframa morning briefing — Accra air", msg,
+    ok = send_ntfy(f"Mframa {_daypart()} briefing — Accra air", msg,
                    priority="default", tags="sunrise,ghana", dry_run=dry_run)
     print(f"City briefing {'printed' if dry_run else 'published'}: {'ok' if ok else 'FAILED'}.")
     return 0 if ok else 1
