@@ -557,3 +557,5 @@ def tt(text):
     if current_lang() != "zh":
         return text
     return ZH_MAP.get(text, text)
+
+# touch: force streamlit cloud full redeploy
