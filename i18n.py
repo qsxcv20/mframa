@@ -91,6 +91,12 @@ S = {
         "zh": "🚬 今天在阿克拉待一天 ≈ 吸了 {cigs} 支香烟"
               "（按全市平均 PM2.5、典型户外时长估算）",
     },
+    "home_cig_method": {
+        "en": "Berkeley Earth rule: breathing 22 µg/m³ over a full day ≈ 1 cigarette; "
+              "the estimate weights commute and outdoor time by breathing rate.",
+        "zh": "方法：Berkeley Earth 经验法则——全天呼吸 22 µg/m³ 的空气 ≈ 吸 1 支香烟；"
+              "估算按通勤与户外时长及对应呼吸速率加权。",
+    },
     "home_best_window": {
         "en": "🕐 Best time to be outside today: {slot}",
         "zh": "🕐 今天最适合户外活动的时间：{slot}",
@@ -214,6 +220,17 @@ S = {
     },
 
     # --- Get Air Alerts -------------------------------------------------------
+    "alerts_app_builtin": {
+        "en": "📱 **Threshold alerts are already built into your Mframa app — "
+              "no account, no phone number.** Open the *My Exposure* page from "
+              "the bottom bar, switch on **City air alerts** and pick your own "
+              "PM2.5 threshold. The app checks the air itself every 15 minutes "
+              "and notifies you the moment the air turns unhealthy.",
+        "zh": "📱 **你的 Mframa App 已内置免账号阈值预警——无需注册、无需手机号。** "
+              "从底部导航打开「My Exposure」页，开启 **City air alerts** 并选好"
+              "你自己的 PM2.5 阈值即可。App 每 15 分钟自动检查空气，"
+              "空气转差时立即通知你。",
+    },
     "alerts_intro": {
         "en": "Mframa can **push the air to you** instead of you checking the app. "
               "Two free channels, powered by scheduled checks of the same OpenAQ "

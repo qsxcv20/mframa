@@ -55,6 +55,33 @@ def main():
         lang.set_value("中文").run()
         return at
     ok = run_case(make_zh, "switch to 中文 after navigating") and ok
+
+    # ?from=app (Android WebView): alerts page shows the built-in-alerts
+    # guidance instead of the ntfy/Telegram subscription guides.
+    def make_app_alerts():
+        at = AppTest.from_file("app.py", default_timeout=180)
+        at.query_params["from"] = "app"
+        at.run()
+        nav = next(p for p in at.pills if "My Air" in list(p.options))
+        nav.set_value("More").run()
+        subnav = next(p for p in at.pills if "Get Air Alerts" in list(p.options))
+        subnav.set_value("Get Air Alerts").run()
+        return at
+    at = make_app_alerts()
+    errors = [str(e.value) for e in at.exception]
+    body = "\n".join(str(m.value) for m in at.markdown)
+    if not errors and "My Exposure" in body and "ntfy.sh" not in body:
+        print("[OK] More > Get Air Alerts (?from=app shows built-in guide)")
+    else:
+        ok = False
+        print("[FAIL] More > Get Air Alerts (?from=app)")
+        for e in errors:
+            print("   ", e[:500])
+        if "My Exposure" not in body:
+            print("    built-in guide missing")
+        if "ntfy.sh" in body:
+            print("    ntfy subscribe guide still visible")
+
     print("ALL PAGES OK" if ok else "SOME PAGES FAILED")
     sys.exit(0 if ok else 1)
 

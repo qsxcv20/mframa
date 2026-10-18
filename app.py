@@ -256,7 +256,7 @@ def aqi_info(aqi):
 
 
 def aqi_kaomoji(aqi):
-    """Cute kaomoji face for the AQI level (empty string when unavailable)."""
+    """Emoji face for the AQI level (empty string when unavailable)."""
     try:
         face = analytics.aqi_category(aqi).get("kaomoji")
     except Exception:
@@ -634,6 +634,7 @@ def render_my_air(stations):
             if cigs is not None:
                 cigs_txt = f"{cigs:.1f}" if cigs >= 0.05 else t("cigs_lt")
                 st.warning(t("home_cig_line", cigs=cigs_txt))
+                st.caption(t("home_cig_method"))
     except Exception:
         pass
 
@@ -799,6 +800,12 @@ def render_breathe(stations):
 
 def render_get_alerts():
     st.subheader(t("nav_alerts"))
+    if st.session_state.get("is_app"):
+        # Inside the Android app (URL has ?from=app): threshold alerts are
+        # built in, so the ntfy/Telegram subscription guides don't apply.
+        st.markdown(t("alerts_app_builtin"))
+        st.caption(t("alerts_footer"))
+        return
     st.markdown(t("alerts_intro"))
     c1, c2 = st.columns(2)
     with c1:
@@ -881,6 +888,10 @@ def render_map(stations):
 
 def main():
     inject_responsive_css()
+    # The Android WebView loads the page with ?from=app (only on first load),
+    # so remember it for the rest of the session.
+    if "is_app" not in st.session_state:
+        st.session_state["is_app"] = st.query_params.get("from") == "app"
     head_l, head_r = st.columns([3, 2])
     with head_l:
         st.title("Mframa")

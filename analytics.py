@@ -21,12 +21,12 @@ _PM25_BREAKPOINTS = (
 )
 
 _AQI_CATEGORIES = (
-    (50, "Good", "#00e400", "＼(＾▽＾)／"),
-    (100, "Moderate", "#ffff00", "(・‿・)"),
-    (150, "Unhealthy for Sensitive Groups", "#ff7e00", "(；￣△￣)"),
-    (200, "Unhealthy", "#ff0000", "(＞_＜)😷"),
-    (300, "Very Unhealthy", "#8f3f97", "(っ°Д°)っ😷"),
-    (500, "Hazardous", "#7e0023", "(×﹏×)😷"),
+    (50, "Good", "#00e400", "😊"),
+    (100, "Moderate", "#ffff00", "🙂"),
+    (150, "Unhealthy for Sensitive Groups", "#ff7e00", "😐"),
+    (200, "Unhealthy", "#ff0000", "😷"),
+    (300, "Very Unhealthy", "#8f3f97", "🤢"),
+    (500, "Hazardous", "#7e0023", "☠️"),
 )
 
 # Minute ventilation (L/min) by activity level; typical literature values
@@ -54,7 +54,7 @@ def aqi_category(aqi: int) -> dict:
     for upper, label, color, kaomoji in _AQI_CATEGORIES:
         if aqi <= upper:
             return {"label": label, "color_hex": color, "kaomoji": kaomoji}
-    return {"label": "Hazardous", "color_hex": "#7e0023", "kaomoji": "(×﹏×)😷"}
+    return {"label": "Hazardous", "color_hex": "#7e0023", "kaomoji": "☠️"}
 
 
 def _level_key(aqi: int) -> str:

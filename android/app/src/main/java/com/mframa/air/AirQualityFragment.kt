@@ -90,7 +90,11 @@ class AirQualityFragment : Fragment() {
             }
         }
         if (savedInstanceState == null) {
-            web.loadUrl(BuildConfig.WEB_URL)
+            // ?from=app tells the web app it runs inside the native shell, so
+            // it can hide ntfy/Telegram signup guidance in favor of the
+            // built-in alerts on the My Exposure page.
+            val sep = if ('?' in BuildConfig.WEB_URL) '&' else '?'
+            web.loadUrl(BuildConfig.WEB_URL + sep + "from=app")
         }
         webView = web
         return root

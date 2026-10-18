@@ -379,7 +379,7 @@ def build_alert_message(station_info: dict, city_median: float | None) -> str:
     name = station_info.get("name") or "your station"
     pm25 = station_info.get("pm25")
     aqi = station_info.get("aqi")
-    cat = analytics.aqi_category(aqi) if aqi is not None else {"label": "Unhealthy", "kaomoji": "(＞_＜)😷"}
+    cat = analytics.aqi_category(aqi) if aqi is not None else {"label": "Unhealthy", "kaomoji": "😷"}
     label = cat["label"]
 
     lines = [f"*AIR QUALITY ALERT — Accra* {cat['kaomoji']}", ""]
@@ -448,7 +448,7 @@ def build_city_alert(station_info: dict, city_median: float | None) -> str:
     name = station_info.get("name") or "Accra"
     pm25 = station_info.get("pm25")
     aqi = station_info.get("aqi")
-    cat = analytics.aqi_category(aqi) if aqi is not None else {"label": "Unhealthy", "kaomoji": "(＞_＜)😷"}
+    cat = analytics.aqi_category(aqi) if aqi is not None else {"label": "Unhealthy", "kaomoji": "😷"}
     label = cat["label"]
 
     lines = [f"{cat['kaomoji']} Air Quality Alert — Accra", ""]

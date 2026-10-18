@@ -27,7 +27,16 @@
     <string name="hospitals_empty">Hospital data unavailable</string>
     <string name="no_maps_app">No maps app installed</string>
     <string name="alerts_toggle">City air alerts (no account needed)</string>
-    <string name="alerts_threshold_fmt">Alert me when city PM2.5 ≥ %1$d µg/m³</string>
+    <string-array name="alerts_threshold_labels">
+        <item>Very sensitive — asthma/child (15)</item>
+        <item>Caution — limit long outdoor work (25)</item>
+        <item>Mask day outdoors (35)</item>
+        <item>Mask + shorten errands (55)</item>
+        <item>Stay indoors if you can (75)</item>
+        <item>Avoid outside (100)</item>
+        <item>Emergency — stay in (150)</item>
+    </string-array>
     <string name="notif_city_title">Accra air alert</string>
-    <string name="notif_city_text">City PM2.5 is now %1$d µg/m³ — above your %2$d limit. Sensitive groups should stay indoors; consider a mask outside.</string>
+    <string name="notif_city_text">PM2.5 is %1$d now — above your %2$d limit. Mask up outdoors.</string>
+    <string name="exposure_cigs_note">Berkeley Earth rule: a day at 22 µg/m³ ≈ 1 cigarette</string>
 </resources>
