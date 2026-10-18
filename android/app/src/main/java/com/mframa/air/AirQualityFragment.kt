@@ -4,13 +4,16 @@ import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import java.util.Locale
 
 class AirQualityFragment : Fragment() {
 
@@ -52,6 +55,7 @@ class AirQualityFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_air, container, false)
         val web = root.findViewById<WebView>(R.id.webview)
         val loading = root.findViewById<View>(R.id.loading_overlay)
+        bindLaunchCard(root)
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         // Fallback pinch-to-zoom for the whole page (e.g. enlarging the map)
@@ -104,5 +108,26 @@ class AirQualityFragment : Fragment() {
         webView?.destroy()
         webView = null
         super.onDestroyView()
+    }
+
+    // Fills the launch card with the last city reading cached by AlertWorker.
+    // Without a cache (first install) it degrades to a plain "Loading…".
+    private fun bindLaunchCard(root: View) {
+        val cached = AlertPrefs.lastCityPm25(requireContext())
+        if (cached == null) {
+            root.findViewById<View>(R.id.txt_splash_pm25).visibility = View.GONE
+            root.findViewById<View>(R.id.txt_splash_age).visibility = View.GONE
+            root.findViewById<View>(R.id.txt_splash_threshold).visibility = View.GONE
+            root.findViewById<View>(R.id.txt_splash_updating).visibility = View.GONE
+            root.findViewById<View>(R.id.txt_splash_loading).visibility = View.VISIBLE
+            return
+        }
+        root.findViewById<TextView>(R.id.txt_splash_pm25).text =
+            String.format(Locale.US, "%.0f µg/m³", cached)
+        root.findViewById<TextView>(R.id.txt_splash_age).text =
+            DateUtils.getRelativeTimeSpanString(AlertPrefs.lastCityTs(requireContext()))
+        val labels = resources.getStringArray(R.array.alerts_threshold_labels)
+        root.findViewById<TextView>(R.id.txt_splash_threshold).text =
+            labels[AlertPrefs.labelIndex(requireContext())]
     }
 }

@@ -42,6 +42,7 @@ class AlertWorker(context: Context, params: WorkerParameters) :
                     ?: snap.stations.mapNotNull { it.pm25 }
                         .takeIf { it.isNotEmpty() }?.average()
                     ?: return
+                AlertPrefs.setLastCity(context, city)
                 val threshold = AlertPrefs.threshold(context).toDouble()
                 if (city < threshold) return
                 val now = System.currentTimeMillis()

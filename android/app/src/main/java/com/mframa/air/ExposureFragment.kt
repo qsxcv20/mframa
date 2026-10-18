@@ -157,12 +157,10 @@ class ExposureFragment : Fragment() {
     }
 
     private fun updateThresholdLabel() {
-        val current = AlertPrefs.threshold(requireContext())
-        val idx = AlertPrefs.THRESHOLD_STEPS
-            .indexOfFirst { it == current }
-            .takeIf { it >= 0 } ?: AlertPrefs.thresholdIndex(requireContext())
         txtThreshold.text =
-            resources.getStringArray(R.array.alerts_threshold_labels)[idx]
+            resources.getStringArray(R.array.alerts_threshold_labels)[
+                AlertPrefs.labelIndex(requireContext())
+            ]
     }
 
     private fun refresh() {

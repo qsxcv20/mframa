@@ -13,6 +13,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import pydeck as pdk
 import streamlit as st
+import streamlit.components.v1 as components
 
 import analytics
 import nowcast
@@ -57,11 +58,10 @@ MOBILE_CSS = """
   [data-testid="stExpander"] summary {
     min-height: 44px !important;
   }
-  [data-baseweb="select"] > div {
+  /* Touch target >= 44px for the selectbox (baseweb was replaced by
+     react-aria in new Streamlit, so target the stable testid). */
+  [data-testid="stSelectbox"] input {
     min-height: 44px !important;
-  }
-  [data-baseweb="select"] input {
-    min-height: 30px !important;
   }
   [data-testid="stNumberInput"] input,
   [data-testid="stTextInput"] input {
@@ -121,6 +121,30 @@ div[class*="viewerBadge"], [class*="viewerBadge_container"] { display: none !imp
 def inject_responsive_css():
     try:
         st.markdown(MOBILE_CSS + CHROME_CSS, unsafe_allow_html=True)
+        # Station/profile pickers are pure option lists: mark the inner input
+        # readonly so tapping one on a phone never pops the soft keyboard.
+        # Clicks still reach the input, so the dropdown opens as usual; only
+        # baseweb "select" inputs are touched, number/text inputs keep focus.
+        components.html(
+            """
+            <script>
+            (function () {
+              const doc = parent.document;
+              const fix = () => doc
+                .querySelectorAll('[data-testid="stSelectbox"] input')
+                .forEach(i => {
+                  if (!i.readOnly) i.readOnly = true;
+                  if (i.getAttribute('inputmode') !== 'none') {
+                    i.setAttribute('inputmode', 'none');
+                  }
+                });
+              fix();
+              new MutationObserver(fix).observe(doc.body, {childList: true, subtree: true});
+            })();
+            </script>
+            """,
+            height=0,
+        )
     except Exception:
         pass
 
@@ -863,7 +887,7 @@ def render_map(stations):
     layers.append(pdk.Layer(
         "ScatterplotLayer", sdf,
         get_position="[lon, lat]", get_fill_color="color",
-        get_radius=200, radius_min_pixels=6, pickable=True,
+        get_radius=200, radius_min_pixels=12, pickable=True,
         stroked=True, get_line_color=[255, 255, 255], line_width_min_pixels=1,
     ))
 
@@ -888,10 +912,25 @@ def render_map(stations):
 
 def main():
     inject_responsive_css()
+    qp = st.query_params
     # The Android WebView loads the page with ?from=app (only on first load),
     # so remember it for the rest of the session.
     if "is_app" not in st.session_state:
-        st.session_state["is_app"] = st.query_params.get("from") == "app"
+        st.session_state["is_app"] = qp.get("from") == "app"
+    # Deep links (?lang=zh&page=more&sub=alerts) apply once per session, using
+    # stable English ids so shared links and WebView reloads land on the same
+    # page and language regardless of the current UI language.
+    if "deep_linked" not in st.session_state:
+        st.session_state["deep_linked"] = True
+        if qp.get("lang") in ("en", "zh"):
+            st.session_state["lang"] = qp["lang"]
+        page_keys = {"my_air": "nav_my_air", "best_hours": "nav_best_hours",
+                     "map": "nav_map", "more": "nav_more"}
+        if qp.get("page") in page_keys:
+            st.session_state["nav_page"] = t(page_keys[qp["page"]])
+        if qp.get("sub") in ("breathe", "alerts"):
+            st.session_state["more_subpage"] = t(
+                "nav_breathe" if qp["sub"] == "breathe" else "nav_alerts")
     head_l, head_r = st.columns([3, 2])
     with head_l:
         st.title("Mframa")
@@ -936,6 +975,24 @@ def main():
             label_visibility="collapsed",
             key="more_subpage",
         ) or sub_options[0]
+
+    # Reflect the current language/page back into the URL (stable English
+    # ids, not translated labels) so WebView reloads keep ?lang=zh and shared
+    # links deep-link correctly. ?from=app and any other params stay untouched.
+    page_ids = {t("nav_my_air"): "my_air", t("nav_best_hours"): "best_hours",
+                t("nav_map"): "map", t("nav_more"): "more"}
+    sub_ids = {t("nav_breathe"): "breathe", t("nav_alerts"): "alerts"}
+    desired_qp = {
+        "lang": st.session_state.get("lang", "en"),
+        "page": page_ids.get(page, "my_air"),
+        "sub": sub_ids.get(more_sub) if page == t("nav_more") else None,
+    }
+    for k, v in desired_qp.items():
+        if v is None:
+            if k in qp:
+                del qp[k]
+        elif qp.get(k) != v:
+            qp[k] = v
 
     try:
         locations, source = load_locations()
