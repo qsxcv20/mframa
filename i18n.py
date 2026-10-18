@@ -388,6 +388,21 @@ S = {
         "en": "Source: OpenAQ hourly means · computed {ts}",
         "zh": "来源：OpenAQ 逐小时均值 · 计算于 {ts}",
     },
+    "map_fires_src": {
+        "en": "Fire detections: NASA FIRMS VIIRS (last 48 h, {n} across Ghana)",
+        "zh": "火点探测：NASA FIRMS VIIRS（近 48 小时，加纳全境 {n} 个）",
+    },
+    "fires_evidence": {
+        "en": "🛰️ NASA VIIRS satellites detected {n} active fires within 300 km of "
+              "Accra in the past 24 h (observed, not modelled).",
+        "zh": "🛰️ 过去 24 小时 NASA VIIRS 卫星在阿克拉 300 公里范围内观测到 {n} 个活跃火点（卫星实测，非模型推算）。",
+    },
+    "fires_evidence_many": {
+        "en": "🛰️ NASA VIIRS satellites detected {n} active fires within 300 km of "
+              "Accra in the past 24 h (observed, not modelled) — observed evidence "
+              "that local burning is feeding the smoke.",
+        "zh": "🛰️ 过去 24 小时 NASA VIIRS 卫星在阿克拉 300 公里范围内观测到 {n} 个活跃火点（卫星实测，非模型推算）——这是本地焚烧助长烟雾的实测证据。",
+    },
 }
 
 

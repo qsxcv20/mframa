@@ -1,0 +1,35 @@
+name: FIRMS Fire Detections
+
+on:
+  schedule:
+    # every 6 hours; FIRMS NRT updates a few times per day
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fires:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch VIIRS fire detections
+        env:
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: python fetch_fires.py
+
+      - name: Commit fires_ghana.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/fires_ghana.json
+          git diff --cached --quiet || (git commit -m "fires_ghana.json [skip ci]" && git push)

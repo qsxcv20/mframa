@@ -161,6 +161,7 @@ FALLBACK_COLOR = "#8a94a6"
 EPA_PM25_24H = 35.0
 DEMO_PATH = Path(__file__).parent / "data" / "demo_harmattan.json"
 CLEANUP_PATH = Path(__file__).parent / "data" / "agbogbloshie_cleanup.json"
+FIRES_PATH = Path(__file__).parent / "data" / "fires_ghana.json"
 
 
 def load_demo_harmattan(path=None):
@@ -179,6 +180,17 @@ def load_cleanup_status(path=None):
     try:
         d = json.loads(Path(path or CLEANUP_PATH).read_text(encoding="utf-8"))
         if d.get("baseline_mean") is not None and d.get("current_mean") is not None:
+            return d
+    except (OSError, json.JSONDecodeError, TypeError):
+        pass
+    return None
+
+
+def load_fires(path=None):
+    """Static NASA FIRMS fire detections; None if the JSON is missing/broken."""
+    try:
+        d = json.loads(Path(path or FIRES_PATH).read_text(encoding="utf-8"))
+        if isinstance(d.get("fires"), list):
             return d
     except (OSError, json.JSONDecodeError, TypeError):
         pass
@@ -456,6 +468,17 @@ def render_dust_smoke_card():
         )
         risk = openmeteo_client.dust_risk_level(dust)
         stale_txt = t("cached_suffix") if aq.get("stale") else ""
+        # Satellite observation line: FIRMS fire counts back up (or soften)
+        # the smoke side of the model-based attribution.
+        fires = load_fires()
+        fires_line = ""
+        if fires is not None:
+            n_fires = fires.get("accra_300km_24h_fires", 0)
+            fires_key = "fires_evidence_many" if n_fires >= 10 else "fires_evidence"
+            fires_line = (
+                f'<div style="font-size:.85rem;margin-top:6px;">'
+                f'{t(fires_key, n=n_fires)}</div>'
+            )
         if split is not None:
             dust_line = t(
                 "dust_line",
@@ -474,6 +497,7 @@ def render_dust_smoke_card():
                     {dust_line}
                   </div>
                   <div style="font-size:.95rem;margin-top:6px;">{tt(split['advice'])}</div>
+                  {fires_line}
                   <div style="font-size:.75rem;opacity:.75;margin-top:8px;">
                     {t("forecast_src")}{stale_txt}
                   </div>
@@ -929,7 +953,7 @@ def render_get_alerts():
     st.caption(t("alerts_footer"))
 
 
-def render_map(stations):
+def render_map(stations, replay=False):
     st.subheader(t("map_header"))
     grid = idw_points(stations)
 
@@ -959,6 +983,30 @@ def render_map(stations):
         stroked=True, get_line_color=[255, 255, 255], line_width_min_pixels=1,
     ))
 
+    # NASA FIRMS VIIRS fire dots — skipped in replay mode (a historical day
+    # has no business showing today's fires).
+    fires = None if replay else load_fires()
+    if fires and fires.get("fires"):
+        fdf = pd.DataFrame([
+            {
+                "lat": f["lat"], "lon": f["lon"],
+                "frp": f.get("frp") or 0,
+                "color": [255, 111, 0] if f.get("daynight") == "D" else [255, 45, 0],
+                "name": "VIIRS fire",
+                "pm25": f"{f.get('frp', '?')} MW FRP",
+                "label": f"{f.get('acq_date', '')} {str(f.get('acq_time', '')).zfill(4)} UTC · "
+                         f"{'day' if f.get('daynight') == 'D' else 'night'}",
+            }
+            for f in fires["fires"]
+        ])
+        layers.append(pdk.Layer(
+            "ScatterplotLayer", fdf,
+            get_position="[lon, lat]", get_fill_color="color",
+            get_radius="frp", radius_scale=25, radius_min_pixels=4,
+            radius_max_pixels=18, pickable=True, opacity=0.75,
+            stroked=True, get_line_color=[255, 255, 255], line_width_min_pixels=1,
+        ))
+
     deck = pdk.Deck(
         layers=layers,
         initial_view_state=pdk.ViewState(latitude=MAP_CENTER[0], longitude=MAP_CENTER[1], zoom=10.5),
@@ -972,6 +1020,8 @@ def render_map(stations):
     )
     st.pydeck_chart(deck, width="stretch", height=520)
     st.caption(t("map_caption"))
+    if fires and fires.get("fires"):
+        st.caption(t("map_fires_src", n=fires.get("total_fires", len(fires["fires"]))))
     render_cleanup_card()
 
 
@@ -1142,7 +1192,7 @@ def main():
         elif page == t("nav_more"):
             render_breathe(stations)
         else:
-            render_map(stations)
+            render_map(stations, replay=demo is not None)
     except Exception:
         st.error(t("snag_error"))
 

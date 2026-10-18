@@ -228,12 +228,62 @@ def main():
     silent = (app_mod.load_cleanup_status("data/_missing_.json") is None
               and app_mod.load_demo_harmattan("data/_missing_.json") is None
               and app_mod.load_cleanup_status() is not None
-              and app_mod.load_demo_harmattan() is not None)
+              and app_mod.load_demo_harmattan() is not None
+              and app_mod.load_fires("data/_missing_.json") is None
+              and app_mod.load_fires() is not None)
     if silent:
         print("[OK] static-data loaders silent on missing files")
     else:
         ok = False
         print("[FAIL] static-data loaders silent on missing files")
+
+    # FIRMS: Live Map carries the NASA FIRMS fire-source caption (static
+    # data/fires_ghana.json); My Air's attribution card shows the VIIRS
+    # observation line whenever the dust/smoke card itself renders.
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.run()
+    nav = next(p for p in at.pills if "My Air" in list(p.options))
+    nav.set_value("Live Map").run()
+    cap = "\n".join(str(c.value) for c in at.caption)
+    errors = [str(e.value) for e in at.exception]
+    fires_cap_ok = "NASA FIRMS" in cap
+    at2 = AppTest.from_file("app.py", default_timeout=180)
+    at2.run()
+    body2 = "\n".join(str(m.value) for m in at2.markdown)
+    errors += [str(e.value) for e in at2.exception]
+    dust_card = "Dust or Smoke?" in body2
+    viirs_ok = ("VIIRS" in body2) if dust_card else True
+    if not errors and fires_cap_ok and viirs_ok:
+        note = "VIIRS line asserted" if dust_card else "dust card off, VIIRS skipped"
+        print(f"[OK] FIRMS: map fire caption + attribution line ({note})")
+    else:
+        ok = False
+        print("[FAIL] FIRMS: map fire caption + attribution line")
+        for e in errors:
+            print("   ", e[:500])
+        if not fires_cap_ok:
+            print("    NASA FIRMS caption missing on Live Map")
+        if not viirs_ok:
+            print("    VIIRS evidence line missing on My Air")
+
+    # FIRMS: replay mode (?demo=harmattan) must hide the fire layer — a
+    # historical day has no business showing today's fires.
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.query_params["demo"] = "harmattan"
+    at.run()
+    nav = next(p for p in at.pills if "My Air" in list(p.options))
+    nav.set_value("Live Map").run()
+    cap = "\n".join(str(c.value) for c in at.caption)
+    errors = [str(e.value) for e in at.exception]
+    if not errors and "NASA FIRMS" not in cap:
+        print("[OK] FIRMS: fire layer hidden in demo replay")
+    else:
+        ok = False
+        print("[FAIL] FIRMS: fire layer hidden in demo replay")
+        for e in errors:
+            print("   ", e[:500])
+        if "NASA FIRMS" in cap:
+            print("    NASA FIRMS caption visible during replay")
 
     print("ALL PAGES OK" if ok else "SOME PAGES FAILED")
     sys.exit(0 if ok else 1)

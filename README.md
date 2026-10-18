@@ -54,7 +54,7 @@ Top navigation, four destinations, tuned for one-thumb phone use:
 
 - **My Air** — pick a health profile (child, pregnant, asthma, elderly, outdoor worker, healthy adult) and get plain-language action guidance on WHO-aligned PM2.5 breakpoints, not generic "moderate" labels. The AQI card wears a **universal emoji face** per level (😊 good → 😷 unhealthy), so even a child can read the air. A **"Dust or Smoke?"** card attributes the source — Saharan dust vs combustion smoke — from live PM2.5 plus the CAMS dust forecast.
 - **Best Hours Today** — the question everyone actually asks: *when should I go out?* A diurnal curve from 7 days of hourly readings finds the historically cleanest hours, overlays today's live trend, and marks **green outdoor windows** — plus a 48-hour dust & PM2.5 forecast.
-- **Live Map** — all 85 monitoring stations across Accra with an IDW interpolation heatmap: the pollution *field*, not just dots.
+- **Live Map** — all 85 monitoring stations across Accra with an IDW interpolation heatmap: the pollution *field*, not just dots — plus a **NASA FIRMS VIIRS fire layer** ([`fetch_fires.py`](fetch_fires.py), refreshed every 6 h by [`.github/workflows/fires.yml`](.github/workflows/fires.yml)) sizing each active fire by radiative power, so you can *see* the smoke sources around the city.
 - **More → What Did I Breathe? / Get Air Alerts** — a **cigarette-equivalent exposure calculator** ([Berkeley Earth conversion](http://berkeleyearth.org/air-pollution-and-cigarette-equivalence/): 22 µg/m³ over a day ≈ one cigarette), weighted by breathing rate and your actual commute/outdoor time; and 10-second subscription to a **daily morning briefing** plus **burst alerts** when the city crosses AQI 151 — no account, no phone number.
 - **In the Android app:** threshold alerts fire inside the app itself as your accumulated dose crosses levels.
 - **In parallel development (web):** one-tap **WhatsApp share** of your air report — the channel where Ghanaians actually forward information.
@@ -123,6 +123,7 @@ Every claim above, one click away:
 - [WHO — Ambient (outdoor) air quality and health](https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health)
 - [IQAir — Accra air quality](https://www.iqair.com/ghana/greater-accra/accra)
 - [AfriqAir — African air-quality network](https://www.afriqair.org/)
+- [NASA FIRMS — Fire Information for Resource Management System](https://firms.modaps.eosdis.nasa.gov/api/area/) (VIIRS active-fire detections feeding the map fire layer and the smoke-attribution evidence line)
 - [Ghana EPA](https://epa.gov.gh/)
 
 ## Run it yourself
@@ -146,6 +147,7 @@ No key? The app still runs — it serves the bundled real-data snapshot instead 
 |---|---|
 | `OPENAQ_API_KEY` | Live air-quality data (free at [explore.openaq.org](https://explore.openaq.org)); without it the engine falls back to the bundled snapshot |
 | `TELEGRAM_BOT_TOKEN` | Optional — station-level personal alerts via the Telegram Bot API (from [@BotFather](https://t.me/BotFather)); without it Telegram degrades to dry-run logs while ntfy keeps publishing |
+| `FIRMS_MAP_KEY` | NASA FIRMS active-fire data for the map fire layer and smoke attribution (free at [firms.modaps.eosdis.nasa.gov](https://firms.modaps.eosdis.nasa.gov/api/area/)); without it the fire workflow keeps the last committed `data/fires_ghana.json` |
 
 **Android build:**
 
