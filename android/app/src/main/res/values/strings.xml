@@ -3,6 +3,7 @@
     <string name="app_name">Mframa</string>
     <string name="nav_air">Air Quality</string>
     <string name="nav_exposure">My Exposure</string>
+    <string name="loading_web">Loading…</string>
     <string name="channel_advisory">Exposure advisory</string>
     <string name="channel_advisory_desc">Air quality and dose advisories</string>
     <string name="channel_health">Health alert</string>

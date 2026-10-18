@@ -20,6 +20,7 @@ S = {
     "nav_breathe": {"en": "What Did I Breathe?", "zh": "我吸入了什么？"},
     "nav_map": {"en": "Live Map", "zh": "实时地图"},
     "nav_alerts": {"en": "Get Air Alerts", "zh": "订阅空气提醒"},
+    "nav_more": {"en": "More", "zh": "更多"},
     "station_header": {"en": "Station", "zh": "监测站"},
     "monitoring_station": {"en": "Monitoring station", "zh": "监测站"},
     "reference_station": {"en": "Reference station", "zh": "参考站点"},
@@ -56,8 +57,8 @@ S = {
     "profile_athlete": {"en": "athlete", "zh": "运动爱好者"},
     "no_readings": {
         "en": "No recent readings for this station and not enough data to estimate — "
-              "try another station in the sidebar.",
-        "zh": "该站点暂无近期读数，也没有足够数据进行估算——请在侧边栏换个站点试试。",
+              "try another station.",
+        "zh": "该站点暂无近期读数，也没有足够数据进行估算——请换个站点试试。",
     },
     "estimated_suffix": {"en": " (estimated)", "zh": "（估算）"},
     "updated_source": {
@@ -83,6 +84,20 @@ S = {
     "advice_header": {
         "en": "What this means for you ({profile})",
         "zh": "这对您意味着什么（{profile}）",
+    },
+    "home_cig_line": {
+        "en": "🚬 A day in Accra today ≈ smoking {cigs} cigarettes "
+              "(city-average PM2.5, typical day outdoors)",
+        "zh": "🚬 今天在阿克拉待一天 ≈ 吸了 {cigs} 支香烟"
+              "（按全市平均 PM2.5、典型户外时长估算）",
+    },
+    "home_best_window": {
+        "en": "🕐 Best time to be outside today: {slot}",
+        "zh": "🕐 今天最适合户外活动的时间：{slot}",
+    },
+    "home_no_window": {
+        "en": "🕐 No clear low-pollution window today — consider indoor exercise.",
+        "zh": "🕐 今天没有明显的低污染时段——建议改为室内锻炼。",
     },
 
     # --- Dust or Smoke? card / forecast chart -------------------------------
@@ -127,8 +142,8 @@ S = {
     # --- Best Hours Today ---------------------------------------------------
     "no_hourly": {
         "en": "No recent hourly measurements for this station yet — "
-              "try another station in the sidebar.",
-        "zh": "该站点暂无近期逐小时测量数据——请在侧边栏换个站点试试。",
+              "try another station.",
+        "zh": "该站点暂无近期逐小时测量数据——请换个站点试试。",
     },
     "no_pattern": {
         "en": "Today's pattern could not be computed for this station.",

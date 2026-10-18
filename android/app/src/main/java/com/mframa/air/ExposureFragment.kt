@@ -48,6 +48,9 @@ class ExposureFragment : Fragment() {
             if (fine) startService() else toggle.isChecked = false
         }
 
+    private val notifPermLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+
     private val doseReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             refresh()
@@ -82,6 +85,7 @@ class ExposureFragment : Fragment() {
         toggleAlerts.isChecked = AlertPrefs.enabled(requireContext())
         toggleAlerts.setOnCheckedChangeListener { _, checked ->
             AlertPrefs.setEnabled(requireContext(), checked)
+            if (checked) ensureNotificationPermission()
         }
         seekThreshold.progress = AlertPrefs.thresholdIndex(requireContext())
         updateThresholdLabel()
@@ -129,6 +133,15 @@ class ExposureFragment : Fragment() {
                 PackageManager.PERMISSION_GRANTED
         }
         if (missing.isEmpty()) startService() else permLauncher.launch(missing.toTypedArray())
+    }
+
+    private fun ensureNotificationPermission() {
+        if (Build.VERSION.SDK_INT < 33) return
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) return
+        notifPermLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
     private fun startService() {

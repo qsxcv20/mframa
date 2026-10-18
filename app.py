@@ -523,9 +523,10 @@ def nearest_index(stations):
     return best_i
 
 
-def pick_station(stations, key, label=None):
+def pick_station(stations, key, label=None, container=None):
     names = [s.get("name") or f"Station {s.get('id')}" for s in stations]
-    idx = st.sidebar.selectbox(
+    c = container or st
+    idx = c.selectbox(
         label or t("monitoring_station"), range(len(stations)),
         format_func=lambda i: names[i], index=nearest_index(stations), key=key,
     )
@@ -552,16 +553,16 @@ def footer():
 # ---------------------------------------------------------------------------
 
 def render_my_air(stations):
-    st.sidebar.markdown(f"### {t('nav_my_air')}")
     profile_labels = [t(f"profile_{p}") for p in PROFILES]
     prev = st.session_state.get("health_profile_value", "general")
-    choice = st.sidebar.selectbox(
+    c_prof, c_stat = st.columns(2)
+    choice = c_prof.selectbox(
         t("health_profile"), profile_labels,
         index=PROFILES.index(prev) if prev in PROFILES else 0,
         key="health_profile")
     profile = PROFILES[profile_labels.index(choice)]
     st.session_state["health_profile_value"] = profile
-    station = pick_station(stations, key="station_myair")
+    station = pick_station(stations, key="station_myair", container=c_stat)
 
     pm25 = pm25_of(station)
     stale_h = stale_hours_of(station)
@@ -622,6 +623,51 @@ def render_my_air(stations):
             stale=estimate.get("stale_hours"), conf=estimate.get("confidence"),
         ))
 
+    # Wow lines: cigarette equivalent + today's first clean window, right
+    # under the AQI card so they are visible without scrolling on a phone.
+    try:
+        pm_vals = [v for v in (pm25_of(s) for s in stations) if v is not None]
+        if pm_vals:
+            pm_city = float(np.mean(pm_vals))
+            rep = exposure(pm_city, 1.0, pm_city, 2.0, "light")
+            cigs = rep.get("cigarettes")
+            if cigs is not None:
+                cigs_txt = f"{cigs:.1f}" if cigs >= 0.05 else t("cigs_lt")
+                st.warning(t("home_cig_line", cigs=cigs_txt))
+    except Exception:
+        pass
+
+    try:
+        plan = hourly_plan(get_hourly(station))
+        green = (plan or {}).get("green_windows") or []
+        if green:
+            s, e = green[0]  # windows are half-open (start, end_exclusive)
+            st.success(t("home_best_window", slot=f"{s:02d}:00–{e:02d}:00"))
+        else:
+            st.info(t("home_no_window"))
+    except Exception:
+        pass
+
+    # Quick jumps so mobile users can reach every page in one tap.
+    def _goto(page_label, sub_label=None):
+        st.session_state["nav_page"] = page_label
+        if sub_label is not None:
+            st.session_state["more_subpage"] = sub_label
+
+    st.caption(t("quick_jump"))
+    q1, q2 = st.columns(2)
+    q3, q4 = st.columns(2)
+    q1.button(f"🕐 {t('nav_best_hours')}", on_click=_goto,
+              args=(t("nav_best_hours"),), key="qj_best", use_container_width=True)
+    q2.button(f"🗺️ {t('nav_map')}", on_click=_goto,
+              args=(t("nav_map"),), key="qj_map", use_container_width=True)
+    q3.button(f"🫁 {t('nav_breathe')}", on_click=_goto,
+              args=(t("nav_more"), t("nav_breathe")), key="qj_breathe",
+              use_container_width=True)
+    q4.button(f"🔔 {t('nav_alerts')}", on_click=_goto,
+              args=(t("nav_more"), t("nav_alerts")), key="qj_alerts",
+              use_container_width=True)
+
     tips = advice_for(profile, aqi)
     if tips:
         st.markdown(f"#### {t('advice_header', profile=t(f'profile_{profile}'))}")
@@ -629,20 +675,6 @@ def render_my_air(stations):
             st.markdown(f"- {tt(tip)}")
 
     render_dust_smoke_card()
-
-    # Quick jumps so mobile users (sidebar collapsed behind ">>") can still
-    # reach the other pages in one tap.
-    def _goto(page_label):
-        st.session_state["nav_page"] = page_label
-
-    st.caption(t("quick_jump"))
-    q1, q2, q3 = st.columns(3)
-    q1.button(f"🕐 {t('nav_best_hours')}", on_click=_goto,
-              args=(t("nav_best_hours"),), key="qj_best", use_container_width=True)
-    q2.button(f"🗺️ {t('nav_map')}", on_click=_goto,
-              args=(t("nav_map"),), key="qj_map", use_container_width=True)
-    q3.button(f"🔔 {t('nav_alerts')}", on_click=_goto,
-              args=(t("nav_alerts"),), key="qj_alerts", use_container_width=True)
 
 
 def render_best_hours(station):
@@ -849,17 +881,50 @@ def render_map(stations):
 
 def main():
     inject_responsive_css()
-    st.title("Mframa")
-    st.caption(t("tagline"))
+    head_l, head_r = st.columns([3, 2])
+    with head_l:
+        st.title("Mframa")
+        st.caption(t("tagline"))
+    with head_r:
+        lang_options = ["English", "中文"]
+        lang_choice = st.pills(
+            t("language_label"), lang_options,
+            default="English" if st.session_state.get("lang", "en") == "en" else "中文",
+            selection_mode="single",
+            label_visibility="collapsed",
+            key="lang_switch",
+        )
+        st.session_state["lang"] = "zh" if lang_choice == "中文" else "en"
 
-    lang_options = ["English", "中文"]
-    lang_choice = st.sidebar.radio(
-        t("language_label"), lang_options,
-        index=0 if st.session_state.get("lang", "en") == "en" else 1,
-        horizontal=True,
-        key="lang_switch",
-    )
-    st.session_state["lang"] = "en" if lang_choice == "English" else "zh"
+    nav_options = [t("nav_my_air"), t("nav_best_hours"), t("nav_map"), t("nav_more")]
+    sub_options = [t("nav_breathe"), t("nav_alerts")]
+
+    # Quick-jump tiles (and stale sessions) may point at a "More" sub-page.
+    if st.session_state.get("nav_page") in sub_options:
+        st.session_state["more_subpage"] = st.session_state["nav_page"]
+        st.session_state["nav_page"] = t("nav_more")
+    # A language switch can leave a stored label that no longer matches the
+    # options — fall back to the defaults instead of a blank selection.
+    if st.session_state.get("nav_page") not in nav_options:
+        st.session_state["nav_page"] = nav_options[0]
+    if st.session_state.get("more_subpage") not in sub_options:
+        st.session_state["more_subpage"] = sub_options[0]
+
+    page = st.pills(
+        t("nav_page"), nav_options,
+        selection_mode="single",
+        label_visibility="collapsed",
+        key="nav_page",
+    ) or nav_options[0]
+
+    more_sub = None
+    if page == t("nav_more"):
+        more_sub = st.pills(
+            t("nav_more"), sub_options,
+            selection_mode="single",
+            label_visibility="collapsed",
+            key="more_subpage",
+        ) or sub_options[0]
 
     try:
         locations, source = load_locations()
@@ -870,20 +935,12 @@ def main():
 
     data_banner(source)
 
-    st.sidebar.title(t("navigate"))
-    page = st.sidebar.radio(
-        t("nav_page"),
-        [t("nav_my_air"), t("nav_best_hours"), t("nav_breathe"), t("nav_map"), t("nav_alerts")],
-        label_visibility="collapsed",
-        key="nav_page",
-    )
+    if more_sub == t("nav_alerts"):
+        render_get_alerts()
+        footer()
+        return
 
     try:
-        if page == t("nav_alerts"):
-            render_get_alerts()
-            footer()
-            return
-
         stations = stations_with_readings(locations or [])
     except Exception:
         stations = []
@@ -901,9 +958,8 @@ def main():
                     pool.append(loc)  # offline but estimable via nowcast
             render_my_air(pool)
         elif page == t("nav_best_hours"):
-            st.sidebar.markdown(f"### {t('station_header')}")
             render_best_hours(pick_station(stations, key="station_hours"))
-        elif page == t("nav_breathe"):
+        elif page == t("nav_more"):
             render_breathe(stations)
         else:
             render_map(stations)

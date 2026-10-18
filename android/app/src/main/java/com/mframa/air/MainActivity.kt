@@ -1,7 +1,5 @@
 package com.mframa.air
 
-import android.Manifest
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -21,9 +19,6 @@ class MainActivity : AppCompatActivity() {
 
         AlertWorker.schedule(this)
         lifecycleScope.launch { AlertWorker.checkNow(this@MainActivity) }
-        if (Build.VERSION.SDK_INT >= 33) {
-            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
-        }
 
         val nav = findViewById<BottomNavigationView>(R.id.bottom_nav)
         if (savedInstanceState == null) {
