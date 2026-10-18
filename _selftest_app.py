@@ -51,7 +51,7 @@ def main():
         at.run()
         nav = next(p for p in at.pills if "My Air" in list(p.options))
         nav.set_value("Live Map").run()
-        lang = next(p for p in at.pills if "中文" in list(p.options))
+        lang = next(s for s in at.selectbox if "中文" in list(s.options))
         lang.set_value("中文").run()
         return at
     ok = run_case(make_zh, "switch to 中文 after navigating") and ok
@@ -116,7 +116,7 @@ def main():
     nav = next(p for p in at.pills if "My Air" in list(p.options))
     nav.set_value("Live Map").run()
     page_ok = at.query_params.get("page") == "map"
-    lang = next(p for p in at.pills if "中文" in list(p.options))
+    lang = next(s for s in at.selectbox if "中文" in list(s.options))
     lang.set_value("中文").run()
     # (switching language resets the stale page label to the default page,
     # so only lang is asserted here)

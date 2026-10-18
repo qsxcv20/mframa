@@ -937,10 +937,9 @@ def main():
         st.caption(t("tagline"))
     with head_r:
         lang_options = ["English", "中文"]
-        lang_choice = st.pills(
+        lang_choice = st.selectbox(
             t("language_label"), lang_options,
-            default="English" if st.session_state.get("lang", "en") == "en" else "中文",
-            selection_mode="single",
+            index=0 if st.session_state.get("lang", "en") == "en" else 1,
             label_visibility="collapsed",
             key="lang_switch",
         )
