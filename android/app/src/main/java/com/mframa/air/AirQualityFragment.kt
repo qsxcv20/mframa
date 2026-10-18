@@ -51,6 +51,10 @@ class AirQualityFragment : Fragment() {
         val web = root.findViewById<WebView>(R.id.webview)
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
+        // Fallback pinch-to-zoom for the whole page (e.g. enlarging the map)
+        web.settings.setSupportZoom(true)
+        web.settings.builtInZoomControls = true
+        web.settings.displayZoomControls = false
         web.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
                 view: WebView,

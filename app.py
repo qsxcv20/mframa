@@ -483,11 +483,11 @@ def render_dust_forecast_chart(hours=48):
                           annotation_text=t("harmattan_threshold"),
                           annotation_position="top left")
         fig.update_layout(
-            height=320, margin=dict(l=10, r=10, t=30, b=10),
-            title=t("dust_chart_title", hours=hours),
+            height=320, margin=dict(l=10, r=10, t=44, b=10),
             yaxis_title="µg/m³",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0, xanchor="left"),
         )
+        st.markdown(f"**{t('dust_chart_title', hours=hours)}**")
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
         st.caption(t("forecast_src")
                    + (t("showing_cached") if aq.get("stale") else ""))
@@ -731,9 +731,16 @@ def render_breathe(stations):
             text=bdf["ug"], textposition="auto",
         ))
         fig.update_layout(
-            height=320, margin=dict(l=10, r=10, t=30, b=10),
-            yaxis_title=t("yaxis_inhaled"), title=t("exposure_breakdown"),
+            height=320, margin=dict(l=10, r=10, t=56, b=10),
         )
+        # Plotly always renders y-axis titles vertically, which turns Chinese
+        # labels into an unreadable rotated stack — use a horizontal annotation
+        # above the axis instead.
+        fig.add_annotation(
+            text=t("yaxis_inhaled"), xref="paper", yref="paper",
+            x=0, y=1.14, showarrow=False, xanchor="left", font=dict(size=13),
+        )
+        st.markdown(f"**{t('exposure_breakdown')}**")
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
     st.caption(t("cig_method"))
@@ -807,6 +814,11 @@ def render_map(stations):
         initial_view_state=pdk.ViewState(latitude=MAP_CENTER[0], longitude=MAP_CENTER[1], zoom=10.5),
         map_style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         tooltip={"html": "<b>{name}</b><br/>PM2.5: {pm25} µg/m³<br/>{label}"},
+        views=[pdk.View(type="MapView", controller={
+            "scrollZoom": True, "dragPan": True, "dragRotate": False,
+            "touchZoom": True, "touchRotate": False, "doubleClickZoom": True,
+            "keyboard": False,
+        })],
     )
     st.pydeck_chart(deck, width="stretch", height=520)
     st.caption(t("map_caption"))

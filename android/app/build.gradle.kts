@@ -17,8 +17,8 @@ android {
         applicationId = "com.mframa.air"
         minSdk = 26
         targetSdk = 34
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.5.0"
         buildConfigField("String", "FIELD_JSON_URL", "\"$fieldJsonUrl\"")
         buildConfigField("String", "WEB_URL", "\"$webUrl\"")
     }
