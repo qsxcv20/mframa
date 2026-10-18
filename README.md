@@ -42,7 +42,7 @@ The cruel part: the pollution is invisible, hyper-local, and time-varying. Offic
 
 **Live Map** — An interactive map of all 85 monitoring stations across Accra, with an IDW (inverse-distance-weighted) interpolation heatmap so you can see the pollution *field*, not just dots. Hover any station dot for its live reading and AQI category.
 
-**Get Air Alerts** — Subscribe to a **Telegram morning briefing** and **burst alerts every 15 minutes** when your air turns unhealthy (details below).
+**Get Air Alerts** — Subscribe in 10 seconds to a **daily morning briefing** and **burst alerts every 15 minutes** when the city's air turns unhealthy — no account, no phone number (details below).
 
 ## Data Authenticity
 
@@ -87,8 +87,10 @@ A native Kotlin app under `android/` for the way Ghanaians actually live with ai
 
 Checking an app is a habit most people don't have. Mframa's push engine flips the model: **the air report comes to you**, on two tracks.
 
-- **Morning briefing** — every day at ~05:45, each subscriber gets their station's current PM2.5 and AQI, today's cleanest hours (same `best_hours` model as the app), commute guidance for the 06:00–09:00 / 17:00–20:00 rush peaks, and a laundry & windows tip. During Harmattan build-up (city 7-day median rising and above 35.5 µg/m³) an extra dust-season warning is added.
-- **Burst alerts** — every 15 minutes the engine checks thresholds; when a subscriber's station or the whole city crosses **AQI 151 (Unhealthy)**, an immediate alert goes out with protective steps. De-duplication guarantees at most one alert of the same type per 12 hours.
+- **Morning briefing** — every day at ~05:45 the city-wide briefing goes out: Accra's current PM2.5 and AQI, today's cleanest hours (same `best_hours` model as the app), commute guidance for the 06:00–09:00 / 17:00–20:00 rush peaks, and a laundry & windows tip. During Harmattan build-up (city 7-day median rising and above 35.5 µg/m³) an extra dust-season warning is added.
+- **Burst alerts** — every 15 minutes the engine checks thresholds; when any station or the whole city crosses **AQI 151 (Unhealthy)**, an immediate alert goes out with protective steps. De-duplication guarantees at most one alert of the same type per 12 hours.
+
+**Subscribe free, no account needed:** open **[ntfy.sh/mframa-accra-air](https://ntfy.sh/mframa-accra-air)** in any browser and tap *Subscribe*, or install the **ntfy** app (Android / iOS) and add the topic `mframa-accra-air`. ntfy is open-source and free; delivery is a normal phone notification. A Telegram bot with *station-level* personal alerts (`/subscribe` your street's sensor) is wired into the same engine and activates the moment a bot token is configured.
 
 ```
                  ┌──────────────────────────┐
@@ -98,28 +100,29 @@ Checking an app is a habit most people don't have. Mframa's push engine flips th
                               ▼
                  ┌──────────────────────────┐      fallback
                  │      push_engine.py      │────────────▶ data/snapshot.json
-                 │ briefing · alerts · poll │  ┌────────▶ OpenAQ v3 (live)
+                 │ briefing · broadcast ·   │  ┌────────▶ OpenAQ v3 (live)
+                 │ alerts · poll            │  │
                  └────────────┬─────────────┘  │
               ┌───────────────┼────────────────┘
-              ▼               ▼
-     ┌────────────────┐ ┌──────────────────┐
-     │  Telegram bot  │ │ SMS / USSD       │
-     │  (live today)  │ │ Africa's Talking │
-     └────────────────┘ └──────────────────┘
+              ▼               ▼               ▼
+     ┌────────────────┐ ┌────────────┐ ┌──────────────────┐
+     │  ntfy topic    │ │ Telegram   │ │ SMS / USSD       │
+     │  (live today)  │ │ (token in) │ │ Africa's Talking │
+     └────────────────┘ └────────────┘ └──────────────────┘
         subscribers.json + bot_state.json committed back to the repo by the workflow;
         publish_field.py refreshes public/field.json on the same 15-min cycle
 ```
 
-**Cost model.** Telegram delivery is free. SMS via [Africa's Talking](https://africastalking.com/) costs roughly **$0.01–0.05 per message** in Ghana; at one message per subscriber per day, **10,000 subscribers ≈ $300–500/month** — a line item sized for a corporate CSR sponsorship or an EPA Ghana / NGO partnership, which is the planned funding path. USSD session costs are in the same range and reach feature phones with no data plan at all.
+**Cost model.** ntfy and Telegram delivery are free. SMS via [Africa's Talking](https://africastalking.com/) costs roughly **$0.01–0.05 per message** in Ghana; at one message per subscriber per day, **10,000 subscribers ≈ $300–500/month** — a line item sized for a corporate CSR sponsorship or an EPA Ghana / NGO partnership, which is the planned funding path. USSD session costs are in the same range and reach feature phones with no data plan at all.
 
-**Running it yourself.** The engine needs two repository secrets (repo → **Settings → Secrets and variables → Actions**):
+**Running it yourself.** The engine needs one repository secret (repo → **Settings → Secrets and variables → Actions**), plus an optional one for Telegram:
 
 | Secret | What for |
 |---|---|
 | `OPENAQ_API_KEY` | Live air-quality data (free key at [explore.openaq.org](https://explore.openaq.org)); without it the engine falls back to the bundled snapshot |
-| `TELEGRAM_BOT_TOKEN` | Sending messages via the Telegram Bot API (from [@BotFather](https://t.me/BotFather)); without it every run degrades to dry-run and only logs |
+| `TELEGRAM_BOT_TOKEN` | Optional — enables station-level personal alerts via the Telegram Bot API (from [@BotFather](https://t.me/BotFather)); without it Telegram runs degrade to dry-run logs while ntfy keeps publishing |
 
-No token is ever printed or committed. Without `TELEGRAM_BOT_TOKEN` nothing crashes — the workflows simply produce dry-run logs.
+No token is ever printed or committed. The ntfy topic is configurable via the `NTFY_TOPIC` / `NTFY_BASE` environment variables (self-hosting ntfy is the production path for a reserved, access-controlled topic).
 
 ## Why it works in Ghana today
 
@@ -198,7 +201,7 @@ _holdout_eval.py        blind holdout validation on a fresh OpenAQ pull
 openaq_client.py        OpenAQ v3 client: cache, retry, live-first + snapshot fallback
 openmeteo_client.py     free CAMS/ECMWF dust forecast client (no API key)
 fetch_snapshot.py       regenerates the offline fallback snapshot
-push_engine.py          Telegram morning briefing + 15-min burst alerts
+push_engine.py          ntfy city broadcast + Telegram briefings + 15-min burst alerts
 publish_field.py        generates public/field.json (31×51 IDW grid over Accra)
 public/field.json       published pollution field, consumed by the Android app offline
 data/                   snapshot, holdout, nowcast metrics, hospital list, caches
@@ -237,7 +240,7 @@ requirements.txt        web app dependencies
                                   ▼
         ┌──────────────────────────────────────────────┐
         │   GitHub Actions — every 15 min              │
-        │   push_engine (Telegram) · publish_field.py  │
+        │   push_engine (ntfy · Telegram) · publish_field.py  │
         └───────────────┬──────────────────────────────┘
                         ▼
         ┌──────────────────────────────────────────────┐

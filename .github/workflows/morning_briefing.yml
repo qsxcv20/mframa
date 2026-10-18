@@ -28,6 +28,11 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: python push_engine.py briefing
 
+      - name: Broadcast city briefing to ntfy topic
+        env:
+          OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
+        run: python push_engine.py broadcast
+
       - name: Commit subscriber state changes
         run: |
           git config user.name "github-actions[bot]"

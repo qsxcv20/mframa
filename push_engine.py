@@ -1,14 +1,20 @@
-"""Mframa proactive push engine: morning briefings and burst alerts over Telegram.
+"""Mframa proactive push engine: morning briefings and burst alerts.
+
+Two free delivery channels:
+- ntfy.sh topic broadcast (city-wide) — no account or token needed, users
+  subscribe at https://ntfy.sh/mframa-accra-air or in the ntfy app.
+- Telegram bot (per-subscriber) — activates when TELEGRAM_BOT_TOKEN is set.
 
 Pure requests + numpy — never imports streamlit, so it can run in GitHub
 Actions cron jobs. Live OpenAQ v3 first, data/snapshot.json as fallback,
-same philosophy as the main app. The API key and bot token are read only
-from environment variables and are never printed.
+same philosophy as the main app. API keys are read only from environment
+variables and are never printed.
 
 CLI:
-    python push_engine.py briefing [--dry-run]   # morning briefing to all subscribers
-    python push_engine.py alerts   [--dry-run]   # threshold check (AQI >= 151)
-    python push_engine.py poll     [--dry-run]   # handle Telegram getUpdates commands
+    python push_engine.py briefing  [--dry-run]  # morning briefing to Telegram subscribers
+    python push_engine.py broadcast [--dry-run]  # city-wide morning briefing to ntfy topic
+    python push_engine.py alerts    [--dry-run]  # threshold check (AQI >= 151), Telegram + ntfy
+    python push_engine.py poll      [--dry-run]  # handle Telegram getUpdates commands
 
 All times are UTC, which equals Ghana local time (UTC+0).
 """
@@ -39,6 +45,9 @@ ENRICH_LIMIT = 30  # stations nearest Accra center enriched with hourly data
 
 ALERT_AQI_THRESHOLD = 151  # US EPA "Unhealthy" and above
 ALERT_COOLDOWN_HOURS = 12
+
+NTFY_BASE = os.environ.get("NTFY_BASE", "https://ntfy.sh").rstrip("/")
+NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "mframa-accra-air")
 
 BASE_DIR = Path(__file__).parent
 SNAPSHOT_PATH = BASE_DIR / "data" / "snapshot.json"
@@ -240,6 +249,18 @@ def stations_with_readings(locations: list[dict], extra_ids: set | None = None) 
 _CITY_CACHE: dict[int, dict] = {}
 
 
+def city_hourly_series(locations: list[dict]) -> list[dict]:
+    """City-mean hourly PM2.5 series across all stations, oldest first."""
+    by_hour: dict[str, list[float]] = {}
+    for loc in locations:
+        for rec in loc.get("hourly_pm25") or []:
+            ts, value = rec.get("hour_utc"), rec.get("value")
+            if ts and value is not None:
+                by_hour.setdefault(str(ts), []).append(float(value))
+    return [{"hour_utc": ts, "value": float(np.mean(vals))}
+            for ts, vals in sorted(by_hour.items())]
+
+
 def city_context(locations: list[dict]) -> dict:
     """City-wide median PM2.5, 7-day median and rising/falling trend.
 
@@ -254,19 +275,13 @@ def city_context(locations: list[dict]) -> dict:
     current = [pm25_of(l) for l in locations if pm25_of(l) is not None]
     city_median = float(np.median(current)) if current else None
 
-    by_hour: dict[str, list[float]] = {}
-    for loc in locations:
-        for rec in loc.get("hourly_pm25") or []:
-            ts, value = rec.get("hour_utc"), rec.get("value")
-            if ts and value is not None:
-                by_hour.setdefault(str(ts), []).append(float(value))
+    points = [
+        (datetime.fromisoformat(rec["hour_utc"].replace("Z", "+00:00")), rec["value"])
+        for rec in city_hourly_series(locations)
+    ]
 
     trend, week_median = None, None
-    if by_hour:
-        points = sorted(
-            (datetime.fromisoformat(ts.replace("Z", "+00:00")), float(np.mean(vals)))
-            for ts, vals in by_hour.items()
-        )
+    if points:
         week_median = float(np.median([v for _, v in points]))
         if len(points) >= 24:
             t0 = points[0][0]
@@ -383,6 +398,75 @@ def build_alert_message(station_info: dict, city_median: float | None) -> str:
 
 
 # ---------------------------------------------------------------------------
+# City-wide (ntfy) message builders — plain text, no Markdown
+# ---------------------------------------------------------------------------
+
+def build_city_briefing(stations: list[dict]) -> str:
+    """City-wide morning briefing for the public ntfy topic."""
+    ctx = city_context(stations)
+    city_median = ctx.get("city_median")
+    aqi = analytics.pm25_to_aqi(city_median) if city_median is not None else None
+
+    lines = ["Good morning, Accra! Your Mframa city air briefing:", ""]
+    if aqi is not None:
+        label = analytics.aqi_category(aqi)["label"]
+        lines.append(f"City now: PM2.5 {city_median:.1f} µg/m³ — AQI {aqi} ({label})")
+    else:
+        lines.append("No fresh city reading this morning; guidance below uses the 7-day pattern.")
+
+    series = city_hourly_series(stations)
+    if series:
+        plan = analytics.best_hours(series)
+        green = plan.get("green_windows") or []
+        red = plan.get("red_windows") or []
+        if green:
+            lines.append("Cleanest hours today: " + " · ".join(_fmt_window(w) for w in green))
+        else:
+            lines.append("No clear low-pollution window today — prefer indoor exercise.")
+        if red:
+            lines.append("Avoid heavy outdoor exertion: " + " · ".join(_fmt_window(w) for w in red))
+
+    lines.append("")
+    lines.append(
+        "Commute: rush hours 06:00–09:00 and 17:00–20:00 push roadside pollution up. "
+        "If you can, travel outside these windows; on a trotro keep windows up in jams."
+    )
+    if ctx.get("harmattan_watch"):
+        lines.append("")
+        lines.append(
+            "Harmattan watch: city-wide PM2.5 has been climbing over the past week "
+            f"(7-day median {ctx['week_median']:.1f} µg/m³). Dust season is building — expect hazy afternoons."
+        )
+    lines.append("")
+    lines.append("Live map & personal advice: https://mframa.streamlit.app · Data: OpenAQ")
+    return "\n".join(lines)
+
+
+def build_city_alert(station_info: dict, city_median: float | None) -> str:
+    """City-wide burst alert body for the ntfy topic (plain text)."""
+    name = station_info.get("name") or "Accra"
+    pm25 = station_info.get("pm25")
+    aqi = station_info.get("aqi")
+    label = analytics.aqi_category(aqi)["label"] if aqi is not None else "Unhealthy"
+
+    lines = []
+    if pm25 is not None and aqi is not None:
+        lines.append(f"{name}: PM2.5 {pm25:.1f} µg/m³ — AQI {aqi} ({label}).")
+    if city_median is not None:
+        lines.append(f"City median right now: {city_median:.1f} µg/m³ "
+                     f"(AQI {analytics.pm25_to_aqi(city_median)}).")
+    lines.append("")
+    lines.append("What to do now:")
+    lines.append("- Stay indoors and keep windows closed.")
+    lines.append("- Avoid the 06:00–09:00 / 17:00–20:00 rush corridors if you must travel; wear a well-fitting mask.")
+    lines.append("- Move children, elderly and anyone with asthma away from smoke and dust.")
+    lines.append("- Postpone outdoor exercise, laundry and burning of any waste.")
+    lines.append("")
+    lines.append("Live map: https://mframa.streamlit.app · Data: OpenAQ")
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
 # Telegram transport
 # ---------------------------------------------------------------------------
 
@@ -413,6 +497,56 @@ def send_message(token: str, chat_id, text: str, dry_run: bool = False) -> bool:
     except requests.RequestException as exc:
         print(f"Telegram send failed for chat_id={chat_id}: {exc}", file=sys.stderr)
         return False
+
+
+# ---------------------------------------------------------------------------
+# ntfy transport (city-wide public topic)
+# ---------------------------------------------------------------------------
+
+def _header_ascii(s: str) -> str:
+    """HTTP headers must be latin-1; fold common unicode punctuation to ASCII."""
+    return (s.replace("\u2013", "-").replace("\u2014", "-")
+             .encode("ascii", "replace").decode("ascii"))
+
+
+def send_ntfy(title: str, text: str, priority: str = "default",
+              tags: str = "", dry_run: bool = False) -> bool:
+    """Publish a message to the public ntfy topic. No auth needed."""
+    if dry_run:
+        print(f"--- [dry-run] ntfy publish to {NTFY_BASE}/{NTFY_TOPIC} ---")
+        print(f"Title: {title} | Priority: {priority} | Tags: {tags}")
+        print(text)
+        print("--- end message ---\n")
+        return True
+    try:
+        resp = requests.post(
+            f"{NTFY_BASE}/{NTFY_TOPIC}",
+            data=text.encode("utf-8"),
+            headers={"Title": _header_ascii(title), "Priority": priority, "Tags": tags},
+            timeout=REQUEST_TIMEOUT,
+        )
+        if resp.status_code != 200:
+            print(f"ntfy publish failed: HTTP {resp.status_code} {resp.text[:200]}", file=sys.stderr)
+            return False
+        return True
+    except requests.RequestException as exc:
+        print(f"ntfy publish failed: {exc}", file=sys.stderr)
+        return False
+
+
+def cmd_broadcast(dry_run: bool) -> int:
+    """City-wide morning briefing to the ntfy topic."""
+    locations, source = get_locations()
+    stations = stations_with_readings(locations)
+    print(f"Data source: {source}; stations with readings: {len(stations)}")
+    if not stations:
+        print("No station readings available — broadcast skipped.", file=sys.stderr)
+        return 1
+    msg = build_city_briefing(stations)
+    ok = send_ntfy("Mframa morning briefing — Accra air", msg,
+                   priority="default", tags="sunrise,ghana", dry_run=dry_run)
+    print(f"City briefing {'printed' if dry_run else 'published'}: {'ok' if ok else 'FAILED'}.")
+    return 0 if ok else 1
 
 
 # ---------------------------------------------------------------------------
@@ -461,13 +595,11 @@ def _alert_due(sub: dict, alert_type: str, now: datetime) -> bool:
 
 def cmd_alerts(dry_run: bool) -> int:
     subscribers = load_subscribers()
-    if not subscribers:
-        print("No subscribers — nothing to check.")
-        return 0
     token = get_bot_token()
-    if not token and not dry_run:
-        print("TELEGRAM_BOT_TOKEN not set — falling back to dry-run (no messages sent).")
-        dry_run = True
+    tg_dry_run = dry_run
+    if not token and not tg_dry_run:
+        print("TELEGRAM_BOT_TOKEN not set — Telegram alerts in dry-run (ntfy still publishes).")
+        tg_dry_run = True
 
     locations, source = get_locations()
     extra = {s.get("station_id") for s in subscribers if s.get("station_id") is not None}
@@ -485,6 +617,38 @@ def cmd_alerts(dry_run: bool) -> int:
           f"city alarm: {city_alarm}")
 
     now = datetime.now(timezone.utc)
+
+    # --- city-wide ntfy burst alert (public topic, worst station or city median) ---
+    worst, worst_aqi = None, None
+    for loc in stations:
+        v = pm25_of(loc)
+        a = analytics.pm25_to_aqi(v) if v is not None else None
+        if a is not None and (worst_aqi is None or a > worst_aqi):
+            worst, worst_aqi = loc, a
+
+    ntfy_type, ntfy_info = None, None
+    if worst_aqi is not None and worst_aqi >= ALERT_AQI_THRESHOLD:
+        ntfy_type = "station"
+        ntfy_info = {"name": worst.get("name"), "pm25": pm25_of(worst), "aqi": worst_aqi}
+    elif city_alarm:
+        ntfy_type = "city"
+        ntfy_info = {"name": "Accra", "pm25": None, "aqi": None}
+
+    if ntfy_type:
+        state = load_bot_state()
+        if _alert_due(state, f"ntfy_{ntfy_type}", now):
+            body = build_city_alert(ntfy_info, city_median)
+            if send_ntfy("AIR QUALITY ALERT — Accra", body,
+                         priority="urgent", tags="rotating_light,warning", dry_run=dry_run):
+                state["last_alert_type"] = f"ntfy_{ntfy_type}"
+                state["last_alert_at"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+                if not dry_run:
+                    save_bot_state(state)
+                print(f"ntfy city alert {'printed' if dry_run else 'published'} ({ntfy_type}).")
+        else:
+            print(f"ntfy alert ({ntfy_type}) within {ALERT_COOLDOWN_HOURS}h cooldown — skipped.")
+
+    # --- per-subscriber Telegram alerts ---
     sent, changed = 0, False
     for sub in subscribers:
         station = find_station(sub, stations)
@@ -502,15 +666,15 @@ def cmd_alerts(dry_run: bool) -> int:
 
         if alert_type and _alert_due(sub, alert_type, now):
             msg = build_alert_message(info, city_median)
-            if send_message(token or "", sub.get("chat_id"), msg, dry_run=dry_run):
+            if send_message(token or "", sub.get("chat_id"), msg, dry_run=tg_dry_run):
                 sub["last_alert_type"] = alert_type
                 sub["last_alert_at"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
                 sent += 1
                 changed = True
 
-    if changed and not dry_run:
+    if changed and not tg_dry_run:
         save_subscribers(subscribers)
-    print(f"Alerts {'printed' if dry_run else 'sent'}: {sent} (threshold AQI {ALERT_AQI_THRESHOLD}, "
+    print(f"Alerts {'printed' if tg_dry_run else 'sent'}: {sent} (threshold AQI {ALERT_AQI_THRESHOLD}, "
           f"cooldown {ALERT_COOLDOWN_HOURS}h).")
     return 0
 
@@ -681,13 +845,15 @@ def main() -> int:
         except (AttributeError, ValueError):
             pass
     parser = argparse.ArgumentParser(description="Mframa proactive push engine")
-    parser.add_argument("command", choices=["briefing", "alerts", "poll"])
+    parser.add_argument("command", choices=["briefing", "broadcast", "alerts", "poll"])
     parser.add_argument("--dry-run", action="store_true",
                         help="print messages instead of sending them (no token needed)")
     args = parser.parse_args()
 
     if args.command == "briefing":
         return cmd_briefing(args.dry_run)
+    if args.command == "broadcast":
+        return cmd_broadcast(args.dry_run)
     if args.command == "alerts":
         return cmd_alerts(args.dry_run)
     return cmd_poll(args.dry_run)

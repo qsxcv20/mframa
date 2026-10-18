@@ -745,24 +745,34 @@ def render_get_alerts():
         bot_username = os.environ.get("TELEGRAM_BOT_USERNAME")
     bot_username = (bot_username or "").strip().lstrip("@")
 
+    ntfy_topic = "mframa-accra-air"
+    st.markdown(
+        f"👉 **Subscribe free in 10 seconds — no account, no phone number:** open "
+        f"**[ntfy.sh/{ntfy_topic}](https://ntfy.sh/{ntfy_topic})** in any browser and tap "
+        f"*Subscribe to topic*, or install the **ntfy** app (Android / iOS) and add the topic "
+        f"`{ntfy_topic}`. You will get the daily morning briefing and every city-wide burst alert "
+        "as a phone notification."
+    )
+
     if bot_username:
         st.markdown(
-            f"👉 **Subscribe free on Telegram: [@{bot_username}](https://t.me/{bot_username})** — "
+            f"📮 **Station-level personal alerts on Telegram: [@{bot_username}](https://t.me/{bot_username})** — "
             "send `/subscribe nearest` and share your location, or `/subscribe <station name>`."
         )
     else:
-        st.info("Our Telegram bot is launching soon — check back shortly for free air alerts.")
+        st.caption("A Telegram bot with station-level personal alerts (/subscribe your street's "
+                   "sensor) is launching soon — the ntfy channel above already works today.")
 
     with st.expander("No smartphone? SMS / USSD is the scale path"):
         st.markdown(
-            "Telegram covers smartphone users first. To reach feature-phone users — "
+            "ntfy covers smartphone users first. To reach feature-phone users — "
             "often the people most exposed — the same engine plugs into "
             "**[Africa's Talking](https://africastalking.com/)** for SMS and USSD delivery "
             "across MTN, Vodafone and AirtelTigo. The alert logic, thresholds and "
             "de-duplication stay identical; only the transport changes."
         )
 
-    st.caption("Free to use, always. Data: OpenAQ · reply /stop to the bot any time to unsubscribe.")
+    st.caption("Free to use, always. Data: OpenAQ · mute the ntfy topic any time to unsubscribe.")
 
 
 def render_map(stations):
