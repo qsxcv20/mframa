@@ -36,7 +36,10 @@ class AirQualityFragment : Fragment() {
         (function() {
           function hideBadges() {
             document.querySelectorAll(
-              'a[href*="streamlit.io"], [class*="viewerBadge"]'
+              'a[href*="streamlit.io"], [class*="viewerBadge"], ' +
+              '[data-testid="stToolbar"], [data-testid="stHeader"], ' +
+              '[data-testid="stAppDeployButton"], [data-testid="stDecoration"], ' +
+              '[data-testid="stFooter"], [class*="embeddedAppMetaBlock"]'
             ).forEach(function(e) { e.style.display = 'none'; });
           }
           hideBadges();
@@ -55,6 +58,7 @@ class AirQualityFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_air, container, false)
         val web = root.findViewById<WebView>(R.id.webview)
         val loading = root.findViewById<View>(R.id.loading_overlay)
+        val errorOverlay = root.findViewById<View>(R.id.error_overlay)
         bindLaunchCard(root)
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
@@ -85,6 +89,7 @@ class AirQualityFragment : Fragment() {
                 url: String,
                 favicon: android.graphics.Bitmap?
             ) {
+                errorOverlay.visibility = View.GONE
                 loading.visibility = View.VISIBLE
             }
 
@@ -92,16 +97,40 @@ class AirQualityFragment : Fragment() {
                 loading.visibility = View.GONE
                 view.evaluateJavascript(hideBadgeJs, null)
             }
+
+            override fun onReceivedError(
+                view: WebView,
+                request: WebResourceRequest,
+                error: android.webkit.WebResourceError
+            ) {
+                if (!request.isForMainFrame) return
+                loading.visibility = View.GONE
+                errorOverlay.visibility = View.VISIBLE
+            }
         }
-        if (savedInstanceState == null) {
-            // ?from=app tells the web app it runs inside the native shell, so
-            // it can hide ntfy/Telegram signup guidance in favor of the
-            // built-in alerts on the My Exposure page.
-            val sep = if ('?' in BuildConfig.WEB_URL) '&' else '?'
-            web.loadUrl(BuildConfig.WEB_URL + sep + "from=app")
+        root.findViewById<View>(R.id.btn_retry).setOnClickListener {
+            errorOverlay.visibility = View.GONE
+            if (web.url != null) web.reload() else loadWebApp(web)
         }
+        val restored = savedInstanceState != null && web.restoreState(savedInstanceState) != null
+        if (!restored) loadWebApp(web)
         webView = web
         return root
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        webView?.saveState(outState)
+    }
+
+    // ?from=app tells the web app it runs inside the native shell, so
+    // it can hide ntfy/Telegram signup guidance in favor of the
+    // built-in alerts on the My Exposure page. embed=true strips the
+    // Streamlit toolbar (Fork/GitHub/menu) that page-injected JS
+    // cannot reach inside the wrapper iframe.
+    private fun loadWebApp(web: WebView) {
+        val sep = if ('?' in BuildConfig.WEB_URL) '&' else '?'
+        web.loadUrl(BuildConfig.WEB_URL + sep + "from=app&embed=true")
     }
 
     override fun onDestroyView() {

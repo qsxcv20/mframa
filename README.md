@@ -32,7 +32,7 @@ Built for the **TechHub Africa Hackathon 2026**, track *Reducing Public Pollutio
 | Criterion | Where Mframa answers it |
 |---|---|
 | **Design & implementation** | Bilingual (EN/中文) phone-first UI; web + native Android companion; zero-account, zero-install; universal emoji AQI faces a child can read; live today at [mframa.streamlit.app](https://mframa.streamlit.app) |
-| **Technical complexity** | 12-algorithm leak-free backtest to pick the nowcast champion ([`bench_nowcast.py`](bench_nowcast.py)) + blind holdout ([`_holdout_eval.py`](_holdout_eval.py)); CAMS dust-vs-smoke source attribution; breathing-rate-weighted dose model; 15-min `field.json` pollution-field pipeline for offline Android lookup |
+| **Technical complexity** | 12-algorithm leak-free backtest to pick the nowcast champion ([`bench_nowcast.py`](bench_nowcast.py)) + blind holdout ([`_holdout_eval.py`](_holdout_eval.py)); CAMS dust-vs-smoke source attribution; breathing-rate-weighted dose model; ~15–30-min `field.json` pollution-field pipeline for offline Android lookup |
 | **Potential impact** | ~28,000 premature deaths/yr and Ghana's #2 health risk ([Clean Air Fund](https://www.cleanairfund.org/geography/ghana/)); WhatsApp-first distribution where Ghanaians already are; push alerts via free ntfy; EPA Ghana / NGO partnership roadmap for SMS reach |
 | **Creativity** | Cigarette-equivalent exposure front and center; "Best Hours Today" clean-window finder; Harmattan dust-vs-smoke attribution; live policy tracking of the [Agbogbloshie e-waste cleanup](https://www.myjoyonline.com/one-million-tonnes-of-waste-to-be-evacuated-from-agbogbloshie-in-90-days-mahama/) |
 
@@ -55,7 +55,7 @@ Top navigation, four destinations, tuned for one-thumb phone use:
 - **My Air** — pick a health profile (child, pregnant, asthma, elderly, outdoor worker, healthy adult) and get plain-language action guidance on WHO-aligned PM2.5 breakpoints, not generic "moderate" labels. The AQI card wears a **universal emoji face** per level (😊 good → 😷 unhealthy), so even a child can read the air. A **"Dust or Smoke?"** card attributes the source — Saharan dust vs combustion smoke — from live PM2.5 plus the CAMS dust forecast.
 - **Best Hours Today** — the question everyone actually asks: *when should I go out?* A diurnal curve from 7 days of hourly readings finds the historically cleanest hours, overlays today's live trend, and marks **green outdoor windows** — plus a 48-hour dust & PM2.5 forecast.
 - **Live Map** — all 85 monitoring stations across Accra with an IDW interpolation heatmap: the pollution *field*, not just dots — plus a **NASA FIRMS VIIRS fire layer** ([`fetch_fires.py`](fetch_fires.py), refreshed every 6 h by [`.github/workflows/fires.yml`](.github/workflows/fires.yml)) sizing each active fire by radiative power, so you can *see* the smoke sources around the city.
-- **More → What Did I Breathe? / Get Air Alerts** — a **cigarette-equivalent exposure calculator** ([Berkeley Earth conversion](http://berkeleyearth.org/air-pollution-and-cigarette-equivalence/): 22 µg/m³ over a day ≈ one cigarette), weighted by breathing rate and your actual commute/outdoor time; and 10-second subscription to a **daily morning briefing** plus **burst alerts** when the city crosses AQI 151 — no account, no phone number.
+- **More → What Did I Breathe? / Get Air Alerts** — a **cigarette-equivalent exposure calculator** ([Berkeley Earth conversion](https://berkeleyearth.org/air-pollution-and-cigarette-equivalence/): 22 µg/m³ over a day ≈ one cigarette), weighted by breathing rate and your actual commute/outdoor time; and 10-second subscription to a **daily morning briefing** plus **burst alerts** when the city crosses AQI 151 — no account, no phone number.
 - **In the Android app:** threshold alerts fire inside the app itself as your accumulated dose crosses levels.
 - **One-tap WhatsApp share** of your air report — a prefilled message with the current level, cigarette equivalent, best outdoor window and a deep link back, built for the channel where Ghanaians actually forward information.
 
@@ -77,7 +77,7 @@ Even cheating with future data only reaches 0.71 — and we are at 0.7049, withi
 ## Market & distribution
 
 - **The audience is already online and mobile-first:** [DataReportal Digital 2025: Ghana](https://datareportal.com/reports/digital-2025-ghana) reports **69.9% internet penetration**, mobile connections at **110% of population**, and WhatsApp as the dominant social platform. Hence: no account, no install for the web app, share-first design.
-- **Data is cheap but bought by the day:** mobile data averages about **$0.40/GB** in Ghana ([Cable.co.uk worldwide data pricing](https://www.cable.co.uk/mobiles/worldwide-data-pricing/)), but most users buy small daily bundles — so Mframa is lightweight (server-side fetching, cached responses, small pages) and **push-first**: the air report comes to you instead of you spending data checking.
+- **Data is cheap but bought by the day:** mobile data averages about **$0.40/GB** in Ghana ([worldwide mobile data pricing](https://bestbroadbanddeals.co.uk/mobiles/worldwide-data-pricing/)), but most users buy small daily bundles — so Mframa is lightweight (server-side fetching, cached responses, small pages) and **push-first**: the air report comes to you instead of you spending data checking.
 - **Differentiation:** [AirQo](https://www.airqo.net/) (Uganda) runs a capital-intensive model deploying its own hardware. Mframa is **zero-hardware**: it rides the existing OpenAQ / [AfriqAir](https://www.afriqair.org/) networks (AfriqAir already spans 11 African countries). The same pipeline redeploys to a new city — **Kumasi, Lagos, Nairobi** — by changing a bounding box and a country code.
 - **Phase 2 roadmap:** USSD/SMS queries via [Africa's Talking](https://africastalking.com/) to reach the ~30% offline population; Sentinel-5P satellite assimilation for areas between sensors; Twi key phrases for the most critical alerts.
 
@@ -88,7 +88,7 @@ Every number comes from the **[OpenAQ v3 API](https://api.openaq.org)** — we d
 - **85 real monitoring locations in Ghana** (OpenAQ country id 152), including the **AfriqAir / Carnegie Mellon University hybrid network** and **Clarity** low-cost sensors, at verifiable places: **Agbogbloshie, Makola, Osu Oxford Street**, and dozens more
 - **~60 stations report fresh data daily**; every figure is labeled with its **source station and timestamp**
 - **Live-first, snapshot-fallback:** the app always tries the live API; `data/snapshot.json` — regenerated with `fetch_snapshot.py` — is used **only** when the API is unreachable
-- **field.json pipeline:** `publish_field.py` builds a **31×51 IDW grid over Accra (96% valid cells)** into [`public/field.json`](public/field.json); the GitHub Actions workflow [`.github/workflows/alert_and_poll.yml`](.github/workflows/alert_and_poll.yml) refreshes and commits it **every 15 minutes**, served via `raw.githubusercontent.com`, so the Android app does **fully offline air-quality lookup** — no API key, no connection needed on the phone
+- **field.json pipeline:** `publish_field.py` builds a **31×51 IDW grid over Accra (96% valid cells)** into [`public/field.json`](public/field.json); the GitHub Actions workflow [`.github/workflows/alert_and_poll.yml`](.github/workflows/alert_and_poll.yml) refreshes and commits it **about every 15–30 minutes** (GitHub's cron scheduler can delay queued runs; ~30 min is typical under load), served via `raw.githubusercontent.com`, so the Android app does **fully offline air-quality lookup** — no API key, no connection needed on the phone
 - **Dust forecasting:** `openmeteo_client.py` integrates the free **CAMS / ECMWF Saharan-dust forecast** via [Open-Meteo](https://open-meteo.com) (no API key), powering the Harmattan badge and the smoke-vs-dust attribution
 - The API key is read only from the `OPENAQ_API_KEY` environment variable or Streamlit secrets — never hardcoded or committed
 
@@ -107,8 +107,9 @@ A native Kotlin app under `android/` for the way Ghanaians actually live with ai
 Checking an app is a habit most people don't have. The push engine ([`push_engine.py`](push_engine.py)) flips the model: **the air report comes to you**.
 
 - **Morning briefing** — ~05:45 daily: city PM2.5 and AQI, today's cleanest hours, rush-hour commute guidance, laundry & windows tip, plus a Harmattan-season warning when the 7-day median climbs
-- **Burst alerts** — every 15 minutes; when any station or the whole city crosses **AQI 151 (Unhealthy)**, an immediate alert with protective steps (max one alert of each type per 12 hours)
+- **Burst alerts** — every 15–30 minutes; when any station or the whole city crosses **AQI 151 (Unhealthy)**, an immediate alert with protective steps (max one alert of each type per 12 hours)
 - **Subscribe free, no account:** open [ntfy.sh/mframa-accra-air](https://ntfy.sh/mframa-accra-air) and tap *Subscribe*, or add topic `mframa-accra-air` in the ntfy app. A Telegram bot with station-level personal alerts is wired into the same engine and activates once a token is configured
+- **Privacy:** the Telegram subscriber registry (`subscribers.json`, with chat_ids) is `.gitignore`'d and never committed to this public repo — CI persists only the non-personal `bot_state.json` (update offsets and alert cooldowns). Telegram subscriptions therefore do not survive across CI runs; run `push_engine.py` locally for a persistent Telegram deployment, the ntfy topic remains the supported zero-account channel
 - **Cost model:** ntfy and Telegram are free. SMS via Africa's Talking runs roughly $0.01–0.05/message in Ghana — 10,000 subscribers ≈ $300–500/month, a line item sized for CSR sponsorship or an EPA Ghana / NGO partnership, the planned funding path
 
 ## Evidence wall
@@ -189,13 +190,16 @@ _holdout_eval.py        blind holdout validation on a fresh OpenAQ pull
 openaq_client.py        OpenAQ v3 client: cache, retry, live-first + snapshot fallback
 openmeteo_client.py     free CAMS/ECMWF dust forecast client (no API key)
 fetch_snapshot.py       regenerates the offline fallback snapshot
-push_engine.py          ntfy city broadcast + Telegram briefings + 15-min burst alerts
+push_engine.py          ntfy city broadcast + Telegram briefings + 15–30-min burst alerts
 publish_field.py        generates public/field.json (31×51 IDW grid over Accra)
 public/field.json       published pollution field, consumed by the Android app offline
 data/                   snapshot, holdout, nowcast metrics, hospital list, caches
 android/                Kotlin companion app (WebView + foreground GPS + DoseLogic)
 dist/                   prebuilt APKs (latest: Mframa-v0.7-debug.apk)
-.github/workflows/      alert_and_poll.yml — 15-min alerts, bot poll, field.json refresh
+.github/workflows/      alert_and_poll.yml — 15–30-min alerts, bot poll, field.json + snapshot refresh
+                        morning_briefing.yml — twice-daily briefings (~05:45 & ~17:45 UTC)
+                        fires.yml — NASA FIRMS fire layer refresh every 6 h
+subscribers.json        Telegram registry (local-only, .gitignore'd — chat_ids never committed; see below)
 requirements.txt        web app dependencies
 ```
 
@@ -226,7 +230,7 @@ requirements.txt        web app dependencies
               └───────────────────┬─────────────────────┘
                                   ▼
         ┌──────────────────────────────────────────────┐
-        │   GitHub Actions — every 15 min              │
+        │   GitHub Actions — every 15–30 min           │
         │   push_engine (ntfy · Telegram) · publish_field.py  │
         └───────────────┬──────────────────────────────┘
                         ▼

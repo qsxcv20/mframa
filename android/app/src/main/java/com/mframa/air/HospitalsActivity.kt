@@ -31,6 +31,9 @@ class HospitalsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hospitals)
 
+        setSupportActionBar(findViewById(R.id.hospitals_toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         adapter = HospitalAdapter { openInMaps(it) }
         val list = findViewById<RecyclerView>(R.id.hospitals_list)
         list.layoutManager = LinearLayoutManager(this)
@@ -89,6 +92,11 @@ class HospitalsActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, R.string.no_maps_app, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     companion object {

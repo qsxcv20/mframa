@@ -72,11 +72,17 @@ S = {
     "quick_jump": {"en": "Jump to:", "zh": "快速前往："},
     "est_warn": {
         "en": "Estimated (station offline) — based on diurnal pattern + "
-              "{n} nearby stations{stats}. Last reading {stale} h ago · "
+              "{n} nearby stations{stats}. Last reading: {stale} · "
               "confidence: {conf}.",
         "zh": "估算值（站点离线）——基于昼夜变化规律 + {n} 个邻近站点{stats}。"
-              "最近一次读数为 {stale} 小时前 · 置信度：{conf}。",
+              "最近一次读数：{stale} · 置信度：{conf}。",
     },
+    "stale_ago": {"en": "{h} h ago", "zh": "{h} 小时前"},
+    "stale_unknown": {"en": "time unknown", "zh": "时间未知"},
+    "conf_high": {"en": "high", "zh": "高"},
+    "conf_medium": {"en": "medium", "zh": "中"},
+    "conf_low": {"en": "low", "zh": "低"},
+    "conf_unknown": {"en": "unknown", "zh": "未知"},
     "est_mae": {
         "en": "backtest MAE ≈ {mae} µg/m³",
         "zh": "回测 MAE ≈ {mae} µg/m³",
@@ -275,12 +281,13 @@ S = {
               "两个免费渠道，背后是定时检查你在这里看到的同一套 OpenAQ 数据：",
     },
     "alerts_morning": {
-        "en": "**🌅 Morning briefing (daily, ~05:45)**\n\n"
+        "en": "**🌅 Morning & evening briefings (twice daily, ~05:45 & ~17:45)**\n\n"
               "Your station's current PM2.5 and AQI, today's cleanest hours,\n"
               "commute guidance for the 06:00–09:00 / 17:00–20:00 rush peaks,\n"
-              "and a laundry & windows tip — before you leave home.",
-        "zh": "**🌅 晨间简报（每天约 05:45）**\n\n"
-              "在你出门前送达：你所在站点的当前 PM2.5 和 AQI、今天最干净的时段、"
+              "and a laundry & windows tip — once before you leave home,\n"
+              "and again before the evening rush.",
+        "zh": "**🌅 早晚简报（每日两发，约 05:45 和 17:45）**\n\n"
+              "出门前和晚高峰前各送达一次：你所在站点的当前 PM2.5 和 AQI、今天最干净的时段、"
               "06:00–09:00 / 17:00–20:00 早晚高峰的通勤建议，以及晾晒和开窗小贴士。",
     },
     "alerts_burst": {
@@ -370,14 +377,14 @@ S = {
         "zh": "🗑️ Agbogbloshie 90 天清运：空气在变好吗？",
     },
     "cleanup_body": {
-        "en": "Cleanup launched {launch} · tracking station **{station}** "
+        "en": "Cleanup launched {launch} · tracking station <b>{station}</b> "
               "({dist} km from the site). Baseline (30 days before, {bdays} "
-              "days with data): **{base} µg/m³** → since launch ({cdays} days "
-              "with data): **{cur} µg/m³**",
-        "zh": "清运于 {launch} 启动 · 追踪站点 **{station}**（距垃圾场 "
+              "days with data): <b>{base} µg/m³</b> → since launch ({cdays} days "
+              "with data): <b>{cur} µg/m³</b>",
+        "zh": "清运于 {launch} 启动 · 追踪站点 <b>{station}</b>（距垃圾场 "
               "{dist} 公里）。启动前 30 天基线（{bdays} 天有数据）："
-              "**{base} µg/m³** → 启动至今（{cdays} 天有数据）："
-              "**{cur} µg/m³**",
+              "<b>{base} µg/m³</b> → 启动至今（{cdays} 天有数据）："
+              "<b>{cur} µg/m³</b>",
     },
     "cleanup_point": {
         "en": "Will 90 days of cleanup clear the air? Watch this card — the data "
@@ -574,3 +581,5 @@ def tt(text):
     return ZH_MAP.get(text, text)
 
 # touch: force streamlit cloud full redeploy
+
+# cache-bust: force Streamlit Cloud full redeploy

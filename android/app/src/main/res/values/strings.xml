@@ -40,4 +40,7 @@
     <string name="notif_city_title">Accra air alert</string>
     <string name="notif_city_text">PM2.5 is %1$d now — above your %2$d limit. Mask up outdoors.</string>
     <string name="exposure_cigs_note">Berkeley Earth rule: a day at 22 µg/m³ ≈ 1 cigarette</string>
+    <string name="offline_title">No internet connection</string>
+    <string name="offline_text">Mframa needs a connection to load live air quality. Check your data or Wi-Fi, then retry. City alerts already set up keep working in the background.</string>
+    <string name="retry">Retry</string>
 </resources>

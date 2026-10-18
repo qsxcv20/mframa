@@ -1,6 +1,9 @@
 # Secrets & machine-local
 .env
 local.properties
+# Telegram subscriber registry — chat_ids must never enter the public git
+# history; the file stays local-only and CI never commits it.
+subscribers.json
 
 # Python
 __pycache__/

@@ -51,6 +51,10 @@ NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "mframa-accra-air")
 
 BASE_DIR = Path(__file__).parent
 SNAPSHOT_PATH = BASE_DIR / "data" / "snapshot.json"
+# subscribers.json holds Telegram chat_ids and is .gitignore'd on purpose:
+# it must never be committed to the public repo. CI therefore does not
+# persist subscriptions across runs — the ntfy topic is the supported
+# zero-account broadcast channel; run push_engine locally for Telegram.
 SUBSCRIBERS_PATH = BASE_DIR / "subscribers.json"
 BOT_STATE_PATH = BASE_DIR / "bot_state.json"
 

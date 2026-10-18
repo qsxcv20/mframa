@@ -126,7 +126,8 @@ def build_agbogbloshie_cleanup(locations):
     print(f"tracking station: {loc['name']} ({dist(loc) * 111:.2f} km, sensor {sensor})")
 
     baseline = fetch_hours(sensor, "2026-08-19T00:00:00Z", "2026-09-18T00:00:00Z")
-    current = fetch_hours(sensor, "2026-09-18T00:00:00Z", "2026-10-19T00:00:00Z")
+    now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    current = fetch_hours(sensor, "2026-09-18T00:00:00Z", now_iso)
     if not baseline or not current:
         sys.exit(f"insufficient data: baseline {len(baseline)} h, current {len(current)} h")
     base_mean = sum(baseline.values()) / len(baseline)

@@ -237,6 +237,55 @@ def main():
         ok = False
         print("[FAIL] static-data loaders silent on missing files")
 
+    # Defensive helpers: negative PM2.5 clamps to 0, stations with missing
+    # coordinates never crash station picking, and malformed demo JSON
+    # (non-list stations, or every station lacking PM2.5) degrades to None.
+    import os as _os
+    import tempfile as _tempfile
+
+    def demo_with(payload):
+        fd, p = _tempfile.mkstemp(suffix=".json")
+        _os.write(fd, _json.dumps(payload).encode())
+        _os.close(fd)
+        try:
+            return app_mod.load_demo_harmattan(p)
+        finally:
+            _os.unlink(p)
+
+    try:
+        defensive = (
+            app_mod.pm25_of({"latest_pm25": {"value": -3.2}}) == 0.0
+            and app_mod.pm25_of({"latest_pm25": {"value": None}}) is None
+            and app_mod.nearest_index(
+                [{"lat": None, "lon": None}, {"lat": 5.6, "lon": -0.19}]) == 1
+            and demo_with({"stations": "not-a-list"}) is None
+            and demo_with({"stations": [{"latest_pm25": {"value": None}}]}) is None
+            and demo_with({"stations": [{"latest_pm25": {"value": 12.3}}]}) is not None
+        )
+    except Exception:
+        defensive = False
+    if defensive:
+        print("[OK] defensive helpers (pm25 clamp, None coords, demo filter)")
+    else:
+        ok = False
+        print("[FAIL] defensive helpers (pm25 clamp, None coords, demo filter)")
+
+    # A polluted lang value (e.g. "fr" from a hand-edited URL) must self-heal
+    # to English instead of silently showing the Chinese UI.
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.session_state["lang"] = "fr"
+    at.run()
+    errors = [str(e.value) for e in at.exception]
+    if not errors and at.session_state.get("lang") == "en":
+        print("[OK] polluted lang self-heals to English")
+    else:
+        ok = False
+        print("[FAIL] polluted lang self-heals to English")
+        for e in errors:
+            print("   ", e[:500])
+        if at.session_state.get("lang") != "en":
+            print("    failed: lang is %r" % at.session_state.get("lang"))
+
     # FIRMS: Live Map carries the NASA FIRMS fire-source caption (static
     # data/fires_ghana.json); My Air's attribution card shows the VIIRS
     # observation line whenever the dust/smoke card itself renders.

@@ -9,8 +9,8 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private val airFragment: Fragment by lazy { AirQualityFragment() }
-    private val exposureFragment: Fragment by lazy { ExposureFragment() }
+    private var airFragment: Fragment? = null
+    private var exposureFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,17 +22,26 @@ class MainActivity : AppCompatActivity() {
 
         val nav = findViewById<BottomNavigationView>(R.id.bottom_nav)
         if (savedInstanceState == null) {
+            val air = AirQualityFragment()
+            val exposure = ExposureFragment()
             supportFragmentManager.beginTransaction()
-                .add(R.id.fragment_container, exposureFragment, "exposure")
-                .hide(exposureFragment)
-                .add(R.id.fragment_container, airFragment, "air")
+                .add(R.id.fragment_container, exposure, "exposure")
+                .hide(exposure)
+                .add(R.id.fragment_container, air, "air")
                 .commit()
+            airFragment = air
+            exposureFragment = exposure
+        } else {
+            airFragment = supportFragmentManager.findFragmentByTag("air")
+            exposureFragment = supportFragmentManager.findFragmentByTag("exposure")
         }
         nav.setOnItemSelectedListener { item ->
+            val air = airFragment ?: return@setOnItemSelectedListener false
+            val exposure = exposureFragment ?: return@setOnItemSelectedListener false
             val tx = supportFragmentManager.beginTransaction()
             when (item.itemId) {
-                R.id.nav_air -> tx.hide(exposureFragment).show(airFragment)
-                R.id.nav_exposure -> tx.hide(airFragment).show(exposureFragment)
+                R.id.nav_air -> tx.hide(exposure).show(air)
+                R.id.nav_exposure -> tx.hide(air).show(exposure)
                 else -> return@setOnItemSelectedListener false
             }
             tx.commit()

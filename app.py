@@ -7,6 +7,7 @@ Data: OpenAQ v3 (live API with snapshot fallback via openaq_client).
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
+import html
 import json
 
 import numpy as np
@@ -165,12 +166,18 @@ FIRES_PATH = Path(__file__).parent / "data" / "fires_ghana.json"
 
 
 def load_demo_harmattan(path=None):
-    """Static Harmattan replay dataset (?demo=harmattan); None if unavailable."""
+    """Static Harmattan replay dataset (?demo=harmattan); None if unavailable.
+
+    Stations without a current PM2.5 reading are dropped here so the Map and
+    Breathe pages never see them (they assume every replay station has one).
+    """
     try:
         d = json.loads(Path(path or DEMO_PATH).read_text(encoding="utf-8"))
-        if d.get("stations"):
-            return d
-    except (OSError, json.JSONDecodeError, TypeError):
+        if isinstance(d.get("stations"), list) and d["stations"]:
+            d["stations"] = [s for s in d["stations"] if pm25_of(s) is not None]
+            if d["stations"]:
+                return d
+    except (OSError, json.JSONDecodeError, TypeError, AttributeError):
         pass
     return None
 
@@ -253,7 +260,9 @@ def pm25_of(loc):
     latest = loc.get("latest_pm25") or {}
     value = latest.get("value")
     try:
-        return float(value) if value is not None else None
+        # Sensor glitches can report small negative values; PM2.5 is a mass
+        # concentration, so clamp at zero instead of showing "-2.4 µg/m³".
+        return max(0.0, float(value)) if value is not None else None
     except (TypeError, ValueError):
         return None
 
@@ -279,7 +288,10 @@ def stations_with_readings(locations, enrich_limit=30):
     if ready:
         return ready
     def dist(loc):
-        return (loc.get("lat", 0) - ACCRA_CENTER[0]) ** 2 + (loc.get("lon", 0) - ACCRA_CENTER[1]) ** 2
+        lat, lon = loc.get("lat"), loc.get("lon")
+        if lat is None or lon is None:
+            return float("inf")
+        return (lat - ACCRA_CENTER[0]) ** 2 + (lon - ACCRA_CENTER[1]) ** 2
     enriched = []
     for loc in sorted(locations, key=dist)[:enrich_limit]:
         hourly = get_hourly(loc)
@@ -592,7 +604,10 @@ def text_on(bg_hex):
 def nearest_index(stations):
     best_i, best_d = 0, float("inf")
     for i, s in enumerate(stations):
-        d = (s.get("lat", 0) - ACCRA_CENTER[0]) ** 2 + (s.get("lon", 0) - ACCRA_CENTER[1]) ** 2
+        lat, lon = s.get("lat"), s.get("lon")
+        if lat is None or lon is None:
+            continue
+        d = (lat - ACCRA_CENTER[0]) ** 2 + (lon - ACCRA_CENTER[1]) ** 2
         if d < best_d:
             best_i, best_d = i, d
     return best_i
@@ -663,6 +678,11 @@ def render_my_air(stations, replay=False):
     latest = station.get("latest_pm25") or {}
     ts = latest.get("datetime_utc") or station.get("last_updated_utc") or "unknown time"
     provider = station.get("provider") or "OpenAQ"
+    # External strings (station metadata from the API) are HTML-escaped before
+    # entering the unsafe_allow_html card.
+    name_txt = html.escape(str(station.get("name") or "Station"))
+    ts_txt = html.escape(str(ts))
+    provider_txt = html.escape(str(provider))
     est_suffix = t("estimated_suffix") if estimate and estimate.get("value") is not None else ""
 
     st.markdown(
@@ -670,14 +690,14 @@ def render_my_air(stations, replay=False):
         <div class="aqi-card"
              style="background:{color};border-radius:18px;padding:30px 22px;
                     color:{fg};text-align:center;margin-bottom:8px;">
-          <div class="aqi-name" style="font-size:1rem;opacity:.85;">{station.get('name', 'Station')}</div>
+          <div class="aqi-name" style="font-size:1rem;opacity:.85;">{name_txt}</div>
           <div class="aqi-face" style="font-size:2.2rem;line-height:1.2;margin-top:4px;">{face}</div>
           <div class="aqi-value" style="font-size:3.6rem;font-weight:800;line-height:1.1;">
             {pm25:.1f}<span style="font-size:1.1rem;font-weight:500;"> µg/m³ PM2.5</span>
           </div>
           <div class="aqi-line" style="font-size:1.5rem;font-weight:700;">AQI {aqi} · {tt(label)}{est_suffix}</div>
           <div class="aqi-meta" style="font-size:.8rem;opacity:.8;margin-top:6px;">
-            {t("updated_source", ts=ts, provider=provider)}
+            {t("updated_source", ts=ts_txt, provider=provider_txt)}
           </div>
         </div>
         """,
@@ -702,10 +722,16 @@ def render_my_air(stations, replay=False):
             if m.get("acc") is not None and m.get("n") else ""
         )
         stats_txt = f" — {mae_txt}{acc_txt}" if mae_txt else ""
+        stale_h = estimate.get("stale_hours")
+        stale_txt = (t("stale_ago", h=f"{stale_h:.1f}") if stale_h is not None
+                     else t("stale_unknown"))
+        conf = estimate.get("confidence")
+        conf_txt = (t(f"conf_{conf}") if conf in ("high", "medium", "low")
+                    else t("conf_unknown"))
         st.warning(t(
             "est_warn",
             n=estimate.get("sources_used", 0), stats=stats_txt,
-            stale=estimate.get("stale_hours"), conf=estimate.get("confidence"),
+            stale=stale_txt, conf=conf_txt,
         ))
 
     # Wow lines: cigarette equivalent + today's first clean window, right
@@ -827,7 +853,9 @@ def render_best_hours(station):
     fig.update_layout(
         height=380, margin=dict(l=10, r=10, t=56, b=10),
         xaxis=dict(title=t("xaxis_hour"), dtick=2, range=[-0.5, 23.5]),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        # Share the top line with the y-axis annotation below: unit label on
+        # the left, legend pinned to the right so they never overlap.
+        legend=dict(orientation="h", yanchor="middle", y=1.14, xanchor="right", x=1),
     )
     # Plotly always renders y-axis titles vertically, which turns Chinese
     # labels into an unreadable rotated stack — use a horizontal annotation
@@ -959,7 +987,7 @@ def render_map(stations, replay=False):
 
     sdf = pd.DataFrame([
         {
-            "name": s.get("name") or f"Station {s.get('id')}",
+            "name": html.escape(str(s.get("name") or f"Station {s.get('id')}")),
             "lat": s.get("lat"), "lon": s.get("lon"),
             "pm25": round(pm25_of(s), 1),
             "label": tt(aqi_info(aqi_of(pm25_of(s)))[0]),
@@ -994,8 +1022,9 @@ def render_map(stations, replay=False):
                 "color": [255, 111, 0] if f.get("daynight") == "D" else [255, 45, 0],
                 "name": "VIIRS fire",
                 "pm25": f"{f.get('frp', '?')} MW FRP",
-                "label": f"{f.get('acq_date', '')} {str(f.get('acq_time', '')).zfill(4)} UTC · "
-                         f"{'day' if f.get('daynight') == 'D' else 'night'}",
+                "label": html.escape(
+                    f"{f.get('acq_date', '')} {str(f.get('acq_time', '')).zfill(4)} UTC · "
+                    f"{'day' if f.get('daynight') == 'D' else 'night'}"),
             }
             for f in fires["fires"]
         ])
@@ -1039,8 +1068,9 @@ def render_cleanup_card():
                     padding:20px 22px;margin-top:12px;color:#1E3B2C;">
           <div style="font-size:1.1rem;font-weight:700;">{t('cleanup_title')}</div>
           <div style="font-size:.95rem;margin-top:8px;">
-            {t('cleanup_body', station=d['station_name'], dist=d['distance_km'],
-               launch=d['launch_date'],
+            {t('cleanup_body', station=html.escape(str(d['station_name'])),
+               dist=d['distance_km'],
+               launch=html.escape(str(d['launch_date'])),
                base=d['baseline_mean'], bdays=d['baseline_days'],
                cur=d['current_mean'], cdays=d['current_days'])}
             <span style="font-weight:800;color:{color};">{arrow} {abs(pct)}%</span>
@@ -1049,7 +1079,7 @@ def render_cleanup_card():
             {t('cleanup_point')}
           </div>
           <div style="font-size:.75rem;opacity:.7;margin-top:8px;">
-            {t('cleanup_meta', ts=d.get('computed_at_utc', '?'))}
+            {t('cleanup_meta', ts=html.escape(str(d.get('computed_at_utc', '?'))))}
           </div>
         </div>
         """,
@@ -1090,7 +1120,7 @@ def main():
         lang_options = ["English", "中文"]
         lang_choice = st.selectbox(
             t("language_label"), lang_options,
-            index=0 if st.session_state.get("lang", "en") == "en" else 1,
+            index=1 if st.session_state.get("lang") == "zh" else 0,
             label_visibility="collapsed",
             key="lang_switch",
         )

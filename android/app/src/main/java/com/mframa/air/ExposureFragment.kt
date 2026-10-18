@@ -49,7 +49,12 @@ class ExposureFragment : Fragment() {
         }
 
     private val notifPermLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (!granted) {
+                AlertPrefs.setEnabled(requireContext(), false)
+                toggleAlerts.isChecked = false
+            }
+        }
 
     private val doseReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {

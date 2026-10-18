@@ -51,9 +51,19 @@ def main():
     try:
         resp = requests.get(AREA_URL.format(key=key), timeout=REQUEST_TIMEOUT)
         resp.raise_for_status()
-        rows = list(csv.DictReader(io.StringIO(resp.text)))
+        reader = csv.DictReader(io.StringIO(resp.text))
+        fields = set(reader.fieldnames or [])
+        rows = list(reader)
     except Exception as e:
         sys.exit(f"FIRMS fetch failed ({e}); keeping previous JSON")
+
+    # Guard against wiping good data: an empty body, a changed CSV schema, or
+    # an invalid-key 200 response must never overwrite the previous JSON.
+    if not {"latitude", "longitude"} <= fields:
+        sys.exit(f"FIRMS response missing latitude/longitude columns "
+                 f"(got {sorted(fields)[:5]}); keeping previous JSON")
+    if not rows:
+        sys.exit("FIRMS response had no rows; keeping previous JSON")
 
     now = datetime.now(timezone.utc)
     fires = []
