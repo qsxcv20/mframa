@@ -245,6 +245,15 @@ def aqi_info(aqi):
     return str(cat), FALLBACK_COLOR
 
 
+def aqi_kaomoji(aqi):
+    """Cute kaomoji face for the AQI level (empty string when unavailable)."""
+    try:
+        face = analytics.aqi_category(aqi).get("kaomoji")
+    except Exception:
+        return ""
+    return str(face or "")
+
+
 def advice_for(profile, aqi):
     try:
         tips = analytics.profile_advice(aqi, profile)
@@ -552,6 +561,7 @@ def render_my_air(stations):
 
     aqi = aqi_of(pm25)
     label, color = aqi_info(aqi) if aqi is not None else ("No data", FALLBACK_COLOR)
+    face = aqi_kaomoji(aqi) if aqi is not None else ""
     fg = text_on(color)
     latest = station.get("latest_pm25") or {}
     ts = latest.get("datetime_utc") or station.get("last_updated_utc") or "unknown time"
@@ -563,6 +573,7 @@ def render_my_air(stations):
              style="background:{color};border-radius:18px;padding:30px 22px;
                     color:{fg};text-align:center;margin-bottom:8px;">
           <div class="aqi-name" style="font-size:1rem;opacity:.85;">{station.get('name', 'Station')}</div>
+          <div class="aqi-face" style="font-size:2.2rem;line-height:1.2;margin-top:4px;">{face}</div>
           <div class="aqi-value" style="font-size:3.6rem;font-weight:800;line-height:1.1;">
             {pm25:.1f}<span style="font-size:1.1rem;font-weight:500;"> µg/m³ PM2.5</span>
           </div>

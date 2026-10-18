@@ -331,8 +331,8 @@ def build_morning_message(sub: dict, locations: list[dict]) -> str:
     pm25 = pm25_of(station) if station else None
     aqi = analytics.pm25_to_aqi(pm25) if pm25 is not None else None
     if aqi is not None:
-        label = analytics.aqi_category(aqi)["label"]
-        lines.append(f"Now: PM2.5 {pm25:.1f} µg/m³ — AQI {aqi} ({label})")
+        cat = analytics.aqi_category(aqi)
+        lines.append(f"Now: PM2.5 {pm25:.1f} µg/m³ — AQI {aqi} ({cat['label']}) {cat['kaomoji']}")
     else:
         lines.append("Your station has no fresh reading this morning; guidance below uses the 7-day pattern.")
 
@@ -379,9 +379,10 @@ def build_alert_message(station_info: dict, city_median: float | None) -> str:
     name = station_info.get("name") or "your station"
     pm25 = station_info.get("pm25")
     aqi = station_info.get("aqi")
-    label = analytics.aqi_category(aqi)["label"] if aqi is not None else "Unhealthy"
+    cat = analytics.aqi_category(aqi) if aqi is not None else {"label": "Unhealthy", "kaomoji": "(＞_＜)😷"}
+    label = cat["label"]
 
-    lines = ["*AIR QUALITY ALERT — Accra*", ""]
+    lines = [f"*AIR QUALITY ALERT — Accra* {cat['kaomoji']}", ""]
     if pm25 is not None and aqi is not None:
         lines.append(f"{name}: PM2.5 {pm25:.1f} µg/m³ — AQI {aqi} ({label}).")
     if city_median is not None:
@@ -409,8 +410,8 @@ def build_city_briefing(stations: list[dict]) -> str:
 
     lines = ["Good morning, Accra! Your Mframa city air briefing:", ""]
     if aqi is not None:
-        label = analytics.aqi_category(aqi)["label"]
-        lines.append(f"City now: PM2.5 {city_median:.1f} µg/m³ — AQI {aqi} ({label})")
+        cat = analytics.aqi_category(aqi)
+        lines.append(f"City now: PM2.5 {city_median:.1f} µg/m³ — AQI {aqi} ({cat['label']}) {cat['kaomoji']}")
     else:
         lines.append("No fresh city reading this morning; guidance below uses the 7-day pattern.")
 
@@ -447,9 +448,10 @@ def build_city_alert(station_info: dict, city_median: float | None) -> str:
     name = station_info.get("name") or "Accra"
     pm25 = station_info.get("pm25")
     aqi = station_info.get("aqi")
-    label = analytics.aqi_category(aqi)["label"] if aqi is not None else "Unhealthy"
+    cat = analytics.aqi_category(aqi) if aqi is not None else {"label": "Unhealthy", "kaomoji": "(＞_＜)😷"}
+    label = cat["label"]
 
-    lines = []
+    lines = [f"{cat['kaomoji']} Air Quality Alert — Accra", ""]
     if pm25 is not None and aqi is not None:
         lines.append(f"{name}: PM2.5 {pm25:.1f} µg/m³ — AQI {aqi} ({label}).")
     if city_median is not None:
