@@ -11,7 +11,15 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import requests
-import streamlit as st
+
+try:
+    import streamlit as st
+    _cache_data = st.cache_data
+except ModuleNotFoundError:  # CI / CLI context: no Streamlit runtime
+    st = None
+
+    def _cache_data(*_args, **_kwargs):
+        return lambda fn: fn
 
 API_BASE = "https://api.openaq.org/v3"
 COUNTRIES_ID = 152  # Ghana
@@ -22,12 +30,13 @@ MAX_RETRIES = 3
 
 
 def get_api_key() -> str | None:
-    try:
-        key = st.secrets.get("OPENAQ_API_KEY")
-        if key:
-            return key
-    except Exception:
-        pass
+    if st is not None:
+        try:
+            key = st.secrets.get("OPENAQ_API_KEY")
+            if key:
+                return key
+        except Exception:
+            pass
     return os.environ.get("OPENAQ_API_KEY") or None
 
 
@@ -93,7 +102,7 @@ def _snapshot_locations() -> list[dict]:
     return load_snapshot().get("locations") or []
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@_cache_data(ttl=3600, show_spinner=False)
 def get_locations() -> tuple[list[dict], str]:
     key = get_api_key()
     if key:
@@ -111,7 +120,7 @@ def get_locations() -> tuple[list[dict], str]:
     return _snapshot_locations(), "snapshot"
 
 
-@st.cache_data(ttl=900, show_spinner=False)
+@_cache_data(ttl=900, show_spinner=False)
 def get_hourly_pm25(location: dict, days: int = 7) -> tuple[list[dict], str]:
     key = get_api_key()
     sensor_id = (location.get("sensors") or {}).get("pm25")
