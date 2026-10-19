@@ -98,6 +98,11 @@ S = {
         "zh": "更新于 {ts} · 来源：{provider}",
     },
     "quick_jump": {"en": "Jump to:", "zh": "快速前往："},
+    "settings_title": {"en": "Settings", "zh": "设置"},
+    "station_auto": {
+        "en": "Auto — nearest to you",
+        "zh": "自动（离我最近）",
+    },
     "est_warn": {
         "en": "Estimated (station offline) — based on diurnal pattern + "
               "{n} nearby stations{stats}. Last reading: {stale} · "

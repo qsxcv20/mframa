@@ -660,31 +660,38 @@ def nearest_index(stations, target=ACCRA_CENTER):
     return best_i
 
 
-def geolocation_widget(container, qp, stations, selected_index, widget_key=""):
-    """Button that asks the browser for GPS and reloads with ?lat/lon."""
-    user_loc = parse_user_loc(qp)
-    if user_loc is not None:
-        s = stations[selected_index]
-        # A station without coordinates shows no distance line (same skip
-        # rule as nearest_index).
-        s_lat, s_lon = s.get("lat"), s.get("lon")
-        s_name = s.get("name") or f"Station {s.get('id')}"
-        if s_lat is not None and s_lon is not None:
-            km = haversine_km(user_loc[0], user_loc[1], s_lat, s_lon)
-            container.caption(t("geo_located", name=s_name, km=f"{km:.1f}"))
-        else:
-            container.caption(t("geo_located_nokm", name=s_name))
-        if container.button(t("geo_clear"), key=f"geo_reset_{widget_key}",
-                            use_container_width=True):
-            qp.pop("lat", None)
-            qp.pop("lon", None)
-            st.session_state["user_loc"] = None
-            # Keyed station selectboxes keep their widget value across reruns;
-            # drop them so the reset truly returns to the city-center default.
-            for k in ("station_myair", "station_breathe", "station_hours"):
-                st.session_state.pop(k, None)
-            st.rerun()
-        return
+def current_station(stations):
+    """The one global station pick from the ⚙️ menu.
+
+    A manual choice (session key station_global >= 0) wins; the default
+    "Auto" entry (-1) resolves to the monitor nearest the device location,
+    or nearest the city center when no location is known.
+    """
+    sel = st.session_state.get("station_global", -1)
+    if isinstance(sel, int) and not isinstance(sel, bool) and 0 <= sel < len(stations):
+        return stations[sel]
+    target = st.session_state.get("user_loc") or ACCRA_CENTER
+    return stations[nearest_index(stations, target)]
+
+
+def geo_confirmation(container, station):
+    """'Nearest monitor: X · about Y km' line shown while ?lat/lon is active.
+
+    A station without coordinates shows no distance (same skip rule as
+    nearest_index).
+    """
+    user_loc = st.session_state.get("user_loc")
+    s_lat, s_lon = station.get("lat"), station.get("lon")
+    s_name = station.get("name") or f"Station {station.get('id')}"
+    if user_loc is not None and s_lat is not None and s_lon is not None:
+        km = haversine_km(user_loc[0], user_loc[1], s_lat, s_lon)
+        container.caption(t("geo_located", name=s_name, km=f"{km:.1f}"))
+    else:
+        container.caption(t("geo_located_nokm", name=s_name))
+
+
+def geo_locate_button(container):
+    """Small secondary button that asks the browser for GPS and reloads with ?lat/lon."""
     js_labels = json.dumps({
         "button": t("geo_button"),
         "denied": t("geo_denied"),
@@ -692,61 +699,49 @@ def geolocation_widget(container, qp, stations, selected_index, widget_key=""):
         "locating": t("geo_locating"),
     }, ensure_ascii=False)
     btn_label = html.escape(t("geo_button"))
-    container.caption(t("geo_hint"))
-    components.html(
-        f"""
-        <div id="geo-root" style="font-family:inherit;">
-          <button id="geo-btn" type="button"
-            style="width:100%;border:1px solid #d0d5dd;border-radius:8px;
-                   background:#fff;padding:.45rem .6rem;font-size:.86rem;
-                   cursor:pointer;">{btn_label}</button>
-          <div id="geo-msg" style="font-size:.78rem;color:#b42318;margin-top:.25rem;"></div>
-        </div>
-        <script>
-        (function() {{
-          const L = {js_labels};
-          const btn = document.getElementById('geo-btn');
-          const msg = document.getElementById('geo-msg');
-          const go = (lat, lon) => {{
-            const u = new URL(window.parent.location.href);
-            u.searchParams.set('lat', lat);
-            u.searchParams.set('lon', lon);
-            try {{ window.parent.location.href = u.toString(); }}
-            catch (e) {{ window.location.href = u.toString(); }}
-          }};
-          btn.addEventListener('click', () => {{
-            if (!navigator.geolocation) {{ msg.textContent = L.unavailable; return; }}
-            btn.disabled = true;
-            btn.textContent = L.locating;
-            navigator.geolocation.getCurrentPosition(
-              (pos) => go(pos.coords.latitude.toFixed(5),
-                          pos.coords.longitude.toFixed(5)),
-              (err) => {{
-                btn.disabled = false;
-                btn.textContent = L.button;
-                msg.textContent = err.code === err.PERMISSION_DENIED
-                  ? L.denied : L.unavailable;
-              }},
-              {{enableHighAccuracy: true, timeout: 10000, maximumAge: 300000}}
-            );
-          }});
-        }})();
-        </script>
-        """,
-        height=70,
-    )
-
-
-def pick_station(stations, key, label=None, container=None):
-    names = [s.get("name") or f"Station {s.get('id')}" for s in stations]
-    c = container or st
-    target = st.session_state.get("user_loc") or ACCRA_CENTER
-    idx = c.selectbox(
-        label or t("monitoring_station"), range(len(stations)),
-        format_func=lambda i: names[i], index=nearest_index(stations, target), key=key,
-    )
-    geolocation_widget(c, st.query_params, stations, idx, key)
-    return stations[idx]
+    with container:
+        components.html(
+            f"""
+            <div id="geo-root" style="font-family:inherit;">
+              <button id="geo-btn" type="button"
+                style="width:100%;border:1px solid #d0d5dd;border-radius:8px;
+                       background:#fff;padding:.4rem .6rem;font-size:.82rem;
+                       color:#444;display:block;cursor:pointer;">{btn_label}</button>
+              <div id="geo-msg" style="font-size:.78rem;color:#b42318;margin-top:.25rem;"></div>
+            </div>
+            <script>
+            (function() {{
+              const L = {js_labels};
+              const btn = document.getElementById('geo-btn');
+              const msg = document.getElementById('geo-msg');
+              const go = (lat, lon) => {{
+                const u = new URL(window.parent.location.href);
+                u.searchParams.set('lat', lat);
+                u.searchParams.set('lon', lon);
+                try {{ window.parent.location.href = u.toString(); }}
+                catch (e) {{ window.location.href = u.toString(); }}
+              }};
+              btn.addEventListener('click', () => {{
+                if (!navigator.geolocation) {{ msg.textContent = L.unavailable; return; }}
+                btn.disabled = true;
+                btn.textContent = L.locating;
+                navigator.geolocation.getCurrentPosition(
+                  (pos) => go(pos.coords.latitude.toFixed(5),
+                              pos.coords.longitude.toFixed(5)),
+                  (err) => {{
+                    btn.disabled = false;
+                    btn.textContent = L.button;
+                    msg.textContent = err.code === err.PERMISSION_DENIED
+                      ? L.denied : L.unavailable;
+                  }},
+                  {{enableHighAccuracy: true, timeout: 10000, maximumAge: 300000}}
+                );
+              }});
+            }})();
+            </script>
+            """,
+            height=64,
+        )
 
 
 def data_banner(source):
@@ -769,16 +764,11 @@ def footer():
 # ---------------------------------------------------------------------------
 
 def render_my_air(stations, replay=False):
-    profile_labels = [t(f"profile_{p}") for p in PROFILES]
-    prev = st.session_state.get("health_profile_value", "general")
-    c_prof, c_stat = st.columns(2)
-    choice = c_prof.selectbox(
-        t("health_profile"), profile_labels,
-        index=PROFILES.index(prev) if prev in PROFILES else 0,
-        key="health_profile")
-    profile = PROFILES[profile_labels.index(choice)]
-    st.session_state["health_profile_value"] = profile
-    station = pick_station(stations, key="station_myair", container=c_stat)
+    # Health profile and station are global settings (⚙️ menu in the header).
+    profile = st.session_state.get("health_profile_value", "general")
+    if profile not in PROFILES:
+        profile = "general"
+    station = current_station(stations)
 
     pm25 = pm25_of(station)
     stale_h = stale_hours_of(station)
@@ -838,6 +828,14 @@ def render_my_air(stations, replay=False):
         f'{t("epa_line", mult=f"{pm25 / EPA_PM25_24H:.1f}")}</div>',
         unsafe_allow_html=True,
     )
+
+    # Location controls under the AQI card: either the confirmation line
+    # (reset lives in the ⚙️ menu) or the small "use my location" button.
+    if st.session_state.get("user_loc") is not None:
+        geo_confirmation(st, station)
+    else:
+        geo_col, _ = st.columns(2)
+        geo_locate_button(geo_col)
 
     if estimate and estimate.get("value") is not None:
         m = nowcast_metrics(load_locations()[0]) or {}
@@ -1007,7 +1005,7 @@ def render_best_hours(station):
 
 def render_breathe(stations):
     st.subheader(t("nav_breathe"))
-    station = pick_station(stations, key="station_breathe", label=t("reference_station"))
+    station = current_station(stations)
     pm_site = pm25_of(station)
     pm_city = float(np.mean([pm25_of(s) for s in stations]))
 
@@ -1330,14 +1328,28 @@ def main():
         st.title("Mframa")
         st.caption(t("tagline"))
     with head_r:
+        settings = st.popover("⚙️", use_container_width=True)
+    # The first screen shows only the air answer — every configuration knob
+    # (language, health profile, station) lives in this ⚙️ menu. Language and
+    # profile render here, before the nav pills, so a language switch
+    # re-labels the whole page on the same rerun.
+    with settings:
+        st.markdown(f"**{t('settings_title')}**")
         lang_options = ["English", "中文"]
-        lang_choice = st.selectbox(
+        lang_choice = st.radio(
             t("language_label"), lang_options,
             index=1 if st.session_state.get("lang") == "zh" else 0,
-            label_visibility="collapsed",
-            key="lang_switch",
+            horizontal=True,
+            key="lang_radio",
         )
         st.session_state["lang"] = "zh" if lang_choice == "中文" else "en"
+        profile_labels = [t(f"profile_{p}") for p in PROFILES]
+        prev = st.session_state.get("health_profile_value", "general")
+        choice = st.selectbox(
+            t("health_profile"), profile_labels,
+            index=PROFILES.index(prev) if prev in PROFILES else 0,
+            key="health_profile")
+        st.session_state["health_profile_value"] = PROFILES[profile_labels.index(choice)]
 
     nav_options = [t("nav_my_air"), t("nav_best_hours"), t("nav_map"), t("nav_more")]
     sub_options = [t("nav_breathe"), t("nav_alerts")]
@@ -1415,6 +1427,27 @@ def main():
     except Exception:
         stations = []
 
+    # The station half of the ⚙️ menu needs the station list, so it is
+    # filled here; language/profile were filled up in the header.
+    with settings:
+        names = [s.get("name") or f"Station {s.get('id')}" for s in stations]
+        st.selectbox(
+            t("monitoring_station"), [-1] + list(range(len(stations))),
+            format_func=lambda i: t("station_auto") if i == -1 else names[i],
+            key="station_global",
+        )
+        st.caption(t("geo_hint"))
+        if st.session_state.get("user_loc") is not None:
+            if st.button(t("geo_clear"), key="geo_reset_global",
+                         use_container_width=True):
+                qp.pop("lat", None)
+                qp.pop("lon", None)
+                st.session_state["user_loc"] = None
+                # The keyed station picker keeps its widget value across
+                # reruns; drop it so the reset truly returns to "Auto".
+                st.session_state.pop("station_global", None)
+                st.rerun()
+
     # The alerts page shows the current city mean against the user's
     # threshold, so it needs the stations but stays usable with an empty list.
     if more_sub == t("nav_alerts"):
@@ -1437,7 +1470,7 @@ def main():
                         pool.append(loc)  # offline but estimable via nowcast
             render_my_air(pool, replay=demo is not None)
         elif page == t("nav_best_hours"):
-            render_best_hours(pick_station(stations, key="station_hours"))
+            render_best_hours(current_station(stations))
         elif page == t("nav_more"):
             render_breathe(stations)
         else:

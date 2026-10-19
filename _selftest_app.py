@@ -53,7 +53,7 @@ def main():
         at.run()
         nav = next(p for p in at.pills if "My Air" in list(p.options))
         nav.set_value("Live Map").run()
-        lang = next(s for s in at.selectbox if "中文" in list(s.options))
+        lang = next(r for r in at.radio if "中文" in list(r.options))
         lang.set_value("中文").run()
         return at
     ok = run_case(make_zh, "switch to 中文 after navigating") and ok
@@ -152,7 +152,7 @@ def main():
     nav = next(p for p in at.pills if "My Air" in list(p.options))
     nav.set_value("Live Map").run()
     page_ok = at.query_params.get("page") == "map"
-    lang = next(s for s in at.selectbox if "中文" in list(s.options))
+    lang = next(r for r in at.radio if "中文" in list(r.options))
     lang.set_value("中文").run()
     # (switching language resets the stale page label to the default page,
     # so only lang is asserted here)
@@ -321,13 +321,16 @@ def main():
     at.query_params["lon"] = "-0.1986"  # Nima Market
     at.run()
     geo_errors = [str(e.value) for e in at.exception]
-    geo_sb = next(s for s in at.selectbox if getattr(s, "key", None) == "station_myair")
+    # The station picker defaults to "Auto" (-1), which resolves to the
+    # monitor nearest the device location — visible as the AQI card name.
+    geo_body = "\n".join(str(m.value) for m in at.markdown)
     geo_caps = "\n".join(str(c.value) for c in at.caption)
-    geo_name = geo_sb.options[geo_sb.value] if geo_sb.options else ""
+    geo_sb = next(s for s in at.selectbox if getattr(s, "key", None) == "station_global")
     geo_ok = (
         geo_helpers
         and not geo_errors
-        and "Nima Market" in str(geo_name)
+        and geo_sb.value == -1
+        and "Nima Market" in geo_body
         and "Nearest monitor" in geo_caps
     )
     if geo_ok:
@@ -339,8 +342,10 @@ def main():
             print("   ", e[:500])
         if not geo_helpers:
             print("    helper logic failed")
-        if "Nima Market" not in str(geo_name):
-            print("    selected station:", geo_name)
+        if geo_sb.value != -1:
+            print("    station picker not on Auto:", geo_sb.value)
+        if "Nima Market" not in geo_body:
+            print("    Nima Market not the shown station")
         if "Nearest monitor" not in geo_caps:
             print("    confirmation caption missing")
 
@@ -388,36 +393,56 @@ def main():
         if not silent_ok:
             print("    warning shown for unparseable coordinates")
 
-    # Geo reset: clears ?lat/lon AND the keyed station selectboxes, so the
-    # picker falls back to the city-center default instead of keeping the
-    # geolocation-picked station. demo=harmattan pins a deterministic
-    # station list for both instances.
-    at_base = AppTest.from_file("app.py", default_timeout=180)
-    at_base.query_params["demo"] = "harmattan"
-    at_base.run()
-    base_idx = next(s for s in at_base.selectbox if s.key == "station_myair").value
+    # Geo reset: clears ?lat/lon AND the keyed global station picker, so the
+    # selection falls back to "Auto" instead of keeping the manually picked
+    # station. demo=harmattan pins a deterministic station list.
     at = AppTest.from_file("app.py", default_timeout=180)
     at.query_params["demo"] = "harmattan"
     at.query_params["lat"] = "5.55"
     at.query_params["lon"] = "-0.25"
     at.run()
-    sb = next(s for s in at.selectbox if s.key == "station_myair")
-    sb.set_value(0 if sb.value != 0 else 1).run()
-    btn = next(b for b in at.button if b.key == "geo_reset_station_myair")
+    sb = next(s for s in at.selectbox if s.key == "station_global")
+    sb.set_value(1).run()  # manual pick overrides Auto
+    btn = next(b for b in at.button if b.key == "geo_reset_global")
     btn.click().run()
     errors = [str(e.value) for e in at.exception]
-    sb_after = next(s for s in at.selectbox if s.key == "station_myair").value
+    sb_after = next(s for s in at.selectbox if s.key == "station_global").value
     checks = [
         ("lat/lon popped", at.query_params.get("lat") is None
          and at.query_params.get("lon") is None),
         ("user_loc cleared", at.session_state.get("user_loc") is None),
-        ("station back to center default", sb_after == base_idx),
+        ("station back to Auto", sb_after == -1),
     ]
     if not errors and all(c for _, c in checks):
-        print("[OK] geo reset clears station keys (back to city-center default)")
+        print("[OK] geo reset clears station key (back to Auto)")
     else:
         ok = False
-        print("[FAIL] geo reset clears station keys")
+        print("[FAIL] geo reset clears station key")
+        for e in errors:
+            print("   ", e[:500])
+        for name, c in checks:
+            if not c:
+                print("    failed:", name)
+
+    # The ⚙️ settings menu carries all three configuration knobs: language
+    # radio, health-profile selectbox, and the global station picker
+    # defaulting to "Auto" (-1).
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.run()
+    errors = [str(e.value) for e in at.exception]
+    station_sb = next((s for s in at.selectbox if s.key == "station_global"), None)
+    checks = [
+        ("language radio", any(r.key == "lang_radio" and "中文" in list(r.options)
+                               for r in at.radio)),
+        ("profile selectbox", any(s.key == "health_profile" for s in at.selectbox)),
+        ("station selectbox", station_sb is not None),
+        ("station default Auto", station_sb is not None and station_sb.value == -1),
+    ]
+    if not errors and all(c for _, c in checks):
+        print("[OK] settings menu holds language + profile + station")
+    else:
+        ok = False
+        print("[FAIL] settings menu holds language + profile + station")
         for e in errors:
             print("   ", e[:500])
         for name, c in checks:
