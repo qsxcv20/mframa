@@ -2,7 +2,7 @@
 
 [![Live app](https://img.shields.io/badge/live-mframa.streamlit.app-FF4B4B?logo=streamlit)](https://mframa.streamlit.app)
 [![Data: OpenAQ v3](https://img.shields.io/badge/data-OpenAQ%20v3-blue)](https://api.openaq.org)
-[![Android APK](https://img.shields.io/badge/Android-v0.7%20APK-3DDC84?logo=android)](dist/Mframa-v0.7-debug.apk)
+[![Android APK](https://img.shields.io/badge/Android-v0.8%20APK-3DDC84?logo=android)](dist/Mframa-v0.8-debug.apk)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 *Mframa* means "air" in Twi. Most air-quality apps show you pollution. Mframa is built to protect a specific person: it tells a mother in Nima when to open her windows, a cyclist in Osu which hours to avoid, and a market trader at Agbogbloshie what yesterday's air actually did to her lungs. Bilingual English/中文, phone-first, no account needed.
@@ -11,7 +11,7 @@ Built for the **TechHub Africa Hackathon 2026**, track *Reducing Public Pollutio
 
 - **Live app:** [mframa.streamlit.app](https://mframa.streamlit.app) (Streamlit Community Cloud)
 - **Repo:** [github.com/qsxcv20/mframa](https://github.com/qsxcv20/mframa) · entry point `app.py`
-- **Android companion:** prebuilt APK at [`dist/Mframa-v0.7-debug.apk`](dist/Mframa-v0.7-debug.apk)
+- **Android companion:** prebuilt APK at [`dist/Mframa-v0.8-debug.apk`](dist/Mframa-v0.8-debug.apk)
 
 ## Three numbers
 
@@ -52,7 +52,7 @@ Yet Ghana is one of **only seven African countries with real-time air monitors a
 
 Top navigation, four destinations, tuned for one-thumb phone use:
 
-- **My Air** — pick a health profile (child, pregnant, asthma, elderly, outdoor worker, healthy adult) and get plain-language action guidance on WHO-aligned PM2.5 breakpoints, not generic "moderate" labels. The AQI card wears a **universal emoji face** per level (😊 good → 😷 unhealthy), so even a child can read the air. A **"Dust or Smoke?"** card attributes the source — Saharan dust vs combustion smoke — from live PM2.5 plus the CAMS dust forecast.
+- **My Air** — pick a health profile (child, pregnant, asthma, elderly, outdoor worker, healthy adult) and get plain-language action guidance on WHO-aligned PM2.5 breakpoints, not generic "moderate" labels. Tap **"📍 Use my location"** and the app asks the browser/GPS for your position and auto-selects the **nearest real monitor** (with the distance shown; coordinates outside Greater Accra are rejected), so you never have to hunt through 85 station names. The AQI card wears a **universal emoji face** per level (😊 good → 😷 unhealthy), so even a child can read the air. A **"Dust or Smoke?"** card attributes the source — Saharan dust vs combustion smoke — from live PM2.5 plus the CAMS dust forecast.
 - **Best Hours Today** — the question everyone actually asks: *when should I go out?* A diurnal curve from 7 days of hourly readings finds the historically cleanest hours, overlays today's live trend, and marks **green outdoor windows** — plus a 48-hour dust & PM2.5 forecast.
 - **Live Map** — all 85 monitoring stations across Accra with an IDW interpolation heatmap: the pollution *field*, not just dots — plus a **NASA FIRMS VIIRS fire layer** ([`fetch_fires.py`](fetch_fires.py), refreshed every 6 h by [`.github/workflows/fires.yml`](.github/workflows/fires.yml)) sizing each active fire by radiative power, so you can *see* the smoke sources around the city.
 - **More → What Did I Breathe? / Get Air Alerts** — a **cigarette-equivalent exposure calculator** ([Berkeley Earth conversion](https://berkeleyearth.org/air-pollution-and-cigarette-equivalence/): 22 µg/m³ over a day ≈ one cigarette), weighted by breathing rate and your actual commute/outdoor time; and **browser-native air alerts**: flip one toggle, pick your own PM2.5 threshold (15–150 µg/m³, defaulting to Ghana EPA's 35), and the page posts a system notification whenever the city crosses it — **no account, no phone number, nothing to install**.
@@ -100,7 +100,7 @@ A native Kotlin app under `android/` for the way Ghanaians actually live with ai
 - **Foreground service** sampling GPS from the lock screen (15-minute, balanced-power intervals) so exposure tracking survives the screen being off
 - **Dose accumulation** in `DoseLogic` — pure Kotlin, unit-tested — turning time-at-location into a daily PM2.5 dose, with **3-tier notifications** as dose crosses thresholds
 - **280 real hospitals** around Accra ([`data/hospitals_accra.json`](data/hospitals_accra.json), from OpenStreetMap, bundled in assets) so a bad-air alert can point to actual care
-- **24 unit tests pass**; prebuilt APK: [`dist/Mframa-v0.7-debug.apk`](dist/Mframa-v0.7-debug.apk)
+- **24 unit tests pass**; prebuilt APK: [`dist/Mframa-v0.8-debug.apk`](dist/Mframa-v0.8-debug.apk)
 
 ### Proactive air alerts
 
@@ -167,7 +167,7 @@ cd android
 ./gradlew testDebugUnitTest # 24 unit tests
 ```
 
-Or skip the build: sideload [`dist/Mframa-v0.7-debug.apk`](dist/Mframa-v0.7-debug.apk).
+Or skip the build: sideload [`dist/Mframa-v0.8-debug.apk`](dist/Mframa-v0.8-debug.apk).
 
 ## Why it works in Ghana today
 
@@ -203,7 +203,7 @@ publish_field.py        generates public/field.json (31×51 IDW grid over Accra)
 public/field.json       published pollution field, consumed by the Android app offline
 data/                   snapshot, holdout, nowcast metrics, hospital list, caches
 android/                Kotlin companion app (WebView + foreground GPS + DoseLogic)
-dist/                   prebuilt APKs (latest: Mframa-v0.7-debug.apk)
+dist/                   prebuilt APKs (latest: Mframa-v0.8-debug.apk)
 .github/workflows/      alert_and_poll.yml — 15–30-min alerts, bot poll, field.json + snapshot refresh
                         morning_briefing.yml — twice-daily briefings (~05:45 & ~17:45 UTC)
                         fires.yml — NASA FIRMS fire layer refresh every 6 h
@@ -254,3 +254,4 @@ requirements.txt        web app dependencies
 Code: [MIT License](LICENSE).
 
 Data: © [OpenAQ](https://openaq.org) contributors and the [AfriqAir](https://afriqair.org/) network (Carnegie Mellon University Africa and partners). Dust forecasts: CAMS / ECMWF via [Open-Meteo](https://open-meteo.com). Hospital locations: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors. Mframa is grateful to the communities hosting sensors across Accra.
+

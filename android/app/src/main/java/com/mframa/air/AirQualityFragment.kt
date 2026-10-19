@@ -1,23 +1,43 @@
 package com.mframa.air
 
 import android.annotation.SuppressLint
+import android.Manifest
 import android.content.ActivityNotFoundException
+import android.content.pm.PackageManager
 import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.GeolocationPermissions
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.webkit.WebChromeClient
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.activity.result.contract.ActivityResultContracts
 import java.util.Locale
 
 class AirQualityFragment : Fragment() {
 
     private var webView: WebView? = null
+
+    // The Streamlit page asks for HTML5 geolocation to auto-pick the nearest
+    // monitor. WebView forwards that request here; we map it onto the Android
+    // runtime location permission and answer the page's callback.
+    private var pendingGeoOrigin: String? = null
+    private var pendingGeoCallback: GeolocationPermissions.Callback? = null
+    private val locationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grants ->
+            val granted = grants[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                grants[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+            pendingGeoCallback?.invoke(pendingGeoOrigin, granted, false)
+            pendingGeoCallback = null
+            pendingGeoOrigin = null
+        }
 
     // The Streamlit Cloud wrapper redirects anonymous viewers through
     // share.streamlit.io to establish a session — that host must stay
@@ -62,10 +82,40 @@ class AirQualityFragment : Fragment() {
         bindLaunchCard(root)
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
+        // Allow the Streamlit page's "Use my location" button (HTML5
+        // geolocation) to drive the nearest-station picker.
+        web.settings.setGeolocationEnabled(true)
         // Fallback pinch-to-zoom for the whole page (e.g. enlarging the map)
         web.settings.setSupportZoom(true)
         web.settings.builtInZoomControls = true
         web.settings.displayZoomControls = false
+        web.webChromeClient = object : WebChromeClient() {
+            override fun onGeolocationPermissionsShowPrompt(
+                origin: String?,
+                callback: GeolocationPermissions.Callback
+            ) {
+                val hasPermission = ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(
+                        requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                if (hasPermission) {
+                    // Already granted (e.g. for exposure tracking) — answer now.
+                    callback.invoke(origin, true, false)
+                } else {
+                    // Ask once; the launcher answers the page callback.
+                    pendingGeoOrigin = origin
+                    pendingGeoCallback = callback
+                    locationPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                }
+            }
+        }
         web.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
                 view: WebView,
