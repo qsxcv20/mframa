@@ -76,11 +76,16 @@ jobs:
         run: python publish_field.py
 
       - name: Refresh offline snapshot (~hourly; every 4th run to bound API load)
-        if: ${{ github.run_number % 4 == 1 }}
         env:
           OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
         continue-on-error: true
-        run: python fetch_snapshot.py
+        # GitHub Actions expressions have no modulo operator, so gate in bash.
+        run: |
+          if [ $(( GITHUB_RUN_NUMBER % 4 )) -eq 1 ]; then
+            python fetch_snapshot.py
+          else
+            echo "run $GITHUB_RUN_NUMBER: skip snapshot (every 4th run only)"
+          fi
 
       - name: Commit field.json and snapshot
         run: |
