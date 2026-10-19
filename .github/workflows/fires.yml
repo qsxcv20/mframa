@@ -9,9 +9,16 @@ on:
 permissions:
   contents: write
 
+# Serialize against alert_and_poll / morning_briefing, which push the same
+# branch; concurrent rebase+push races caused failed field.json commits.
+concurrency:
+  group: data-publish-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   fires:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -40,16 +47,16 @@ jobs:
           fi
           # Rebase-and-retry: alert_and_poll runs at :22, one minute before
           # this job's :23 — pushes must tolerate landing mid-cycle.
-          for attempt in 1 2 3; do
+          for attempt in 1 2 3 4 5; do
             git fetch origin "$GITHUB_REF_NAME"
-            if git rebase -X theirs "origin/$GITHUB_REF_NAME"; then
-              git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
-            else
+            if ! git rebase -X theirs "origin/$GITHUB_REF_NAME"; then
               git rebase --abort
               echo "rebase could not auto-resolve; failing loudly"
               exit 1
             fi
+            if git push origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+            echo "push rejected, retrying ($attempt/5)"
             sleep $((attempt * 5))
           done
-          echo "push rejected after 3 attempts"
+          echo "push rejected after 5 attempts"
           exit 1

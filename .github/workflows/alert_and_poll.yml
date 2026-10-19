@@ -9,9 +9,18 @@ on:
 permissions:
   contents: write
 
+# All three data-publishing workflows (alert/fires/briefing) push to main.
+# A shared group across workflows serializes them so two runners can never
+# rebase/push the same branch at once (cause of the 2026-10-18 field.json
+# commit failure). Queued runs wait instead of failing.
+concurrency:
+  group: data-publish-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   poll-and-alert:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -47,18 +56,18 @@ jobs:
           # Rebase-and-retry: the fires/morning-briefing workflows push to the
           # same branch. -X theirs keeps this run's freshly computed state on
           # content conflicts; retry covers a push landing mid-rebase.
-          for attempt in 1 2 3; do
+          for attempt in 1 2 3 4 5; do
             git fetch origin "$GITHUB_REF_NAME"
-            if git rebase -X theirs "origin/$GITHUB_REF_NAME"; then
-              git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
-            else
+            if ! git rebase -X theirs "origin/$GITHUB_REF_NAME"; then
               git rebase --abort
               echo "rebase could not auto-resolve; failing loudly"
               exit 1
             fi
+            if git push origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+            echo "push rejected, retrying ($attempt/5)"
             sleep $((attempt * 5))
           done
-          echo "push rejected after 3 attempts"
+          echo "push rejected after 5 attempts"
           exit 1
 
       - name: Publish PM2.5 field JSON
@@ -81,16 +90,16 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "field.json + snapshot [skip ci]"
           fi
-          for attempt in 1 2 3; do
+          for attempt in 1 2 3 4 5; do
             git fetch origin "$GITHUB_REF_NAME"
-            if git rebase -X theirs "origin/$GITHUB_REF_NAME"; then
-              git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
-            else
+            if ! git rebase -X theirs "origin/$GITHUB_REF_NAME"; then
               git rebase --abort
               echo "rebase could not auto-resolve; failing loudly"
               exit 1
             fi
+            if git push origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+            echo "push rejected, retrying ($attempt/5)"
             sleep $((attempt * 5))
           done
-          echo "push rejected after 3 attempts"
+          echo "push rejected after 5 attempts"
           exit 1

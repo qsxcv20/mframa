@@ -12,9 +12,16 @@ on:
 permissions:
   contents: write
 
+# Serialize against alert_and_poll / fires, which push the same branch;
+# concurrent rebase+push races caused failed commits.
+concurrency:
+  group: data-publish-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   briefing:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -48,16 +55,16 @@ jobs:
           fi
           # Rebase-and-retry: the alert/fires workflows push to the same
           # branch. -X theirs keeps this run's fresh state on conflicts.
-          for attempt in 1 2 3; do
+          for attempt in 1 2 3 4 5; do
             git fetch origin "$GITHUB_REF_NAME"
-            if git rebase -X theirs "origin/$GITHUB_REF_NAME"; then
-              git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
-            else
+            if ! git rebase -X theirs "origin/$GITHUB_REF_NAME"; then
               git rebase --abort
               echo "rebase could not auto-resolve; failing loudly"
               exit 1
             fi
+            if git push origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+            echo "push rejected, retrying ($attempt/5)"
             sleep $((attempt * 5))
           done
-          echo "push rejected after 3 attempts"
+          echo "push rejected after 5 attempts"
           exit 1
