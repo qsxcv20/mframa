@@ -304,6 +304,46 @@ def main():
         ok = False
         print("[FAIL] defensive helpers (pm25 clamp, None coords, demo filter)")
 
+    # Geolocation: ?lat=&lon= (written by the in-page "Use my location"
+    # button or the Android WebView) must auto-select the nearest monitor and
+    # show the confirmation line. Coordinates outside Greater Accra are
+    # rejected by parse_user_loc.
+    geo_helpers = (
+        app_mod.parse_user_loc({"lat": "5.60", "lon": "-0.19"}) == (5.60, -0.19)
+        and app_mod.parse_user_loc({"lat": "40.0", "lon": "-74.0"}) is None
+        and app_mod.parse_user_loc({}) is None
+        and app_mod.nearest_index(
+            [{"lat": 5.50, "lon": -0.30}, {"lat": 5.601, "lon": -0.188}],
+            (5.6037, -0.1870)) == 1
+    )
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.query_params["lat"] = "5.5821"
+    at.query_params["lon"] = "-0.1986"  # Nima Market
+    at.run()
+    geo_errors = [str(e.value) for e in at.exception]
+    geo_sb = next(s for s in at.selectbox if getattr(s, "key", None) == "station_myair")
+    geo_caps = "\n".join(str(c.value) for c in at.caption)
+    geo_name = geo_sb.options[geo_sb.value] if geo_sb.options else ""
+    geo_ok = (
+        geo_helpers
+        and not geo_errors
+        and "Nima Market" in str(geo_name)
+        and "Nearest monitor" in geo_caps
+    )
+    if geo_ok:
+        print("[OK] geolocation ?lat/lon auto-selects nearest station")
+    else:
+        ok = False
+        print("[FAIL] geolocation ?lat/lon auto-selects nearest station")
+        for e in geo_errors:
+            print("   ", e[:500])
+        if not geo_helpers:
+            print("    helper logic failed")
+        if "Nima Market" not in str(geo_name):
+            print("    selected station:", geo_name)
+        if "Nearest monitor" not in geo_caps:
+            print("    confirmation caption missing")
+
     # A polluted lang value (e.g. "fr" from a hand-edited URL) must self-heal
     # to English instead of silently showing the Chinese UI.
     at = AppTest.from_file("app.py", default_timeout=180)

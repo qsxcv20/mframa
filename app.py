@@ -9,6 +9,7 @@ from pathlib import Path
 from urllib.parse import quote
 import html
 import json
+import math
 
 import numpy as np
 import pandas as pd
@@ -152,6 +153,9 @@ def inject_responsive_css():
 
 
 ACCRA_CENTER = (5.6037, -0.1870)
+# Generous Greater-Accra bounds for accepting a device location. Coordinates
+# outside this are ignored rather than silently snapping to a misleading station.
+USER_LOC_BBOX = (4.50, 6.50, -0.70, 0.50)
 MAP_CENTER = (5.60, -0.20)
 GRID_LAT = (5.45, 5.75)
 GRID_LON = (-0.40, 0.10)
@@ -610,25 +614,119 @@ def text_on(bg_hex):
     return "#1A2B21" if 0.299 * r + 0.587 * g + 0.114 * b > 150 else "#FFFFFF"
 
 
-def nearest_index(stations):
+def parse_user_loc(qp):
+    """Read/reject a device location passed as ?lat=&lon=.
+
+    The browser obtains the coordinates; the server only accepts plausible
+    Greater-Accra values so a hand-edited URL cannot select a nonsensical
+    "nearest" station on the other side of the globe.
+    """
+    try:
+        lat = float(qp.get("lat"))
+        lon = float(qp.get("lon"))
+    except (TypeError, ValueError):
+        return None
+    lat0, lat1, lon0, lon1 = USER_LOC_BBOX
+    if not (lat0 <= lat <= lat1 and lon0 <= lon <= lon1):
+        return None
+    return lat, lon
+
+
+def haversine_km(lat1, lon1, lat2, lon2):
+    r = 6371.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp = math.radians(lat2 - lat1)
+    dl = math.radians(lon2 - lon1)
+    a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(a))
+
+
+def nearest_index(stations, target=ACCRA_CENTER):
     best_i, best_d = 0, float("inf")
     for i, s in enumerate(stations):
         lat, lon = s.get("lat"), s.get("lon")
         if lat is None or lon is None:
             continue
-        d = (lat - ACCRA_CENTER[0]) ** 2 + (lon - ACCRA_CENTER[1]) ** 2
+        d = (lat - target[0]) ** 2 + (lon - target[1]) ** 2
         if d < best_d:
             best_i, best_d = i, d
     return best_i
 
 
-def pick_station(stations, key, label=None, container=None):
+def geolocation_widget(container, qp, stations, selected_index, widget_key=""):
+    """Button that asks the browser for GPS and reloads with ?lat/lon."""
+    user_loc = parse_user_loc(qp)
+    if user_loc is not None:
+        s = stations[selected_index]
+        km = haversine_km(user_loc[0], user_loc[1], s["lat"], s["lon"])
+        container.caption(t("geo_located", name=s.get("name", ""), km=f"{km:.1f}"))
+        if container.button(t("geo_clear"), key=f"geo_reset_{widget_key}",
+                            use_container_width=True):
+            qp.pop("lat", None)
+            qp.pop("lon", None)
+            st.session_state["user_loc"] = None
+            st.rerun()
+        return
+    js_labels = json.dumps({
+        "button": t("geo_button"),
+        "denied": t("geo_denied"),
+        "unavailable": t("geo_unavailable"),
+        "locating": "正在定位…" if st.session_state.get("lang") == "zh" else "Locating you…",
+    }, ensure_ascii=False)
+    btn_label = html.escape(t("geo_button"))
+    components.html(
+        f"""
+        <div id="geo-root" style="font-family:inherit;">
+          <button id="geo-btn" type="button"
+            style="width:100%;border:1px solid #d0d5dd;border-radius:8px;
+                   background:#fff;padding:.45rem .6rem;font-size:.86rem;
+                   cursor:pointer;">{btn_label}</button>
+          <div id="geo-msg" style="font-size:.78rem;color:#b42318;margin-top:.25rem;"></div>
+        </div>
+        <script>
+        (function() {{
+          const L = {js_labels};
+          const btn = document.getElementById('geo-btn');
+          const msg = document.getElementById('geo-msg');
+          const go = (lat, lon) => {{
+            const u = new URL(window.parent.location.href);
+            u.searchParams.set('lat', lat);
+            u.searchParams.set('lon', lon);
+            try {{ window.parent.location.href = u.toString(); }}
+            catch (e) {{ window.location.href = u.toString(); }}
+          }};
+          btn.addEventListener('click', () => {{
+            if (!navigator.geolocation) {{ msg.textContent = L.unavailable; return; }}
+            btn.disabled = true;
+            btn.textContent = L.locating;
+            navigator.geolocation.getCurrentPosition(
+              (pos) => go(pos.coords.latitude.toFixed(5),
+                          pos.coords.longitude.toFixed(5)),
+              (err) => {{
+                btn.disabled = false;
+                btn.textContent = L.button;
+                msg.textContent = err.code === err.PERMISSION_DENIED
+                  ? L.denied : L.unavailable;
+              }},
+              {{enableHighAccuracy: true, timeout: 10000, maximumAge: 300000}}
+            );
+          }});
+        }})();
+        </script>
+        """,
+        height=70,
+    )
+
+
+def pick_station(stations, key, label=None, container=None, user_loc=None):
     names = [s.get("name") or f"Station {s.get('id')}" for s in stations]
     c = container or st
+    target = user_loc or st.session_state.get("user_loc") or ACCRA_CENTER
     idx = c.selectbox(
         label or t("monitoring_station"), range(len(stations)),
-        format_func=lambda i: names[i], index=nearest_index(stations), key=key,
+        format_func=lambda i: names[i], index=nearest_index(stations, target), key=key,
     )
+    geolocation_widget(c, st.query_params, stations, idx, key)
     return stations[idx]
 
 
@@ -1199,6 +1297,10 @@ def main():
         if qp.get("sub") in ("breathe", "alerts"):
             st.session_state["more_subpage"] = t(
                 "nav_breathe" if qp["sub"] == "breathe" else "nav_alerts")
+    # Device location (?lat=&lon=), supplied by the in-page geolocation
+    # button (or the Android WebView). When present, station pickers default
+    # to the nearest monitor instead of the city center.
+    st.session_state["user_loc"] = parse_user_loc(qp)
     head_l, head_r = st.columns([3, 2])
     with head_l:
         st.title("Mframa")

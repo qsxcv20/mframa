@@ -24,6 +24,24 @@ S = {
     "station_header": {"en": "Station", "zh": "监测站"},
     "monitoring_station": {"en": "Monitoring station", "zh": "监测站"},
     "reference_station": {"en": "Reference station", "zh": "参考站点"},
+    "geo_button": {"en": "📍 Use my location", "zh": "📍 用我的定位"},
+    "geo_hint": {
+        "en": "Pick the nearest monitor automatically",
+        "zh": "自动选择离我最近的监测站",
+    },
+    "geo_located": {
+        "en": "📍 Nearest monitor: {name} · about {km} km away",
+        "zh": "📍 最近监测站：{name} · 约 {km} 公里",
+    },
+    "geo_clear": {"en": "Reset to city center", "zh": "恢复为市中心"},
+    "geo_denied": {
+        "en": "Location permission was denied. You can still pick a station manually.",
+        "zh": "定位权限被拒绝，仍可手动选择监测站。",
+    },
+    "geo_unavailable": {
+        "en": "Location is unavailable on this device/browser. Pick a station manually.",
+        "zh": "此设备/浏览器无法定位，请手动选择监测站。",
+    },
     "load_error": {
         "en": "Air quality data could not be loaded. Please refresh in a moment.",
         "zh": "空气质量数据暂时无法加载，请稍后刷新。",
