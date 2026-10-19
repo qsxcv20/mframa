@@ -92,6 +92,13 @@ class ExposureFragment : Fragment() {
             AlertPrefs.setEnabled(requireContext(), checked)
             if (checked) ensureNotificationPermission()
         }
+
+        val toggleBrief = root.findViewById<MaterialSwitch>(R.id.toggle_brief)
+        toggleBrief.isChecked = AlertPrefs.briefEnabled(requireContext())
+        toggleBrief.setOnCheckedChangeListener { _, checked ->
+            AlertPrefs.setBriefEnabled(requireContext(), checked)
+            if (checked) ensureNotificationPermission()
+        }
         seekThreshold.progress = AlertPrefs.thresholdIndex(requireContext())
         updateThresholdLabel()
         seekThreshold.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {

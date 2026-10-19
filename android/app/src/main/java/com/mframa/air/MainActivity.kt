@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         NotificationHelper.ensureChannels(this)
 
         AlertWorker.schedule(this)
+        DailyBriefWorker.schedule(this)
         lifecycleScope.launch { AlertWorker.checkNow(this@MainActivity) }
 
         val nav = findViewById<BottomNavigationView>(R.id.bottom_nav)

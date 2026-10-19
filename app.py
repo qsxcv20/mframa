@@ -160,6 +160,15 @@ ACTIVITIES = ["rest", "light", "moderate", "heavy"]
 FALLBACK_COLOR = "#8a94a6"
 # Ghana EPA national 24-hour PM2.5 standard (µg/m³), per 3News reporting.
 EPA_PM25_24H = 35.0
+# Browser-alert threshold steps — mirror AlertPrefs.THRESHOLD_STEPS in the
+# Android app; the default is the Ghana EPA national 24h standard.
+ALERT_THRESHOLD_STEPS = [15, 25, 35, 55, 75, 100, 150]
+ALERT_THRESHOLD_DEFAULT = 35
+# Same published grid the Android app reads; CORS is open on raw.githubusercontent.
+FIELD_JSON_URL = "https://raw.githubusercontent.com/qsxcv20/mframa/main/public/field.json"
+# Master switch for attempting real OS notifications from the browser. The
+# in-app fallback (banner + toast) is independent of this flag.
+BROWSER_SYSTEM_NOTIFY = True
 DEMO_PATH = Path(__file__).parent / "data" / "demo_harmattan.json"
 CLEANUP_PATH = Path(__file__).parent / "data" / "agbogbloshie_cleanup.json"
 FIRES_PATH = Path(__file__).parent / "data" / "fires_ghana.json"
@@ -942,43 +951,121 @@ def render_breathe(stations):
     st.caption(t("cig_method"))
 
 
-def render_get_alerts():
+def render_get_alerts(stations=None):
     st.subheader(t("nav_alerts"))
     if st.session_state.get("is_app"):
         # Inside the Android app (URL has ?from=app): threshold alerts are
-        # built in, so the ntfy/Telegram subscription guides don't apply.
+        # built in, so the browser-notification setup doesn't apply.
         st.markdown(t("alerts_app_builtin"))
         st.caption(t("alerts_footer"))
         return
+
     st.markdown(t("alerts_intro"))
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown(t("alerts_morning"))
-    with c2:
-        st.markdown(t("alerts_burst"))
+    enabled = st.toggle(t("alert_enable"), key="alert_enabled")
+    threshold = st.select_slider(
+        t("alert_threshold"), options=ALERT_THRESHOLD_STEPS,
+        value=ALERT_THRESHOLD_DEFAULT, key="alert_threshold",
+        help=t("alert_threshold_help"),
+    )
+    st.caption(t("alert_how"))
 
-    bot_username = None
-    try:
-        bot_username = st.secrets.get("TELEGRAM_BOT_USERNAME")
-    except Exception:
-        pass
-    if not bot_username:
-        import os
-        bot_username = os.environ.get("TELEGRAM_BOT_USERNAME")
-    bot_username = (bot_username or "").strip().lstrip("@")
+    pm_vals = [v for v in (pm25_of(s) for s in (stations or [])) if v is not None]
+    city_pm = float(np.mean(pm_vals)) if pm_vals else None
+    if enabled and city_pm is not None and city_pm >= threshold:
+        # In-app fallback that works everywhere, even where the host refuses
+        # Notification permission: a persistent banner plus a toast.
+        st.error(t("alert_over_banner", pm=f"{city_pm:.1f}", thr=threshold))
+        st.toast(t("alert_over_banner", pm=f"{city_pm:.1f}", thr=threshold), icon="🚨")
 
-    ntfy_topic = "mframa-accra-air"
-    st.markdown(t("subscribe_line", topic=ntfy_topic))
-
-    if bot_username:
-        st.markdown(t("telegram_line", bot=bot_username))
-    else:
-        st.caption(t("telegram_soon"))
-
-    with st.expander(t("sms_expander")):
-        st.markdown(t("sms_body"))
-
+    _inject_browser_alert(enabled, threshold, city_pm)
+    st.markdown(t("alerts_morning"))
     st.caption(t("alerts_footer"))
+
+
+def _inject_browser_alert(enabled, threshold, city_pm):
+    """Browser-local alert loop, no account and no server involved.
+
+    The current city PM2.5 and the user's threshold are injected at render
+    time for an immediate check; a 15-minute interval then re-checks the
+    published field.json city mean. Prefs persist in localStorage. Real OS
+    notifications need a user-gesture permission grant (the button); where
+    the host denies it (some embedded browsers), the status line says so and
+    the banner/toast fallback above carries the alert.
+    """
+    msgs = {
+        "btn": t("alert_notify_btn"),
+        "on": t("alert_notify_on"),
+        "off": t("alert_sys_unavailable"),
+        "title": t("alert_notify_title"),
+        # __PM__ / __THR__ are filled in by JS at fire time.
+        "body": t("alert_notify_body"),
+    }
+    cfg = {
+        "enabled": bool(enabled),
+        "threshold": threshold,
+        "cityPm": None if city_pm is None else round(city_pm, 2),
+        "fieldUrl": FIELD_JSON_URL,
+        "systemNotify": BROWSER_SYSTEM_NOTIFY,
+        "msg": msgs,
+    }
+    components.html(
+        f"""
+        <div style="font-family:sans-serif;font-size:.9rem;line-height:1.6;">
+          <button id="mfBtn"
+                  style="padding:6px 14px;border-radius:8px;border:1px solid #9aa5b1;
+                         background:#fff;cursor:pointer;">{html.escape(msgs["btn"])}</button>
+          <span id="mfStatus" style="margin-left:8px;opacity:.8;"></span>
+        </div>
+        <script>
+        (function() {{
+          var CFG = {json.dumps(cfg)};
+          var status = document.getElementById('mfStatus');
+          try {{
+            localStorage.setItem('mframa_alert', JSON.stringify({{
+              enabled: CFG.enabled, threshold: CFG.threshold}}));
+          }} catch (e) {{}}
+          function body(pm) {{
+            return CFG.msg.body.replace('__PM__', pm.toFixed(1))
+                               .replace('__THR__', CFG.threshold);
+          }}
+          function notify(pm) {{
+            if (!CFG.enabled || pm === null || pm < CFG.threshold) return;
+            if (CFG.systemNotify && 'Notification' in window
+                && Notification.permission === 'granted') {{
+              try {{ new Notification(CFG.msg.title, {{body: body(pm)}}); }} catch (e) {{}}
+            }}
+          }}
+          function refreshStatus() {{
+            if (!CFG.systemNotify || !('Notification' in window)
+                || Notification.permission !== 'granted') {{
+              status.textContent = CFG.msg.off;
+            }} else {{
+              status.textContent = CFG.msg.on;
+            }}
+          }}
+          document.getElementById('mfBtn').addEventListener('click', function() {{
+            if (!CFG.systemNotify || !('Notification' in window)) {{
+              status.textContent = CFG.msg.off;
+              return;
+            }}
+            Notification.requestPermission().then(function(p) {{
+              refreshStatus();
+              if (p === 'granted') notify(CFG.cityPm);
+            }}).catch(function() {{ status.textContent = CFG.msg.off; }});
+          }});
+          notify(CFG.cityPm);  // immediate check with the render-time value
+          refreshStatus();
+          setInterval(function() {{
+            if (!CFG.enabled) return;
+            fetch(CFG.fieldUrl).then(function(r) {{ return r.json(); }}).then(function(d) {{
+              if (d && typeof d.city_mean === 'number') notify(d.city_mean);
+            }}).catch(function() {{}});
+          }}, 15 * 60 * 1000);
+        }})();
+        </script>
+        """,
+        height=64,
+    )
 
 
 def render_map(stations, replay=False):
@@ -1191,11 +1278,6 @@ def main():
         st.warning(t("demo_banner", date=demo.get("date", "?"),
                      mean=demo.get("city_mean_pm25", "?"), link=live_link))
 
-    if more_sub == t("nav_alerts"):
-        render_get_alerts()
-        footer()
-        return
-
     try:
         if demo:
             stations = demo["stations"]
@@ -1203,6 +1285,14 @@ def main():
             stations = stations_with_readings(locations or [])
     except Exception:
         stations = []
+
+    # The alerts page shows the current city mean against the user's
+    # threshold, so it needs the stations but stays usable with an empty list.
+    if more_sub == t("nav_alerts"):
+        render_get_alerts(stations)
+        footer()
+        return
+
     if not stations:
         st.info(t("no_stations"))
         footer()

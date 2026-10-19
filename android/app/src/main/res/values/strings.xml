@@ -43,4 +43,16 @@
     <string name="offline_title">No internet connection</string>
     <string name="offline_text">Mframa needs a connection to load live air quality. Check your data or Wi-Fi, then retry. City alerts already set up keep working in the background.</string>
     <string name="retry">Retry</string>
+    <string name="channel_brief">Daily morning brief</string>
+    <string name="channel_brief_desc">One local morning air summary per day</string>
+    <string name="brief_toggle">Daily morning brief (local, every morning)</string>
+    <string name="brief_title">Mframa morning brief</string>
+    <string name="brief_text_good">This morning\'s city PM2.5 is %1$d µg/m³ (%2$s) — a good morning for a jog or being outdoors.</string>
+    <string name="brief_text_bad">This morning\'s city PM2.5 is %1$d µg/m³ (%2$s) — above the 35 limit. Keep windows closed and cut outdoor time.</string>
+    <string name="brief_text_stale">This morning\'s city PM2.5 is %1$d µg/m³ (%2$s), but data may be delayed by a power cut. On outage nights generators run — keep windows closed this morning.</string>
+    <string name="brief_level_good">Good</string>
+    <string name="brief_level_moderate">Moderate</string>
+    <string name="brief_level_usg">Unhealthy for sensitive groups</string>
+    <string name="brief_level_unhealthy">Unhealthy</string>
+    <string name="brief_level_very">Very unhealthy</string>
 </resources>

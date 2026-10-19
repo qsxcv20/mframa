@@ -38,6 +38,15 @@
                     android:textSize="18sp"
                     app:showText="false" />
 
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/toggle_brief"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/brief_toggle"
+                    android:textSize="18sp"
+                    app:showText="false" />
+
                 <TextView
                     android:id="@+id/txt_threshold"
                     android:layout_width="match_parent"

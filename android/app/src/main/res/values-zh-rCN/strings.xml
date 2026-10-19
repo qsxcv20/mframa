@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_brief">每日晨报</string>
+    <string name="channel_brief_desc">每天一条本地早晨空气摘要</string>
+    <string name="brief_toggle">每日晨报（本地通知，每天早晨）</string>
+    <string name="brief_title">Mframa 晨报</string>
+    <string name="brief_text_good">今晨全市 PM2.5 均值 %1$d µg/m³（%2$s）——适合晨练出行。</string>
+    <string name="brief_text_bad">今晨全市 PM2.5 均值 %1$d µg/m³（%2$s）——已超过 35 限值，建议关窗、减少户外活动。</string>
+    <string name="brief_text_stale">今晨全市 PM2.5 均值 %1$d µg/m³（%2$s），但数据可能因停电延迟；停电夜发电机多，注意关窗。</string>
+    <string name="brief_level_good">优</string>
+    <string name="brief_level_moderate">良</string>
+    <string name="brief_level_usg">对敏感人群不健康</string>
+    <string name="brief_level_unhealthy">不健康</string>
+    <string name="brief_level_very">非常不健康</string>
+</resources>

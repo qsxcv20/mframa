@@ -33,7 +33,7 @@ Built for the **TechHub Africa Hackathon 2026**, track *Reducing Public Pollutio
 |---|---|
 | **Design & implementation** | Bilingual (EN/中文) phone-first UI; web + native Android companion; zero-account, zero-install; universal emoji AQI faces a child can read; live today at [mframa.streamlit.app](https://mframa.streamlit.app) |
 | **Technical complexity** | 12-algorithm leak-free backtest to pick the nowcast champion ([`bench_nowcast.py`](bench_nowcast.py)) + blind holdout ([`_holdout_eval.py`](_holdout_eval.py)); CAMS dust-vs-smoke source attribution; breathing-rate-weighted dose model; ~15–30-min `field.json` pollution-field pipeline for offline Android lookup |
-| **Potential impact** | ~28,000 premature deaths/yr and Ghana's #2 health risk ([Clean Air Fund](https://www.cleanairfund.org/geography/ghana/)); WhatsApp-first distribution where Ghanaians already are; push alerts via free ntfy; EPA Ghana / NGO partnership roadmap for SMS reach |
+| **Potential impact** | ~28,000 premature deaths/yr and Ghana's #2 health risk ([Clean Air Fund](https://www.cleanairfund.org/geography/ghana/)); WhatsApp-first distribution where Ghanaians already are; **zero-account local push** — browser notifications on web, on-device threshold alerts + daily brief on Android (no Telegram/ntfy install needed, built for where Ghanaians actually are); EPA Ghana / NGO partnership roadmap for SMS reach |
 | **Creativity** | Cigarette-equivalent exposure front and center; "Best Hours Today" clean-window finder; Harmattan dust-vs-smoke attribution; live policy tracking of the [Agbogbloshie e-waste cleanup](https://www.myjoyonline.com/one-million-tonnes-of-waste-to-be-evacuated-from-agbogbloshie-in-90-days-mahama/) |
 
 ## The problem
@@ -55,8 +55,8 @@ Top navigation, four destinations, tuned for one-thumb phone use:
 - **My Air** — pick a health profile (child, pregnant, asthma, elderly, outdoor worker, healthy adult) and get plain-language action guidance on WHO-aligned PM2.5 breakpoints, not generic "moderate" labels. The AQI card wears a **universal emoji face** per level (😊 good → 😷 unhealthy), so even a child can read the air. A **"Dust or Smoke?"** card attributes the source — Saharan dust vs combustion smoke — from live PM2.5 plus the CAMS dust forecast.
 - **Best Hours Today** — the question everyone actually asks: *when should I go out?* A diurnal curve from 7 days of hourly readings finds the historically cleanest hours, overlays today's live trend, and marks **green outdoor windows** — plus a 48-hour dust & PM2.5 forecast.
 - **Live Map** — all 85 monitoring stations across Accra with an IDW interpolation heatmap: the pollution *field*, not just dots — plus a **NASA FIRMS VIIRS fire layer** ([`fetch_fires.py`](fetch_fires.py), refreshed every 6 h by [`.github/workflows/fires.yml`](.github/workflows/fires.yml)) sizing each active fire by radiative power, so you can *see* the smoke sources around the city.
-- **More → What Did I Breathe? / Get Air Alerts** — a **cigarette-equivalent exposure calculator** ([Berkeley Earth conversion](https://berkeleyearth.org/air-pollution-and-cigarette-equivalence/): 22 µg/m³ over a day ≈ one cigarette), weighted by breathing rate and your actual commute/outdoor time; and 10-second subscription to a **daily morning briefing** plus **burst alerts** when the city crosses AQI 151 — no account, no phone number.
-- **In the Android app:** threshold alerts fire inside the app itself as your accumulated dose crosses levels.
+- **More → What Did I Breathe? / Get Air Alerts** — a **cigarette-equivalent exposure calculator** ([Berkeley Earth conversion](https://berkeleyearth.org/air-pollution-and-cigarette-equivalence/): 22 µg/m³ over a day ≈ one cigarette), weighted by breathing rate and your actual commute/outdoor time; and **browser-native air alerts**: flip one toggle, pick your own PM2.5 threshold (15–150 µg/m³, defaulting to Ghana EPA's 35), and the page posts a system notification whenever the city crosses it — **no account, no phone number, nothing to install**.
+- **In the Android app:** the same threshold alerts fire **on-device** (WorkManager polls the shared `field.json`, so alerts keep coming with the app closed and across reboots), plus a **local daily morning brief** (~06:00: city PM2.5, AQI level, one action tip — with a power-cut-night variant when the data feed goes stale). Everything is computed locally; no account, no push service.
 - **One-tap WhatsApp share** of your air report — a prefilled message with the current level, cigarette equivalent, best outdoor window and a deep link back, built for the channel where Ghanaians actually forward information.
 
 ## Why this nowcast — the technical core
@@ -104,12 +104,19 @@ A native Kotlin app under `android/` for the way Ghanaians actually live with ai
 
 ### Proactive air alerts
 
-Checking an app is a habit most people don't have. The push engine ([`push_engine.py`](push_engine.py)) flips the model: **the air report comes to you**.
+Checking an app is a habit most people don't have. Mframa flips the model: **the air report comes to you** — and it does so without asking for an account, a phone number, or a messaging-app install, because that's what fits Ghana (WhatsApp/Facebook dominate; Telegram and ntfy have minimal local penetration).
 
-- **Morning briefing** — ~05:45 daily: city PM2.5 and AQI, today's cleanest hours, rush-hour commute guidance, laundry & windows tip, plus a Harmattan-season warning when the 7-day median climbs
+**Primary channels — zero-account, fully local:**
+
+- **Web: browser notifications + your own threshold** — flip one toggle on the Get Air Alerts page, pick a PM2.5 threshold (15/25/35/55/75/100/150 µg/m³; 35 is Ghana EPA's national 24 h standard), and the page posts a system notification whenever the city crosses it, re-checking every 15 minutes against the same `field.json` the app uses. Threshold lives in the browser's local storage — nothing leaves the device. (Where a host environment blocks the Notification API, the page falls back to an in-app banner + toast, honestly labelled.)
+- **Android: on-device threshold alerts + daily morning brief** — WorkManager polls `field.json` every 15 minutes and posts a local notification when the city crosses *your* threshold (6 h cooldown), and a daily ~06:00 brief delivers the morning city PM2.5, AQI level and one action tip. Both keep working with the app closed and across reboots; both computed on-device. When the data feed goes stale >6 h (a power cut — ECG still publishes weekly 7–9 h outage schedules in 2026), the brief switches to a generator-night warning: close windows.
+
+**Optional broadcast pipeline — technical reserve** ([`push_engine.py`](push_engine.py), CI-run, zero cost):
+
+- **Morning briefing** — ~05:45 & ~17:45 UTC daily: city PM2.5 and AQI, cleanest hours, commute guidance, laundry & windows tip, plus a Harmattan-season warning when the 7-day median climbs
 - **Burst alerts** — every 15–30 minutes; when any station or the whole city crosses **AQI 151 (Unhealthy)**, an immediate alert with protective steps (max one alert of each type per 12 hours)
-- **Subscribe free, no account:** open [ntfy.sh/mframa-accra-air](https://ntfy.sh/mframa-accra-air) and tap *Subscribe*, or add topic `mframa-accra-air` in the ntfy app. A Telegram bot with station-level personal alerts is wired into the same engine and activates once a token is configured
-- **Privacy:** the Telegram subscriber registry (`subscribers.json`, with chat_ids) is `.gitignore`'d and never committed to this public repo — CI persists only the non-personal `bot_state.json` (update offsets and alert cooldowns). Telegram subscriptions therefore do not survive across CI runs; run `push_engine.py` locally for a persistent Telegram deployment, the ntfy topic remains the supported zero-account channel
+- **Channels:** the zero-account [ntfy topic `mframa-accra-air`](https://ntfy.sh/mframa-accra-air) is live; a Telegram bot with station-level personal alerts is wired into the same engine and activates once a token is configured
+- **Privacy:** the Telegram subscriber registry (`subscribers.json`, with chat_ids) is `.gitignore`'d and never committed to this public repo — CI persists only the non-personal `bot_state.json` (update offsets and alert cooldowns). Telegram subscriptions therefore do not survive across CI runs; run `push_engine.py` locally for a persistent Telegram deployment
 - **Cost model:** ntfy and Telegram are free. SMS via Africa's Talking runs roughly $0.01–0.05/message in Ghana — 10,000 subscribers ≈ $300–500/month, a line item sized for CSR sponsorship or an EPA Ghana / NGO partnership, the planned funding path
 
 ## Evidence wall
@@ -190,7 +197,8 @@ _holdout_eval.py        blind holdout validation on a fresh OpenAQ pull
 openaq_client.py        OpenAQ v3 client: cache, retry, live-first + snapshot fallback
 openmeteo_client.py     free CAMS/ECMWF dust forecast client (no API key)
 fetch_snapshot.py       regenerates the offline fallback snapshot
-push_engine.py          ntfy city broadcast + Telegram briefings + 15–30-min burst alerts
+push_engine.py          optional broadcast pipeline: ntfy city broadcast + Telegram
+                        briefings + 15–30-min burst alerts (technical reserve)
 publish_field.py        generates public/field.json (31×51 IDW grid over Accra)
 public/field.json       published pollution field, consumed by the Android app offline
 data/                   snapshot, holdout, nowcast metrics, hospital list, caches
@@ -231,7 +239,7 @@ requirements.txt        web app dependencies
                                   ▼
         ┌──────────────────────────────────────────────┐
         │   GitHub Actions — every 15–30 min           │
-        │   push_engine (ntfy · Telegram) · publish_field.py  │
+        │   publish_field.py · push_engine (optional)  │
         └───────────────┬──────────────────────────────┘
                         ▼
         ┌──────────────────────────────────────────────┐

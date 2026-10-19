@@ -84,6 +84,40 @@ def main():
         if "ntfy.sh" in body:
             print("    ntfy subscribe guide still visible")
 
+    # Browser-local alerts: the Telegram/ntfy subscription UI is gone; the
+    # page offers a toggle plus a threshold slider using the same steps as
+    # the Android app's AlertPrefs.THRESHOLD_STEPS (default 35 = Ghana EPA).
+    def make_alerts_local():
+        at = AppTest.from_file("app.py", default_timeout=180)
+        at.run()
+        nav = next(p for p in at.pills if "My Air" in list(p.options))
+        nav.set_value("More").run()
+        subnav = next(p for p in at.pills if "Get Air Alerts" in list(p.options))
+        subnav.set_value("Get Air Alerts").run()
+        return at
+    at = make_alerts_local()
+    errors = [str(e.value) for e in at.exception]
+    body = "\n".join(str(m.value) for m in at.markdown)
+    body += "\n".join(str(c.value) for c in at.caption)
+    steps = [int(o) for o in at.select_slider[0].options] if at.select_slider else None
+    checks = [
+        ("toggle", len(at.toggle) >= 1),
+        ("threshold steps", steps == [15, 25, 35, 55, 75, 100, 150]),
+        ("threshold default", at.select_slider[0].value == 35 if at.select_slider else False),
+        ("android briefing", "Android app" in body),
+        ("no ntfy/telegram", "ntfy" not in body.lower() and "telegram" not in body.lower()),
+    ]
+    if not errors and all(c for _, c in checks):
+        print("[OK] More > Get Air Alerts (browser-local alerts UI)")
+    else:
+        ok = False
+        print("[FAIL] More > Get Air Alerts (browser-local alerts UI)")
+        for e in errors:
+            print("   ", e[:500])
+        for name, c in checks:
+            if not c:
+                print("    failed:", name)
+
     # Deep link: ?lang=zh&page=more&sub=alerts lands on More > 订阅空气提醒
     # in Chinese, and the URL params are kept in sync.
     at = AppTest.from_file("app.py", default_timeout=180)

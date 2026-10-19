@@ -12,10 +12,12 @@ object NotificationHelper {
 
     const val CHANNEL_ADVISORY = "exposure_advisory"
     const val CHANNEL_HEALTH = "health_alert"
+    const val CHANNEL_BRIEF = "daily_brief"
     const val ID_SERVICE = 1
     const val ID_ADVISORY = 2
     const val ID_HEALTH = 3
     const val ID_CITY = 4
+    const val ID_BRIEF = 5
 
     fun ensureChannels(context: Context) {
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -25,6 +27,13 @@ object NotificationHelper {
                 context.getString(R.string.channel_advisory),
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply { description = context.getString(R.string.channel_advisory_desc) }
+        )
+        nm.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_BRIEF,
+                context.getString(R.string.channel_brief),
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply { description = context.getString(R.string.channel_brief_desc) }
         )
         nm.createNotificationChannel(
             NotificationChannel(
@@ -91,6 +100,24 @@ object NotificationHelper {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
         nm.notify(ID_HEALTH, n)
+    }
+
+    fun postDailyBrief(context: Context, title: String, text: String) {
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val pi = PendingIntent.getActivity(
+            context, 4,
+            Intent(context, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val n = NotificationCompat.Builder(context, CHANNEL_BRIEF)
+            .setSmallIcon(R.drawable.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setContentIntent(pi)
+            .setAutoCancel(true)
+            .build()
+        nm.notify(ID_BRIEF, n)
     }
 
     fun postCityAlert(context: Context, title: String, text: String) {

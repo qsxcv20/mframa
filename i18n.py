@@ -274,21 +274,56 @@ S = {
               "空气转差时立即通知你。",
     },
     "alerts_intro": {
-        "en": "Mframa can **push the air to you** instead of you checking the app. "
-              "Two free channels, powered by scheduled checks of the same OpenAQ "
-              "data you see here:",
-        "zh": "Mframa 可以**把空气状况主动推给你**，不用你反复打开应用查看。"
-              "两个免费渠道，背后是定时检查你在这里看到的同一套 OpenAQ 数据：",
+        "en": "Mframa can watch the air for you — **right here in your browser**. "
+              "No account, no phone number, nothing to install:",
+        "zh": "Mframa 可以替你盯着空气——**就在这个浏览器里**。"
+              "不要账号、不要手机号、不用装任何东西：",
+    },
+    "alert_enable": {"en": "🔔 Remind me in this browser", "zh": "🔔 在此浏览器中提醒我"},
+    "alert_threshold": {
+        "en": "Alert threshold (PM2.5 µg/m³)",
+        "zh": "提醒阈值（PM2.5 µg/m³）",
+    },
+    "alert_threshold_help": {
+        "en": "Same steps as the Android app (15/25/35/55/75/100/150); "
+              "35 is the Ghana EPA national 24-hour standard.",
+        "zh": "档位与安卓 App 一致（15/25/35/55/75/100/150）；"
+              "35 为加纳 EPA 国家 24 小时标准。",
+    },
+    "alert_how": {
+        "en": "While this page is open, the city average crossing your threshold "
+              "pops a notification — re-checked every 15 minutes. Your setting is "
+              "stored only in this browser (localStorage).",
+        "zh": "只要这个页面开着，全城均值超过你设的阈值就会弹提醒——每 15 分钟"
+              "复查一次。你的设置只存在这个浏览器里（localStorage）。",
+    },
+    "alert_over_banner": {
+        "en": "🚨 City PM2.5 is {pm} µg/m³ — above your {thr} µg/m³ threshold. "
+              "Consider a mask outdoors and keep windows closed.",
+        "zh": "🚨 全城 PM2.5 现为 {pm} µg/m³——已超过你设定的 {thr} µg/m³ 阈值。"
+              "外出建议戴口罩，门窗保持关闭。",
+    },
+    "alert_notify_btn": {"en": "Enable system notifications", "zh": "开启系统通知"},
+    "alert_notify_on": {"en": "System notifications on ✓", "zh": "系统通知已开启 ✓"},
+    "alert_sys_unavailable": {
+        "en": "Browser system notifications are unavailable or blocked in this "
+              "hosting environment — the banner above still warns you; for "
+              "lock-screen pushes on your phone, use the Android app.",
+        "zh": "浏览器系统通知在此托管环境不可用或已被拦截——上方横幅仍会提醒你；"
+              "手机端请用安卓 App 获得关屏推送。",
+    },
+    "alert_notify_title": {"en": "Mframa air alert", "zh": "Mframa 空气提醒"},
+    "alert_notify_body": {
+        "en": "City PM2.5 __PM__ µg/m³ — above your __THR__ µg/m³ threshold.",
+        "zh": "全城 PM2.5 为 __PM__ µg/m³——已超过你设定的 __THR__ µg/m³ 阈值。",
     },
     "alerts_morning": {
-        "en": "**🌅 Morning & evening briefings (twice daily, ~05:45 & ~17:45)**\n\n"
-              "Your station's current PM2.5 and AQI, today's cleanest hours,\n"
-              "commute guidance for the 06:00–09:00 / 17:00–20:00 rush peaks,\n"
-              "and a laundry & windows tip — once before you leave home,\n"
-              "and again before the evening rush.",
-        "zh": "**🌅 早晚简报（每日两发，约 05:45 和 17:45）**\n\n"
-              "出门前和晚高峰前各送达一次：你所在站点的当前 PM2.5 和 AQI、今天最干净的时段、"
-              "06:00–09:00 / 17:00–20:00 早晚高峰的通勤建议，以及晾晒和开窗小贴士。",
+        "en": "**🌅 Android app: local morning briefing (daily, 06:00)**\n\n"
+              "The Mframa Android app builds your morning air report on-device "
+              "every day at 6am — no account, no internet connection needed.",
+        "zh": "**🌅 安卓 App：每天早 6 点本地晨报**\n\n"
+              "Mframa 安卓 App 每天早 6 点在本机生成你的空气晨报——"
+              "无需联网、无需账号。",
     },
     "alerts_burst": {
         "en": "**🚨 Burst alerts (checked every 15 min)**\n\n"
@@ -348,8 +383,8 @@ S = {
               "去重机制完全不变，只换投递通道。",
     },
     "alerts_footer": {
-        "en": "Free to use, always. Data: OpenAQ · mute the ntfy topic any time to unsubscribe.",
-        "zh": "永久免费。数据来源：OpenAQ · 随时静音 ntfy 主题即可退订。",
+        "en": "Free to use, always. Data: OpenAQ.",
+        "zh": "永久免费。数据来源：OpenAQ。",
     },
 
     # --- Live Map -------------------------------------------------------------

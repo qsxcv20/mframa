@@ -12,6 +12,7 @@ object AlertPrefs {
     private const val KEY_LAST_NOTIFY = "alerts_last_notify"
     private const val KEY_LAST_CITY_PM25 = "alerts_last_city_pm25"
     private const val KEY_LAST_CITY_TS = "alerts_last_city_ts"
+    private const val KEY_BRIEF_ENABLED = "brief_enabled"
 
     const val DEFAULT_THRESHOLD = 35f
 
@@ -25,6 +26,12 @@ object AlertPrefs {
 
     fun setEnabled(context: Context, v: Boolean) =
         prefs(context).edit().putBoolean(KEY_ENABLED, v).apply()
+
+    fun briefEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_BRIEF_ENABLED, true)
+
+    fun setBriefEnabled(context: Context, v: Boolean) =
+        prefs(context).edit().putBoolean(KEY_BRIEF_ENABLED, v).apply()
 
     fun threshold(context: Context): Float =
         prefs(context).getFloat(KEY_THRESHOLD, DEFAULT_THRESHOLD)
