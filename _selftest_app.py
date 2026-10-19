@@ -360,6 +360,70 @@ def main():
         if at.session_state.get("lang") != "en":
             print("    failed: lang is %r" % at.session_state.get("lang"))
 
+    # Geolocation: coordinates that parse but fall outside the service bbox
+    # get an explicit notice; unparseable values stay silently ignored.
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.query_params["lat"] = "999"
+    at.query_params["lon"] = "999"
+    at.run()
+    warn_body = "\n".join(str(w.value) for w in at.warning)
+    errors = [str(e.value) for e in at.exception]
+    out_ok = "outside the Accra service area" in warn_body
+    at2 = AppTest.from_file("app.py", default_timeout=180)
+    at2.query_params["lat"] = "abc"
+    at2.query_params["lon"] = "abc"
+    at2.run()
+    warn2 = "\n".join(str(w.value) for w in at2.warning)
+    errors += [str(e.value) for e in at2.exception]
+    silent_ok = "outside the Accra service area" not in warn2
+    if not errors and out_ok and silent_ok:
+        print("[OK] geo out-of-area hint (warns on 999/999, silent on garbage)")
+    else:
+        ok = False
+        print("[FAIL] geo out-of-area hint")
+        for e in errors:
+            print("   ", e[:500])
+        if not out_ok:
+            print("    no warning for out-of-bbox coordinates")
+        if not silent_ok:
+            print("    warning shown for unparseable coordinates")
+
+    # Geo reset: clears ?lat/lon AND the keyed station selectboxes, so the
+    # picker falls back to the city-center default instead of keeping the
+    # geolocation-picked station. demo=harmattan pins a deterministic
+    # station list for both instances.
+    at_base = AppTest.from_file("app.py", default_timeout=180)
+    at_base.query_params["demo"] = "harmattan"
+    at_base.run()
+    base_idx = next(s for s in at_base.selectbox if s.key == "station_myair").value
+    at = AppTest.from_file("app.py", default_timeout=180)
+    at.query_params["demo"] = "harmattan"
+    at.query_params["lat"] = "5.55"
+    at.query_params["lon"] = "-0.25"
+    at.run()
+    sb = next(s for s in at.selectbox if s.key == "station_myair")
+    sb.set_value(0 if sb.value != 0 else 1).run()
+    btn = next(b for b in at.button if b.key == "geo_reset_station_myair")
+    btn.click().run()
+    errors = [str(e.value) for e in at.exception]
+    sb_after = next(s for s in at.selectbox if s.key == "station_myair").value
+    checks = [
+        ("lat/lon popped", at.query_params.get("lat") is None
+         and at.query_params.get("lon") is None),
+        ("user_loc cleared", at.session_state.get("user_loc") is None),
+        ("station back to center default", sb_after == base_idx),
+    ]
+    if not errors and all(c for _, c in checks):
+        print("[OK] geo reset clears station keys (back to city-center default)")
+    else:
+        ok = False
+        print("[FAIL] geo reset clears station keys")
+        for e in errors:
+            print("   ", e[:500])
+        for name, c in checks:
+            if not c:
+                print("    failed:", name)
+
     # FIRMS: Live Map carries the NASA FIRMS fire-source caption (static
     # data/fires_ghana.json); My Air's attribution card shows the VIIRS
     # observation line whenever the dust/smoke card itself renders.

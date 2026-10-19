@@ -614,6 +614,14 @@ def text_on(bg_hex):
     return "#1A2B21" if 0.299 * r + 0.587 * g + 0.114 * b > 150 else "#FFFFFF"
 
 
+def parse_user_loc_raw(qp):
+    """Float lat/lon from ?lat=&lon=; None if missing or unparseable."""
+    try:
+        return float(qp.get("lat")), float(qp.get("lon"))
+    except (TypeError, ValueError):
+        return None
+
+
 def parse_user_loc(qp):
     """Read/reject a device location passed as ?lat=&lon=.
 
@@ -621,11 +629,10 @@ def parse_user_loc(qp):
     Greater-Accra values so a hand-edited URL cannot select a nonsensical
     "nearest" station on the other side of the globe.
     """
-    try:
-        lat = float(qp.get("lat"))
-        lon = float(qp.get("lon"))
-    except (TypeError, ValueError):
+    raw = parse_user_loc_raw(qp)
+    if raw is None:
         return None
+    lat, lon = raw
     lat0, lat1, lon0, lon1 = USER_LOC_BBOX
     if not (lat0 <= lat <= lat1 and lon0 <= lon <= lon1):
         return None
@@ -658,22 +665,34 @@ def geolocation_widget(container, qp, stations, selected_index, widget_key=""):
     user_loc = parse_user_loc(qp)
     if user_loc is not None:
         s = stations[selected_index]
-        km = haversine_km(user_loc[0], user_loc[1], s["lat"], s["lon"])
-        container.caption(t("geo_located", name=s.get("name", ""), km=f"{km:.1f}"))
+        # A station without coordinates shows no distance line (same skip
+        # rule as nearest_index).
+        s_lat, s_lon = s.get("lat"), s.get("lon")
+        s_name = s.get("name") or f"Station {s.get('id')}"
+        if s_lat is not None and s_lon is not None:
+            km = haversine_km(user_loc[0], user_loc[1], s_lat, s_lon)
+            container.caption(t("geo_located", name=s_name, km=f"{km:.1f}"))
+        else:
+            container.caption(t("geo_located_nokm", name=s_name))
         if container.button(t("geo_clear"), key=f"geo_reset_{widget_key}",
                             use_container_width=True):
             qp.pop("lat", None)
             qp.pop("lon", None)
             st.session_state["user_loc"] = None
+            # Keyed station selectboxes keep their widget value across reruns;
+            # drop them so the reset truly returns to the city-center default.
+            for k in ("station_myair", "station_breathe", "station_hours"):
+                st.session_state.pop(k, None)
             st.rerun()
         return
     js_labels = json.dumps({
         "button": t("geo_button"),
         "denied": t("geo_denied"),
         "unavailable": t("geo_unavailable"),
-        "locating": "正在定位…" if st.session_state.get("lang") == "zh" else "Locating you…",
+        "locating": t("geo_locating"),
     }, ensure_ascii=False)
     btn_label = html.escape(t("geo_button"))
+    container.caption(t("geo_hint"))
     components.html(
         f"""
         <div id="geo-root" style="font-family:inherit;">
@@ -718,10 +737,10 @@ def geolocation_widget(container, qp, stations, selected_index, widget_key=""):
     )
 
 
-def pick_station(stations, key, label=None, container=None, user_loc=None):
+def pick_station(stations, key, label=None, container=None):
     names = [s.get("name") or f"Station {s.get('id')}" for s in stations]
     c = container or st
-    target = user_loc or st.session_state.get("user_loc") or ACCRA_CENTER
+    target = st.session_state.get("user_loc") or ACCRA_CENTER
     idx = c.selectbox(
         label or t("monitoring_station"), range(len(stations)),
         format_func=lambda i: names[i], index=nearest_index(stations, target), key=key,
@@ -1299,8 +1318,13 @@ def main():
                 "nav_breathe" if qp["sub"] == "breathe" else "nav_alerts")
     # Device location (?lat=&lon=), supplied by the in-page geolocation
     # button (or the Android WebView). When present, station pickers default
-    # to the nearest monitor instead of the city center.
+    # to the nearest monitor instead of the city center. Coordinates that
+    # parse but fall outside the service bbox get an explicit notice —
+    # silently ignoring them reads as "the button did nothing".
+    raw_loc = parse_user_loc_raw(qp)
     st.session_state["user_loc"] = parse_user_loc(qp)
+    if raw_loc is not None and st.session_state["user_loc"] is None:
+        st.warning(t("geo_out_of_area"))
     head_l, head_r = st.columns([3, 2])
     with head_l:
         st.title("Mframa")
@@ -1377,6 +1401,9 @@ def main():
     demo = load_demo_harmattan() if qp.get("demo") == "harmattan" else None
     if demo:
         live_link = f"?lang={st.session_state.get('lang', 'en')}&page=my_air"
+        # Keep the device location across the replay → live switch.
+        if raw_loc is not None:
+            live_link += f"&lat={raw_loc[0]}&lon={raw_loc[1]}"
         st.warning(t("demo_banner", date=demo.get("date", "?"),
                      mean=demo.get("city_mean_pm25", "?"), link=live_link))
 

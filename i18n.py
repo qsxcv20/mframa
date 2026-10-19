@@ -33,6 +33,16 @@ S = {
         "en": "📍 Nearest monitor: {name} · about {km} km away",
         "zh": "📍 最近监测站：{name} · 约 {km} 公里",
     },
+    "geo_located_nokm": {
+        "en": "📍 Nearest monitor: {name}",
+        "zh": "📍 最近监测站：{name}",
+    },
+    "geo_locating": {"en": "Locating you…", "zh": "正在定位…"},
+    "geo_out_of_area": {
+        "en": "Your location is outside the Accra service area — "
+              "showing stations near the city center.",
+        "zh": "你的位置超出阿克拉服务范围，已为你显示市中心附近站点。",
+    },
     "geo_clear": {"en": "Reset to city center", "zh": "恢复为市中心"},
     "geo_denied": {
         "en": "Location permission was denied. You can still pick a station manually.",

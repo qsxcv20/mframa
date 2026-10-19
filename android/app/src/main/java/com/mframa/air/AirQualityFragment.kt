@@ -30,6 +30,14 @@ class AirQualityFragment : Fragment() {
     // runtime location permission and answer the page's callback.
     private var pendingGeoOrigin: String? = null
     private var pendingGeoCallback: GeolocationPermissions.Callback? = null
+
+    // Known behavior: rotating the device while the system permission dialog
+    // is showing drops the result together with the destroyed fragment — the
+    // pending page callback is never invoked for that cycle. This is accepted
+    // rather than architected around: the WebView is rebuilt, the page's
+    // "Use my location" button stays clickable, and if the user did grant,
+    // the next tap is answered synchronously by the hasPermission fast path
+    // below. Do not "fix" this by retaining the callback across recreation.
     private val locationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grants ->
             val granted = grants[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
@@ -38,6 +46,18 @@ class AirQualityFragment : Fragment() {
             pendingGeoCallback = null
             pendingGeoOrigin = null
         }
+
+    // Geolocation prompts are not covered by shouldOverrideUrlLoading (that
+    // whitelist only gates main-frame navigations): any third-party iframe
+    // embedded in the page could otherwise silently obtain the user's
+    // coordinates. Only the app origin itself may receive a grant.
+    private fun isTrustedGeoOrigin(origin: String?): Boolean {
+        if (origin == null) return false
+        val uri = android.net.Uri.parse(origin)
+        val host = uri.host ?: return false
+        if (host == "localhost" || host == "127.0.0.1") return true // local debug
+        return uri.scheme == "https" && host == "mframa.streamlit.app"
+    }
 
     // The Streamlit Cloud wrapper redirects anonymous viewers through
     // share.streamlit.io to establish a session — that host must stay
@@ -94,6 +114,10 @@ class AirQualityFragment : Fragment() {
                 origin: String?,
                 callback: GeolocationPermissions.Callback
             ) {
+                if (!isTrustedGeoOrigin(origin)) {
+                    callback.invoke(origin, false, false)
+                    return
+                }
                 val hasPermission = ContextCompat.checkSelfPermission(
                     requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED ||
@@ -104,6 +128,9 @@ class AirQualityFragment : Fragment() {
                     // Already granted (e.g. for exposure tracking) — answer now.
                     callback.invoke(origin, true, false)
                 } else {
+                    // Close out any earlier unanswered callback before
+                    // replacing it, so it never dangles forever.
+                    pendingGeoCallback?.invoke(pendingGeoOrigin, false, false)
                     // Ask once; the launcher answers the page callback.
                     pendingGeoOrigin = origin
                     pendingGeoCallback = callback
