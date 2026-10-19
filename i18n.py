@@ -636,3 +636,4 @@ def tt(text):
 # touch: force streamlit cloud full redeploy
 
 # cache-bust: force Streamlit Cloud full redeploy
+# cache-bust 2026-10-19T19:40+08: geo_* keys for nearest-monitor geolocation
