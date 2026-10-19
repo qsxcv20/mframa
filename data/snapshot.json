@@ -1,5 +1,5 @@
 {
- "fetched_at_utc": "2026-10-19T11:38:10Z",
+ "fetched_at_utc": "2026-10-19T14:44:10Z",
  "source": "OpenAQ v3 API (https://api.openaq.org)",
  "city": "Accra, Ghana",
  "bbox": {
@@ -148,7 +148,7 @@
     "pm1": 2087971,
     "pm10": 2087966,
     "pm25": 2087968,
-    "temperature": 5244148
+    "temperature": 5244149
    },
    "last_updated_utc": "2023-09-15T23:05:19Z",
    "provider": "Clarity",
@@ -183,7 +183,7 @@
     "temperature": 6530272,
     "um003": 9179771
    },
-   "last_updated_utc": "2026-10-19T11:00:00Z",
+   "last_updated_utc": "2026-10-19T14:00:00Z",
    "provider": "AirGradient",
    "hourly_pm25": []
   },
@@ -193,8 +193,8 @@
    "lat": 5.653842319123899,
    "lon": -0.18587458123045222,
    "sensors": {
-    "pm1": 7979564,
-    "pm10": 7979610,
+    "pm1": 7971323,
+    "pm10": 7971348,
     "pm25": 7897442,
     "relativehumidity": 7972618,
     "temperature": 7897449,
@@ -211,7 +211,7 @@
    "lon": -0.18587458123045222,
    "sensors": {
     "pm1": 7971074,
-    "pm10": 7979625,
+    "pm10": 7971325,
     "pm25": 7897459,
     "relativehumidity": 7972654,
     "temperature": 7897458,
@@ -227,7 +227,7 @@
    "lat": 5.653842319123899,
    "lon": -0.18587458123045222,
    "sensors": {
-    "pm1": 7979661,
+    "pm1": 7971355,
     "pm10": 7971309,
     "pm25": 7897457,
     "relativehumidity": 7972621,
@@ -246,7 +246,7 @@
    "sensors": {
     "pm25": 10330991
    },
-   "last_updated_utc": "2026-10-19T11:06:07Z",
+   "last_updated_utc": "2026-10-19T14:00:32Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -258,7 +258,7 @@
    "sensors": {
     "pm25": 10331000
    },
-   "last_updated_utc": "2026-10-19T11:04:16Z",
+   "last_updated_utc": "2026-10-19T14:05:37Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -270,7 +270,7 @@
    "sensors": {
     "pm25": 10330999
    },
-   "last_updated_utc": "2026-10-19T11:05:53Z",
+   "last_updated_utc": "2026-10-19T14:06:31Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -282,7 +282,7 @@
    "sensors": {
     "pm25": 10330997
    },
-   "last_updated_utc": "2026-10-19T11:06:41Z",
+   "last_updated_utc": "2026-10-19T14:07:02Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -294,7 +294,7 @@
    "sensors": {
     "pm25": 10330996
    },
-   "last_updated_utc": "2026-10-19T11:01:59Z",
+   "last_updated_utc": "2026-10-19T14:00:57Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -306,7 +306,7 @@
    "sensors": {
     "pm25": 10331004
    },
-   "last_updated_utc": "2026-10-19T10:50:48Z",
+   "last_updated_utc": "2026-10-19T13:58:44Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -318,7 +318,7 @@
    "sensors": {
     "pm25": 10331005
    },
-   "last_updated_utc": "2026-10-19T11:04:43Z",
+   "last_updated_utc": "2026-10-19T14:04:42Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -330,7 +330,7 @@
    "sensors": {
     "pm25": 10331003
    },
-   "last_updated_utc": "2026-10-19T10:52:08Z",
+   "last_updated_utc": "2026-10-19T13:48:02Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -342,7 +342,7 @@
    "sensors": {
     "pm25": 10331001
    },
-   "last_updated_utc": "2026-10-19T10:50:25Z",
+   "last_updated_utc": "2026-10-19T14:01:34Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -354,7 +354,7 @@
    "sensors": {
     "pm25": 10330992
    },
-   "last_updated_utc": "2026-10-19T11:00:22Z",
+   "last_updated_utc": "2026-10-19T13:52:08Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -366,7 +366,7 @@
    "sensors": {
     "pm25": 10331002
    },
-   "last_updated_utc": "2026-10-19T10:59:47Z",
+   "last_updated_utc": "2026-10-19T14:06:06Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -378,7 +378,7 @@
    "sensors": {
     "pm25": 10330995
    },
-   "last_updated_utc": "2026-10-19T10:57:53Z",
+   "last_updated_utc": "2026-10-19T13:56:39Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -390,7 +390,7 @@
    "sensors": {
     "pm25": 10330998
    },
-   "last_updated_utc": "2026-10-19T10:54:58Z",
+   "last_updated_utc": "2026-10-19T14:04:00Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -402,7 +402,7 @@
    "sensors": {
     "pm25": 10330993
    },
-   "last_updated_utc": "2026-10-19T10:52:55Z",
+   "last_updated_utc": "2026-10-19T14:05:14Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -414,7 +414,7 @@
    "sensors": {
     "pm25": 10330994
    },
-   "last_updated_utc": "2026-10-19T11:04:53Z",
+   "last_updated_utc": "2026-10-19T14:02:39Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -426,7 +426,7 @@
    "sensors": {
     "pm25": 10826686
    },
-   "last_updated_utc": "2026-10-19T10:59:28Z",
+   "last_updated_utc": "2026-10-19T13:51:20Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -458,7 +458,7 @@
     "temperature": 13503586,
     "um003": 13503587
    },
-   "last_updated_utc": "2026-10-19T11:00:00Z",
+   "last_updated_utc": "2026-10-19T14:00:00Z",
    "provider": "AirGradient",
    "hourly_pm25": []
   },
@@ -490,7 +490,7 @@
     "temperature": 13511934,
     "um003": 13511935
    },
-   "last_updated_utc": "2026-10-19T10:00:00Z",
+   "last_updated_utc": "2026-10-19T12:00:00Z",
    "provider": "AirGradient",
    "hourly_pm25": []
   },
@@ -522,7 +522,7 @@
     "temperature": 13511944,
     "um003": 13511945
    },
-   "last_updated_utc": "2026-10-19T11:00:00Z",
+   "last_updated_utc": "2026-10-19T14:00:00Z",
    "provider": "AirGradient",
    "hourly_pm25": []
   },
@@ -538,7 +538,7 @@
     "temperature": 13519205,
     "um003": 13519206
    },
-   "last_updated_utc": "2026-10-19T11:00:00Z",
+   "last_updated_utc": "2026-10-19T14:00:00Z",
    "provider": "AirGradient",
    "hourly_pm25": []
   },
@@ -566,7 +566,7 @@
    "sensors": {
     "pm25": 14359598
    },
-   "last_updated_utc": "2026-10-19T11:03:26Z",
+   "last_updated_utc": "2026-10-19T14:04:27Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -602,7 +602,7 @@
    "sensors": {
     "pm25": 15872035
    },
-   "last_updated_utc": "2026-10-19T10:56:02Z",
+   "last_updated_utc": "2026-10-19T14:04:22Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -614,7 +614,7 @@
    "sensors": {
     "pm25": 15872036
    },
-   "last_updated_utc": "2026-10-19T11:06:47Z",
+   "last_updated_utc": "2026-10-19T13:59:20Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -626,7 +626,7 @@
    "sensors": {
     "pm25": 15872033
    },
-   "last_updated_utc": "2026-10-19T10:53:12Z",
+   "last_updated_utc": "2026-10-19T14:04:38Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -638,7 +638,7 @@
    "sensors": {
     "pm25": 15872034
    },
-   "last_updated_utc": "2026-10-19T10:51:31Z",
+   "last_updated_utc": "2026-10-19T14:01:29Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -650,7 +650,7 @@
    "sensors": {
     "pm25": 15905125
    },
-   "last_updated_utc": "2026-10-19T10:56:40Z",
+   "last_updated_utc": "2026-10-19T14:04:26Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -674,7 +674,7 @@
    "sensors": {
     "pm25": 15905127
    },
-   "last_updated_utc": "2026-10-19T11:03:13Z",
+   "last_updated_utc": "2026-10-19T13:56:44Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -686,7 +686,7 @@
    "sensors": {
     "pm25": 15905124
    },
-   "last_updated_utc": "2026-10-19T10:58:18Z",
+   "last_updated_utc": "2026-10-19T14:07:02Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -698,7 +698,7 @@
    "sensors": {
     "pm25": 15905129
    },
-   "last_updated_utc": "2026-10-19T11:06:43Z",
+   "last_updated_utc": "2026-10-19T13:57:56Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -722,7 +722,7 @@
    "sensors": {
     "pm25": 15913720
    },
-   "last_updated_utc": "2026-10-19T11:02:43Z",
+   "last_updated_utc": "2026-10-19T13:55:30Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -734,7 +734,7 @@
    "sensors": {
     "pm25": 15913719
    },
-   "last_updated_utc": "2026-10-19T10:52:56Z",
+   "last_updated_utc": "2026-10-19T14:04:33Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -746,7 +746,7 @@
    "sensors": {
     "pm25": 15913721
    },
-   "last_updated_utc": "2026-10-19T10:57:17Z",
+   "last_updated_utc": "2026-10-19T13:51:57Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -758,7 +758,7 @@
    "sensors": {
     "pm25": 15913722
    },
-   "last_updated_utc": "2026-10-19T10:49:56Z",
+   "last_updated_utc": "2026-10-19T14:01:11Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -770,7 +770,7 @@
    "sensors": {
     "pm25": 15914832
    },
-   "last_updated_utc": "2026-10-19T11:04:44Z",
+   "last_updated_utc": "2026-10-19T13:59:28Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -782,7 +782,7 @@
    "sensors": {
     "pm25": 15914830
    },
-   "last_updated_utc": "2026-10-19T10:50:49Z",
+   "last_updated_utc": "2026-10-19T13:57:26Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -794,7 +794,7 @@
    "sensors": {
     "pm25": 15914831
    },
-   "last_updated_utc": "2026-10-19T11:05:48Z",
+   "last_updated_utc": "2026-10-19T14:01:26Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -806,7 +806,7 @@
    "sensors": {
     "pm25": 15915116
    },
-   "last_updated_utc": "2026-10-19T11:00:58Z",
+   "last_updated_utc": "2026-10-19T13:56:38Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -818,7 +818,7 @@
    "sensors": {
     "pm25": 15915117
    },
-   "last_updated_utc": "2026-10-19T11:03:18Z",
+   "last_updated_utc": "2026-10-19T13:58:38Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -830,7 +830,7 @@
    "sensors": {
     "pm25": 15916831
    },
-   "last_updated_utc": "2026-10-19T11:05:45Z",
+   "last_updated_utc": "2026-10-19T13:58:48Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -842,7 +842,7 @@
    "sensors": {
     "pm25": 15963363
    },
-   "last_updated_utc": "2026-10-19T10:55:07Z",
+   "last_updated_utc": "2026-10-19T13:53:39Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -854,7 +854,7 @@
    "sensors": {
     "pm25": 15963359
    },
-   "last_updated_utc": "2026-10-19T10:50:12Z",
+   "last_updated_utc": "2026-10-19T13:58:40Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -878,7 +878,7 @@
    "sensors": {
     "pm25": 15963361
    },
-   "last_updated_utc": "2026-10-19T11:05:11Z",
+   "last_updated_utc": "2026-10-19T13:55:20Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -890,7 +890,7 @@
    "sensors": {
     "pm25": 15963357
    },
-   "last_updated_utc": "2026-10-19T10:55:04Z",
+   "last_updated_utc": "2026-10-19T14:04:02Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -914,7 +914,7 @@
    "sensors": {
     "pm25": 15963358
    },
-   "last_updated_utc": "2026-10-19T10:56:40Z",
+   "last_updated_utc": "2026-10-19T14:05:36Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -926,7 +926,7 @@
    "sensors": {
     "pm25": 15977313
    },
-   "last_updated_utc": "2026-10-19T10:54:19Z",
+   "last_updated_utc": "2026-10-19T14:01:12Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -938,7 +938,7 @@
    "sensors": {
     "pm25": 15977584
    },
-   "last_updated_utc": "2026-10-19T10:52:56Z",
+   "last_updated_utc": "2026-10-19T14:04:38Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -950,7 +950,7 @@
    "sensors": {
     "pm25": 15977583
    },
-   "last_updated_utc": "2026-10-19T10:54:08Z",
+   "last_updated_utc": "2026-10-19T13:53:12Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -962,7 +962,7 @@
    "sensors": {
     "pm25": 15998897
    },
-   "last_updated_utc": "2026-10-19T10:59:08Z",
+   "last_updated_utc": "2026-10-19T14:05:54Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -974,7 +974,7 @@
    "sensors": {
     "pm25": 15998898
    },
-   "last_updated_utc": "2026-10-19T10:57:22Z",
+   "last_updated_utc": "2026-10-19T14:06:02Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -986,7 +986,7 @@
    "sensors": {
     "pm25": 15998899
    },
-   "last_updated_utc": "2026-10-19T11:02:08Z",
+   "last_updated_utc": "2026-10-19T13:53:32Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -998,7 +998,7 @@
    "sensors": {
     "pm25": 16062454
    },
-   "last_updated_utc": "2026-10-19T10:55:52Z",
+   "last_updated_utc": "2026-10-19T14:06:14Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -1010,7 +1010,7 @@
    "sensors": {
     "pm25": 16062453
    },
-   "last_updated_utc": "2026-10-19T11:03:42Z",
+   "last_updated_utc": "2026-10-19T13:58:27Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -1022,7 +1022,7 @@
    "sensors": {
     "pm25": 16062452
    },
-   "last_updated_utc": "2026-10-19T10:52:48Z",
+   "last_updated_utc": "2026-10-19T13:54:31Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -1034,7 +1034,7 @@
    "sensors": {
     "pm25": 16204170
    },
-   "last_updated_utc": "2026-10-19T10:57:41Z",
+   "last_updated_utc": "2026-10-19T13:52:19Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -1046,7 +1046,7 @@
    "sensors": {
     "pm25": 16644413
    },
-   "last_updated_utc": "2026-10-19T10:59:44Z",
+   "last_updated_utc": "2026-10-19T14:05:53Z",
    "provider": "Clarity",
    "hourly_pm25": []
   },
@@ -1062,7 +1062,7 @@
     "temperature": 17291615,
     "um003": 17291616
    },
-   "last_updated_utc": "2026-10-19T11:00:00Z",
+   "last_updated_utc": "2026-10-19T14:00:00Z",
    "provider": "AirGradient",
    "hourly_pm25": []
   },
@@ -1078,7 +1078,7 @@
     "temperature": 17488584,
     "um003": 17488585
    },
-   "last_updated_utc": "2026-10-19T11:00:00Z",
+   "last_updated_utc": "2026-10-19T14:00:00Z",
    "provider": "AirGradient",
    "hourly_pm25": []
   },
