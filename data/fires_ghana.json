@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-10-21T07:07:24Z",
+ "generated_at_utc": "2026-10-21T13:06:08Z",
  "source": "NASA FIRMS VIIRS_NOAA21_NRT (firms.modaps.eosdis.nasa.gov)",
- "total_fires": 58,
+ "total_fires": 61,
  "accra_300km_24h_fires": 24,
  "fires": [
   {
@@ -275,6 +275,15 @@
    "acq_time": "1340"
   },
   {
+   "lat": 4.5975,
+   "lon": -2.8905,
+   "frp": 4.5,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-10-21",
+   "acq_time": "215"
+  },
+  {
    "lat": 6.7381,
    "lon": -0.8452,
    "frp": 4.4,
@@ -498,6 +507,24 @@
    "daynight": "D",
    "acq_date": "2026-10-20",
    "acq_time": "1340"
+  },
+  {
+   "lat": 4.5941,
+   "lon": -2.8888,
+   "frp": 2.5,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-10-21",
+   "acq_time": "215"
+  },
+  {
+   "lat": 4.5947,
+   "lon": -2.8923,
+   "frp": 2.5,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-10-21",
+   "acq_time": "215"
   },
   {
    "lat": 6.8462,
