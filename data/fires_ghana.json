@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-25T07:03:42Z",
+ "generated_at_utc": "2026-10-25T12:58:47Z",
  "source": "NASA FIRMS VIIRS_NOAA21_NRT (firms.modaps.eosdis.nasa.gov)",
  "total_fires": 101,
- "accra_300km_24h_fires": 15,
+ "accra_300km_24h_fires": 12,
  "fires": [
   {
    "lat": 10.6694,
