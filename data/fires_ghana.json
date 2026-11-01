@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-11-01T01:28:22Z",
+ "generated_at_utc": "2026-11-01T07:23:06Z",
  "source": "NASA FIRMS VIIRS_NOAA21_NRT (firms.modaps.eosdis.nasa.gov)",
- "total_fires": 322,
- "accra_300km_24h_fires": 60,
+ "total_fires": 330,
+ "accra_300km_24h_fires": 62,
  "fires": [
   {
    "lat": 11.1464,
@@ -921,6 +921,15 @@
    "daynight": "D",
    "acq_date": "2026-10-31",
    "acq_time": "1333"
+  },
+  {
+   "lat": 4.5981,
+   "lon": -2.891,
+   "frp": 7.0,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-01",
+   "acq_time": "210"
   },
   {
    "lat": 6.3552,
@@ -2003,6 +2012,24 @@
    "acq_time": "1333"
   },
   {
+   "lat": 10.97,
+   "lon": 0.7367,
+   "frp": 4.1,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-01",
+   "acq_time": "208"
+  },
+  {
+   "lat": 10.9708,
+   "lon": 0.735,
+   "frp": 4.1,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-01",
+   "acq_time": "208"
+  },
+  {
    "lat": 8.1022,
    "lon": 0.3356,
    "frp": 4.0,
@@ -2262,6 +2289,15 @@
    "daynight": "D",
    "acq_date": "2026-10-31",
    "acq_time": "1333"
+  },
+  {
+   "lat": 10.9708,
+   "lon": 0.7329,
+   "frp": 3.5,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-01",
+   "acq_time": "208"
   },
   {
    "lat": 5.3586,
@@ -2858,6 +2894,24 @@
    "acq_time": "1333"
   },
   {
+   "lat": 7.0552,
+   "lon": -1.1382,
+   "frp": 1.9,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-01",
+   "acq_time": "210"
+  },
+  {
+   "lat": 7.0605,
+   "lon": -1.1372,
+   "frp": 1.9,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-01",
+   "acq_time": "210"
+  },
+  {
    "lat": 9.955,
    "lon": -2.6288,
    "frp": 1.8,
@@ -2867,6 +2921,15 @@
    "acq_time": "1333"
   },
   {
+   "lat": 10.9694,
+   "lon": 0.7427,
+   "frp": 1.8,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-01",
+   "acq_time": "208"
+  },
+  {
    "lat": 10.9104,
    "lon": -3.282,
    "frp": 1.7,
@@ -2874,6 +2937,15 @@
    "daynight": "D",
    "acq_date": "2026-10-31",
    "acq_time": "1333"
+  },
+  {
+   "lat": 10.665,
+   "lon": -1.2965,
+   "frp": 1.5,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-01",
+   "acq_time": "208"
   },
   {
    "lat": 10.4016,
