@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-11-07T01:23:23Z",
+ "generated_at_utc": "2026-11-07T07:22:36Z",
  "source": "NASA FIRMS VIIRS_NOAA21_NRT (firms.modaps.eosdis.nasa.gov)",
- "total_fires": 478,
+ "total_fires": 487,
  "accra_300km_24h_fires": 67,
  "fires": [
   {
@@ -2561,6 +2561,15 @@
    "acq_time": "1322"
   },
   {
+   "lat": 4.5986,
+   "lon": -2.8928,
+   "frp": 4.4,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-07",
+   "acq_time": "158"
+  },
+  {
    "lat": 6.8254,
    "lon": -0.572,
    "frp": 4.3,
@@ -3171,6 +3180,15 @@
    "daynight": "D",
    "acq_date": "2026-11-06",
    "acq_time": "1320"
+  },
+  {
+   "lat": 4.5978,
+   "lon": -2.8894,
+   "frp": 3.7,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-07",
+   "acq_time": "158"
   },
   {
    "lat": 8.5223,
@@ -4010,6 +4028,15 @@
    "acq_time": "1322"
   },
   {
+   "lat": 11.3503,
+   "lon": -0.323,
+   "frp": 2.4,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-07",
+   "acq_time": "156"
+  },
+  {
    "lat": 8.4353,
    "lon": -0.2737,
    "frp": 2.3,
@@ -4271,6 +4298,24 @@
    "acq_time": "1320"
   },
   {
+   "lat": 11.2593,
+   "lon": 0.2801,
+   "frp": 1.6,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-07",
+   "acq_time": "156"
+  },
+  {
+   "lat": 11.3996,
+   "lon": 0.7083,
+   "frp": 1.2,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-07",
+   "acq_time": "156"
+  },
+  {
    "lat": 5.7348,
    "lon": 0.0989,
    "frp": 1.1,
@@ -4305,6 +4350,42 @@
    "daynight": "D",
    "acq_date": "2026-11-06",
    "acq_time": "1320"
+  },
+  {
+   "lat": 11.3482,
+   "lon": -0.3221,
+   "frp": 0.9,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-07",
+   "acq_time": "156"
+  },
+  {
+   "lat": 11.3489,
+   "lon": -0.326,
+   "frp": 0.9,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-07",
+   "acq_time": "156"
+  },
+  {
+   "lat": 10.4767,
+   "lon": -1.3194,
+   "frp": 0.8,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-07",
+   "acq_time": "156"
+  },
+  {
+   "lat": 10.4872,
+   "lon": -1.2857,
+   "frp": 0.6,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-07",
+   "acq_time": "156"
   }
  ]
 }
