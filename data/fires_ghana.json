@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-11-11T01:25:37Z",
+ "generated_at_utc": "2026-11-11T07:36:31Z",
  "source": "NASA FIRMS VIIRS_NOAA21_NRT (firms.modaps.eosdis.nasa.gov)",
- "total_fires": 541,
+ "total_fires": 551,
  "accra_300km_24h_fires": 3,
  "fires": [
   {
@@ -1706,6 +1706,15 @@
    "acq_time": "1346"
   },
   {
+   "lat": 11.2294,
+   "lon": 1.2748,
+   "frp": 10.4,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "41"
+  },
+  {
    "lat": 8.6119,
    "lon": -0.2034,
    "frp": 10.3,
@@ -2136,6 +2145,15 @@
    "daynight": "D",
    "acq_date": "2026-11-10",
    "acq_time": "1346"
+  },
+  {
+   "lat": 11.2272,
+   "lon": 1.2763,
+   "frp": 8.8,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "41"
   },
   {
    "lat": 10.6868,
@@ -2741,6 +2759,15 @@
    "acq_time": "1346"
   },
   {
+   "lat": 11.1008,
+   "lon": 0.2649,
+   "frp": 6.8,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "219"
+  },
+  {
    "lat": 10.594,
    "lon": -1.6295,
    "frp": 6.7,
@@ -3198,6 +3225,15 @@
    "daynight": "D",
    "acq_date": "2026-11-10",
    "acq_time": "1346"
+  },
+  {
+   "lat": 11.0997,
+   "lon": 0.2706,
+   "frp": 5.6,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "219"
   },
   {
    "lat": 10.1778,
@@ -4586,6 +4622,15 @@
    "acq_time": "1346"
   },
   {
+   "lat": 11.1398,
+   "lon": 0.3375,
+   "frp": 2.5,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "219"
+  },
+  {
    "lat": 9.912,
    "lon": -1.9393,
    "frp": 2.4,
@@ -4784,6 +4829,15 @@
    "acq_time": "1346"
   },
   {
+   "lat": 11.0943,
+   "lon": 0.2635,
+   "frp": 2.0,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "219"
+  },
+  {
    "lat": 11.0313,
    "lon": 0.4691,
    "frp": 1.9,
@@ -4800,6 +4854,15 @@
    "daynight": "D",
    "acq_date": "2026-11-10",
    "acq_time": "1346"
+  },
+  {
+   "lat": 11.1403,
+   "lon": 0.3389,
+   "frp": 1.9,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "219"
   },
   {
    "lat": 10.5063,
@@ -4829,6 +4892,15 @@
    "acq_time": "58"
   },
   {
+   "lat": 11.3866,
+   "lon": 0.9583,
+   "frp": 1.4,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "41"
+  },
+  {
    "lat": 11.2769,
    "lon": 0.0449,
    "frp": 1.3,
@@ -4836,6 +4908,24 @@
    "daynight": "N",
    "acq_date": "2026-11-10",
    "acq_time": "58"
+  },
+  {
+   "lat": 11.3912,
+   "lon": 0.9911,
+   "frp": 1.1,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "41"
+  },
+  {
+   "lat": 11.3891,
+   "lon": 0.9913,
+   "frp": 1.0,
+   "confidence": "n",
+   "daynight": "N",
+   "acq_date": "2026-11-11",
+   "acq_time": "41"
   },
   {
    "lat": 11.2328,
